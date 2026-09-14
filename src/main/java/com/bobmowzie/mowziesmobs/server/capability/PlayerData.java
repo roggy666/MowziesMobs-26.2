@@ -43,6 +43,7 @@ import net.neoforged.neoforge.common.util.ValueIOSerializable;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.ArrayList;
@@ -497,7 +498,7 @@ public class PlayerData implements ValueIOSerializable {
             for (DeferredHolder<Item, ItemElokosaPaw> item : ItemHandler.ELOKOSA_PAWS) {
                 player.getCooldowns().addCooldown(BuiltInRegistries.ITEM.getKey(item.get()), pawCooldownRemainingToLoad);
                 if (player instanceof ServerPlayer serverPlayer) {
-                    serverPlayer.connection.send(new MessageAddInProgressCooldown(item.get(), 0, pawCooldownRemainingToLoad));
+                    PacketDistributor.sendToPlayer(serverPlayer, new MessageAddInProgressCooldown(item.get(), 0, pawCooldownRemainingToLoad));
                 }
             }
         }

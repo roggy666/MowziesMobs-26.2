@@ -1133,12 +1133,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
             Vec3 itemVelocity = new Vec3(0.1f, 0.1f, 0).yRot((float)Math.toRadians(-getUser().yBodyRot - 90));
             ItemEntity itementity = new ItemEntity(getUser().level(), itemPos.x, itemPos.y, itemPos.z, stack, itemVelocity.x, itemVelocity.y, itemVelocity.z);
             itementity.setDefaultPickUpDelay();
-            if (getUser().captureDrops() != null) {
-                getUser().captureDrops().add(itementity);
-            }
-            else {
-                getUser().level().addFreshEntity(itementity);
-            }
+            getUser().level().addFreshEntity(itementity);
             return itementity;
         }
 

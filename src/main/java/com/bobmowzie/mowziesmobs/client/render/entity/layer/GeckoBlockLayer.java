@@ -49,7 +49,7 @@ public class GeckoBlockLayer<T extends GeoAnimatable, R extends GeoRenderState> 
             "mowziesmobs_geckoblocklayer_contents", new TypeToken<List<GeckoBlockLayer.BoneBlock>>() {});
 
     private final BiFunction<GeoBone, T, BlockState> blockForBone;
-    private final BlockModelResolver blockModelResolver = Minecraft.getInstance().getBlockModelResolver();
+    private final BlockModelResolver blockModelResolver = new BlockModelResolver(Minecraft.getInstance().getModelManager());
 
     public GeckoBlockLayer(GeoRenderer<T, Void, R> rendererIn, BiFunction<GeoBone, T, BlockState> blockForBone) {
         super(rendererIn);

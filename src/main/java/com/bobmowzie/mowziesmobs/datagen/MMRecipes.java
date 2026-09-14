@@ -24,7 +24,7 @@ public class MMRecipes extends RecipeProvider {
     }
 
     @Override
-    protected void buildRecipes() {
+    public void buildRecipes() {
         RecipeOutput output = this.output;
 
         // Shaped
@@ -129,7 +129,7 @@ public class MMRecipes extends RecipeProvider {
     // lookup as its first argument (confirmed against real 26.1.2 source) - use the HolderGetter<Item> already
     // held by the RecipeProvider superclass (this.items), so this can no longer be static.
     protected @NotNull Criterion<InventoryChangeTrigger.TriggerInstance> has(ItemLike... items) {
-        return inventoryTrigger(ItemPredicate.Builder.item().of(this.items, items));
+        return inventoryTrigger(ItemPredicate.Builder.item().of(this.registries.lookupOrThrow(net.minecraft.core.registries.Registries.ITEM), items));
     }
 
     /**

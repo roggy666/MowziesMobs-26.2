@@ -78,7 +78,7 @@ public class ModelGeomancerArmor extends MowzieGeoModel<ItemGeomancerArmor> {
                     f = 1.0F;
                 }
 
-                boolean shouldSit = entity.isPassenger() && (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit());
+                boolean shouldSit = entity.isPassenger();
                 float f8_limbSwingAmount = 0.0F;
                 float f5_limbSwing = 0.0F;
                 if (!shouldSit && entity.isAlive()) {

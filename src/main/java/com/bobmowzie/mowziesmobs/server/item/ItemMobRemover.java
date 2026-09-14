@@ -17,7 +17,6 @@ public class ItemMobRemover extends Item {
         super(properties);
     }
 
-    @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         if (entity instanceof MowzieEntity) {
             if (!entity.level().isClientSide()) {

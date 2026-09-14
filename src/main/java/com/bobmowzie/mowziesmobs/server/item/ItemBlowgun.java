@@ -95,7 +95,7 @@ public class ItemBlowgun extends BowItem {
             arrow.setCritArrow(true);
         }
 
-        return customArrow(arrow, ammo, weapon);
+        return arrow;
     }
 
 
@@ -104,7 +104,6 @@ public class ItemBlowgun extends BowItem {
         return DARTS;
     }
 
-    @Override
     public @NotNull ItemStack getDefaultCreativeAmmo(@Nullable Player player, @NotNull ItemStack projectileWeaponItem) {
         return ItemHandler.DART.get().getDefaultInstance();
     }

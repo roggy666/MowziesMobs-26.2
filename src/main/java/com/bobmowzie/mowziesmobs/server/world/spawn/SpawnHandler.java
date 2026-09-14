@@ -4,18 +4,15 @@ import com.bobmowzie.mowziesmobs.server.config.ConfigHandler;
 import com.bobmowzie.mowziesmobs.server.entity.EntityHandler;
 import com.bobmowzie.mowziesmobs.server.entity.MowzieEntity;
 import com.bobmowzie.mowziesmobs.server.world.BiomeChecker;
-import net.minecraft.core.Holder;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementType;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.NaturalSpawner;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,67 +56,49 @@ public class SpawnHandler {
         SPAWN_CONFIGS.put(EntityHandler.ELOKOSA_HOWLER.get(), ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig);
     }
 
-    public static void registerSpawnPlacementTypes(RegisterSpawnPlacementsEvent event) {
-        event.register(EntityHandler.FOLIAATH.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(EntityHandler.LANTERN.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(EntityHandler.UMVUTHANA_RAPTOR.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(EntityHandler.NAGA.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(EntityHandler.GROTTOL.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(EntityHandler.UMVUTHANA_CRANE.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(EntityHandler.BLUFF.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(EntityHandler.ELOKOSA_HOWLER.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+    public static void registerSpawnPlacementTypes() {
+        SpawnPlacements.register(EntityHandler.FOLIAATH.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.LANTERN.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.UMVUTHANA_RAPTOR.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.NAGA.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.GROTTOL.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.UMVUTHANA_CRANE.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.BLUFF.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.ELOKOSA_HOWLER.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
     }
 
-    public static void addBiomeSpawns(Holder<Biome> biomeKey, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+    public static void initBiomeSpawns() {
         if (FOLIAATH_BIOME_CHECKER == null) FOLIAATH_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.FOLIAATH.spawnConfig.biomeConfig);
-        if (ConfigHandler.COMMON.MOBS.FOLIAATH.spawnConfig.spawnRate.get() > 0 && FOLIAATH_BIOME_CHECKER.isBiomeInConfig(biomeKey)) {
-//              System.out.println("Added foliaath biome: " + biomeName.toString());
-            registerEntityWorldSpawn(builder, EntityHandler.FOLIAATH.get(), ConfigHandler.COMMON.MOBS.FOLIAATH.spawnConfig, MobCategory.MONSTER);
-        }
+        registerEntityWorldSpawn(EntityHandler.FOLIAATH.get(), ConfigHandler.COMMON.MOBS.FOLIAATH.spawnConfig, FOLIAATH_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (UMVUTHANA_RAPTOR_BIOME_CHECKER == null) UMVUTHANA_RAPTOR_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.UMVUTHANA.spawnConfig.biomeConfig);
-        if (ConfigHandler.COMMON.MOBS.UMVUTHANA.spawnConfig.spawnRate.get() > 0 && UMVUTHANA_RAPTOR_BIOME_CHECKER.isBiomeInConfig(biomeKey)) {
-//              System.out.println("Added Barakoa biome: " + biomeName.toString());
-            registerEntityWorldSpawn(builder, EntityHandler.UMVUTHANA_RAPTOR.get(), ConfigHandler.COMMON.MOBS.UMVUTHANA.spawnConfig, MobCategory.MONSTER);
-        }
+        registerEntityWorldSpawn(EntityHandler.UMVUTHANA_RAPTOR.get(), ConfigHandler.COMMON.MOBS.UMVUTHANA.spawnConfig, UMVUTHANA_RAPTOR_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (GROTTOL_BIOME_CHECKER == null) GROTTOL_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.GROTTOL.spawnConfig.biomeConfig);
-        if (ConfigHandler.COMMON.MOBS.GROTTOL.spawnConfig.spawnRate.get() > 0 && GROTTOL_BIOME_CHECKER.isBiomeInConfig(biomeKey)) {
-//              System.out.println("Added grottol biome: " + biomeName.toString());
-            registerEntityWorldSpawn(builder, EntityHandler.GROTTOL.get(), ConfigHandler.COMMON.MOBS.GROTTOL.spawnConfig, MobCategory.MONSTER);
-        }
+        registerEntityWorldSpawn(EntityHandler.GROTTOL.get(), ConfigHandler.COMMON.MOBS.GROTTOL.spawnConfig, GROTTOL_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (LANTERN_BIOME_CHECKER == null) LANTERN_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.LANTERN.spawnConfig.biomeConfig);
-        if (ConfigHandler.COMMON.MOBS.LANTERN.spawnConfig.spawnRate.get() > 0 && LANTERN_BIOME_CHECKER.isBiomeInConfig(biomeKey)) {
-//              System.out.println("Added lantern biome: " + biomeName.toString());
-            registerEntityWorldSpawn(builder, EntityHandler.LANTERN.get(), ConfigHandler.COMMON.MOBS.LANTERN.spawnConfig, MobCategory.AMBIENT);
-        }
+        registerEntityWorldSpawn(EntityHandler.LANTERN.get(), ConfigHandler.COMMON.MOBS.LANTERN.spawnConfig, LANTERN_BIOME_CHECKER, MobCategory.AMBIENT);
 
         if (NAGA_BIOME_CHECKER == null) NAGA_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.NAGA.spawnConfig.biomeConfig);
-        if (ConfigHandler.COMMON.MOBS.NAGA.spawnConfig.spawnRate.get() > 0 && NAGA_BIOME_CHECKER.isBiomeInConfig(biomeKey)) {
-//              System.out.println("Added naga biome: " + biomeName.toString());
-            registerEntityWorldSpawn(builder, EntityHandler.NAGA.get(), ConfigHandler.COMMON.MOBS.NAGA.spawnConfig, MobCategory.MONSTER);
-        }
+        registerEntityWorldSpawn(EntityHandler.NAGA.get(), ConfigHandler.COMMON.MOBS.NAGA.spawnConfig, NAGA_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (BLUFF_BIOME_CHECKER == null) BLUFF_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.BLUFF.spawnConfig.biomeConfig);
-        if (ConfigHandler.COMMON.MOBS.BLUFF.spawnConfig.spawnRate.get() > 0 && BLUFF_BIOME_CHECKER.isBiomeInConfig(biomeKey)) {
-//              System.out.println("Added bluff biome: " + biomeName.toString());
-            registerEntityWorldSpawn(builder, EntityHandler.BLUFF.get(), ConfigHandler.COMMON.MOBS.BLUFF.spawnConfig, MobCategory.MONSTER);
-        }
+        registerEntityWorldSpawn(EntityHandler.BLUFF.get(), ConfigHandler.COMMON.MOBS.BLUFF.spawnConfig, BLUFF_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (ELOKOSA_HOWLER_BIOME_CHECKER == null) ELOKOSA_HOWLER_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig.biomeConfig);
-        if (ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig.spawnRate.get() > 0 && ELOKOSA_HOWLER_BIOME_CHECKER.isBiomeInConfig(biomeKey)) {
-//              System.out.println("Added elokosa biome: " + biomeName.toString());
-            registerEntityWorldSpawn(builder, EntityHandler.ELOKOSA_HOWLER.get(), ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig, MobCategory.MONSTER);
-        }
+        registerEntityWorldSpawn(EntityHandler.ELOKOSA_HOWLER.get(), ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig, ELOKOSA_HOWLER_BIOME_CHECKER, MobCategory.MONSTER);
     }
 
-    // PORTING NOTE (1.21.1 -> 26.1.2): MobSpawnSettings.SpawnerData dropped its "weight" field (now
-    // (EntityType, minCount, maxCount) only) - the weight moved out to the enclosing WeightedList<SpawnerData>
-    // itself (confirmed against real 26.1.2 MobSpawnSettings source). NeoForge's MobSpawnSettingsBuilder#getSpawner
-    // now returns a WeightedList.Builder<SpawnerData>, whose add(item, weight) 2-arg overload is the direct
-    // replacement for passing weight through the SpawnerData constructor.
-    private static void registerEntityWorldSpawn(ModifiableBiomeInfo.BiomeInfo.Builder builder, EntityType<?> entity, ConfigHandler.SpawnConfig spawnConfig, MobCategory classification) {
-    	builder.getMobSpawnSettings().getSpawner(classification).add(new MobSpawnSettings.SpawnerData(entity, spawnConfig.minGroupSize.get(), spawnConfig.maxGroupSize.get()), spawnConfig.spawnRate.get());
+    private static void registerEntityWorldSpawn(EntityType<?> entity, ConfigHandler.SpawnConfig spawnConfig, BiomeChecker checker, MobCategory classification) {
+        if (spawnConfig.spawnRate.get() <= 0) return;
+        BiomeModifications.addSpawn(
+                ctx -> checker.isBiomeInConfig(ctx.getBiomeHolder()),
+                classification,
+                entity,
+                spawnConfig.spawnRate.get(),
+                spawnConfig.minGroupSize.get(),
+                spawnConfig.maxGroupSize.get()
+        );
     }
 }

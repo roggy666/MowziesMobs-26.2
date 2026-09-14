@@ -111,7 +111,7 @@ public class UmvuthanaArmorLayer<R extends LivingEntityRenderState & GeoRenderSt
         GeoItemRenderer.RenderData renderData = new GeoItemRenderer.RenderData(
                 itemStack, new ItemStackRenderState(), ItemDisplayContext.HEAD, level, wearer);
         GeoRenderState maskRenderState = maskRenderer.fillRenderState(animatable, renderData,
-                maskRenderer.createRenderState(animatable, renderData), renderPassInfo.renderState().partialTick);
+                maskRenderer.createRenderState(animatable, renderData), renderPassInfo.renderState().getPartialTick());
         maskRenderState.addGeckolibData(DataTickets.PACKED_LIGHT, renderPassInfo.packedLight());
 
         // The mask's own geo model (mask_fury.geo.json etc.) is built in vanilla's biped-armor convention: its

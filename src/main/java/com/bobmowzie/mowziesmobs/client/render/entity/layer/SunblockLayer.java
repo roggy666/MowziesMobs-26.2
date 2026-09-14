@@ -1,6 +1,7 @@
 package com.bobmowzie.mowziesmobs.client.render.entity.layer;
 
 import com.bobmowzie.mowziesmobs.MMCommon;
+import com.bobmowzie.mowziesmobs.client.render.entity.RenderDataHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -60,7 +61,7 @@ public class SunblockLayer<S extends LivingEntityRenderState, M extends EntityMo
 
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, S state, float yRot, float xRot) {
-        if (Boolean.TRUE.equals(state.getRenderData(SUNBLOCK_RENDER_DATA_KEY))) {
+        if (Boolean.TRUE.equals(RenderDataHelper.get(state, SUNBLOCK_RENDER_DATA_KEY))) {
             float f = state.ageInTicks;
             int overlayCoords = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
             int tintColor = ARGB.colorFromFloat(1, 1, 1, 0.1f);

@@ -52,6 +52,7 @@ public class RenderLantern extends EntityRenderer<EntityLantern, RenderLantern.L
 
         state.entity = entity;
         state.yRot = entity.getYRot(partialTicks);
+        state.partialTick = partialTicks;
     }
 
     @Override
@@ -84,5 +85,6 @@ public class RenderLantern extends EntityRenderer<EntityLantern, RenderLantern.L
     public static class LanternRenderState extends EntityRenderState {
         public EntityLantern entity;
         public float yRot;
+        public float partialTick;
     }
 }

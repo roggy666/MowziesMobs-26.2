@@ -23,7 +23,6 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,26 +102,13 @@ public abstract class EntityMagicEffect extends Entity implements ILinkedEntity 
     }
 
     @Override
-    public boolean isPushedByFluid(FluidType type) {
+    public boolean isPushedByFluid() {
         return false;
     }
 
     @Override
     public void tick() {
         super.tick();
-    }
-
-    @Override
-    public void onAddedToLevel() {
-        super.onAddedToLevel();
-//        if (!level().isClientSide() && getCasterID().isPresent() && cachedCaster == null) {
-//            Entity casterEntity = ((ServerLevel)this.level()).getEntity(getCasterID().get());
-//            if (casterEntity instanceof LivingEntity) {
-//                cachedCaster = (LivingEntity) casterEntity;
-//                MowziesMobs.NETWORK.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this), new MessageLinkEntities(this, cachedCaster));
-//            }
-//            hasSyncedCaster = true;
-//        }
     }
 
     @Override

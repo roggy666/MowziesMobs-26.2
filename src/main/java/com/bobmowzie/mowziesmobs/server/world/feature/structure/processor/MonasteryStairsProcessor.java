@@ -34,7 +34,7 @@ public class MonasteryStairsProcessor implements StructureProcessor {
     private static final BlockState[] RAIL = { cobbledDeepslateWall, cobbledDeepslate };
 
     @Override
-    public StructureTemplate.StructureBlockInfo process(LevelReader levelReader, BlockPos jigsawPiecePos, BlockPos jigsawPieceBottomCenterPos, StructureTemplate.StructureBlockInfo blockInfoLocal, StructureTemplate.StructureBlockInfo blockInfoGlobal, StructurePlaceSettings structurePlacementData, StructureTemplate template) {
+    public StructureTemplate.StructureBlockInfo processBlock(LevelReader levelReader, BlockPos targetPosition, BlockPos referencePos, BlockPos templateRelativePos, StructureTemplate.StructureBlockInfo blockInfoGlobal, StructurePlaceSettings structurePlacementData) {
         BlockState startingState = blockInfoGlobal.state();
         BlockState[] blocksToPlace;
         if (startingState.is(Blocks.END_STONE_BRICK_STAIRS) || startingState.is(Blocks.NETHER_BRICK_STAIRS)) {

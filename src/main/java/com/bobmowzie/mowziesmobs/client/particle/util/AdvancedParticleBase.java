@@ -55,6 +55,10 @@ public class AdvancedParticleBase extends SingleQuadParticle {
     public float screenYo;
     public float screenZo;
 
+    public Vec3 getPos() {
+        return new Vec3(this.x, this.y, this.z);
+    }
+
     protected AdvancedParticleBase(ClientLevel worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double motionX, double motionY, double motionZ, ParticleRotation rotation, double scale, double r, double g, double b, double a, double drag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, 0.0D, 0.0D, 0.0D, null);
         this.xd = motionX;

@@ -110,7 +110,7 @@ public class GongRenderer implements BlockEntityRenderer<GongBlockEntity, GongRe
     }
 
 
-    @Override // Can be debugged with the '/neoforge debug_blockentity_renderbounds true' command
+    // Can be debugged with the '/neoforge debug_blockentity_renderbounds true' command
     public @NotNull AABB getRenderBoundingBox(@NotNull GongBlockEntity gong) {
         AABB bounds = new AABB(gong.getBlockPos());
         bounds = bounds.expandTowards(new Vec3(gong.facing.getClockWise().step()));

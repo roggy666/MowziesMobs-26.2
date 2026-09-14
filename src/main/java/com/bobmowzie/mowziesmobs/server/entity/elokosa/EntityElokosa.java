@@ -645,7 +645,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
 
     private boolean canContinueClinging() {
         BlockState blockstate = getInBlockState();
-        if (blockstate.isLadder(level(), blockPosition(), this)) {
+        if (blockstate.is(net.minecraft.tags.BlockTags.CLIMBABLE)) {
             return true;
         }
         Vec3 clingDirVec = Vec3.atLowerCornerOf(getClingDirection().getUnitVec3i());
@@ -738,7 +738,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
     public boolean checkForCling(int ticksInAir) {
         if (!onGround() && ticksInAir > 1 && (getDeltaMovement().y() < 0 || jumpGoalPos == null || distanceToSqr(jumpGoalPos) < 2)) {
             BlockState blockstate = getInBlockState();
-            if (blockstate.isLadder(level(), blockPosition(), this)) {
+            if (blockstate.is(net.minecraft.tags.BlockTags.CLIMBABLE)) {
                 setClingDirection(getDirection());
             } else {
                 // Check for block collisions in the direction of movement

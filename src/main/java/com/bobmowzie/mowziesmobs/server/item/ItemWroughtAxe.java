@@ -34,12 +34,7 @@ public class ItemWroughtAxe extends AxeItem {
     // isEnchantable(ItemStack) no longer exists as an override point; AxeItem's properties already grant
     // enchantability from the tool material's enchantment value, matching the old "return true" behavior.
 
-    @Override
-    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
-        return super.supportsEnchantment(stack, enchantment);
-    }
 
-    @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         if (entity instanceof Player) {
             PlayerData data = DataHandler.getData(entity, DataHandler.PLAYER_DATA);
@@ -49,7 +44,6 @@ public class ItemWroughtAxe extends AxeItem {
         return false;
     }
 
-    @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity, InteractionHand hand) {
         if (entity instanceof Player) {
             return DataHandler.getData(entity, DataHandler.PLAYER_DATA).getUntilAxeSwing() > 0;

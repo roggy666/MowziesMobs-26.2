@@ -32,23 +32,7 @@ public class ItemNagaFangDagger extends Item {
         return !player.isCreative();
     }
 
-    @Override // Enchantment table
-    public boolean isPrimaryItemFor(ItemStack stack, Holder<Enchantment> enchantment) {
-        if (enchantment.is(Enchantments.SWEEPING_EDGE)) {
-            return false;
-        }
 
-        return super.isPrimaryItemFor(stack, enchantment);
-    }
-
-    @Override // Anvil / Enchant command / Enchant randomly function
-    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
-        if (enchantment.is(Enchantments.SWEEPING_EDGE)) {
-            return false;
-        }
-
-        return super.supportsEnchantment(stack, enchantment);
-    }
 
     @Override
     public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {

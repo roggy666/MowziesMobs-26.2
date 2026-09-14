@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -62,7 +63,7 @@ public class RenderFallingBlock extends EntityRenderer<EntityFallingBlock, Rende
 
         BlockState blockState = entityIn.getBlock();
         BlockModelRenderState blockRenderState = new BlockModelRenderState();
-        Minecraft.getInstance().getBlockModelResolver().update(blockRenderState, blockState, BlockDisplayContext.create());
+        new BlockModelResolver(Minecraft.getInstance().getModelManager()).update(blockRenderState, blockState, BlockDisplayContext.create());
         blockRenderState.submit(poseStack, renderTasks, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 
         poseStack.popPose();

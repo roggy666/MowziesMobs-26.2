@@ -20,7 +20,7 @@ public class EnchantmentUtils {
     }
 
     public static int getLevel(@NotNull final ResourceKey<Enchantment> enchantment, @NotNull final Level level, @NotNull final ItemStack stack) {
-        return level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(enchantment).map(stack::getEnchantmentLevel).orElse(0);
+        return level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(enchantment).map(ref -> EnchantmentHelper.getItemEnchantmentLevel(ref, stack)).orElse(0);
     }
 
     public static @Nullable Holder.Reference<Enchantment> getHolder(final ResourceKey<Enchantment> enchantment) {

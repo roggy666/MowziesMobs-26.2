@@ -40,7 +40,7 @@ public record MessageBlackPinkInYourArea(int entityId) implements CustomPacketPa
                 MMCommon.PROXY.playBlackPinkSound(minecart);
                 BlockPos pos = minecart.blockPosition();
                 BlockState state = Blocks.STONE.defaultBlockState();
-                SoundType sound = state.getBlock().getSoundType(state, world, pos, minecart);
+                SoundType sound = state.getSoundType();
                 final float scale = 0.75F;
                 double x = minecart.getX(),
                         y = minecart.getY() + 0.375F + 0.5F + (minecart.getDefaultDisplayOffset() - 8) / 16.0F * scale,

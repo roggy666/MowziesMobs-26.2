@@ -56,6 +56,7 @@ public class RenderWroughtnaut extends EntityRenderer<EntityWroughtnaut, RenderW
 
         state.entity = entity;
         state.yRot = entity.getYRot(partialTicks);
+        state.partialTick = partialTicks;
     }
 
     @Override
@@ -90,5 +91,6 @@ public class RenderWroughtnaut extends EntityRenderer<EntityWroughtnaut, RenderW
     public static class WroughtnautRenderState extends EntityRenderState {
         public EntityWroughtnaut entity;
         public float yRot;
+        public float partialTick;
     }
 }

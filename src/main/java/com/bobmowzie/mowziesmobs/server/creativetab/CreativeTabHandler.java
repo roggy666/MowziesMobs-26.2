@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class CreativeTabHandler {
     public static final DeferredRegister<CreativeModeTab> REG = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MMCommon.MODID);
 
-    public static DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB = REG.register("mowziesmobs_tab", () -> CreativeModeTab.builder()
+    public static DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB = REG.register("mowziesmobs_tab", () -> net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab.builder()
             .icon(() -> ItemHandler.LOGO.get().getDefaultInstance())
             .title(Component.translatable("itemGroup.mowziesmobs.creativeTab"))
             .displayItems((displayParams, output) -> {

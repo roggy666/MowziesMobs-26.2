@@ -75,9 +75,9 @@ public abstract class ElokosaLeapGoal extends Goal {
         this.jumpCandidates = generateStream()
                 .filter(p -> !p.equals(blockpos)
 //                                && elokosa.getRandom().nextFloat() < 0.2
-                                && (elokosa.level().getBlockState(p).isSolid() || elokosa.level().getBlockState(p).isLadder(elokosa.level(), p, elokosa)))
+                                && (elokosa.level().getBlockState(p).isSolid() || elokosa.level().getBlockState(p).is(net.minecraft.tags.BlockTags.CLIMBABLE)))
                 .<PossibleJump>mapMulti((p, downstream) -> {
-                    if (elokosa.level().getBlockState(p).isLadder(elokosa.level(), p, elokosa)) {
+                    if (elokosa.level().getBlockState(p).is(net.minecraft.tags.BlockTags.CLIMBABLE)) {
                         downstream.accept(new PossibleJump(p.immutable(), Direction.UP, scoreJump(p, Direction.UP)));
                     }
                     else {
@@ -190,7 +190,7 @@ public abstract class ElokosaLeapGoal extends Goal {
 
     protected boolean isAcceptableLandingPosition(PossibleJump jump) {
         Level level = elokosa.level();
-        if (!level.getBlockState(jump.getJumpTarget()).isSolid() && !level.getBlockState(jump.getJumpTarget()).isLadder(level, jump.getJumpTarget(), elokosa)) return false;
+        if (!level.getBlockState(jump.getJumpTarget()).isSolid() && !level.getBlockState(jump.getJumpTarget()).is(net.minecraft.tags.BlockTags.CLIMBABLE)) return false;
         if (elokosa.distanceToSqr(Vec3.atBottomCenterOf(jump.getJumpTarget())) < 6) return false;
 
         EntityDimensions entityDimensions = elokosa.getDimensions(Pose.STANDING);

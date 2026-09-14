@@ -197,7 +197,7 @@ public class GeckoRenderPlayer extends GeoObjectRenderer<GeckoPlayer, Void, GeoR
         applyModelVisibility(player);
 
         float partialTick = renderPassInfo.renderState().getPartialTick();
-        boolean shouldSit = player.isPassenger() && player.getVehicle() != null && player.getVehicle().shouldRiderSit();
+        boolean shouldSit = player.isPassenger();
         float limbSwing = 0.0F;
         float limbSwingAmount = 0.0F;
 

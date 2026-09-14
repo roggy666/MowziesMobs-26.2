@@ -103,8 +103,8 @@ public class ClientProxy extends ServerProxy {
                             clientLevel,
                             x + dx + offset, y + dy + offset, z + dz + offset,
                             dx + minecartMotion.x(), dy + minecartMotion.y(), dz + minecartMotion.z(),
-                            state
-                    ) {}.updateSprite(state, pos));
+                            state, pos
+                    ));
                 }
             }
         }

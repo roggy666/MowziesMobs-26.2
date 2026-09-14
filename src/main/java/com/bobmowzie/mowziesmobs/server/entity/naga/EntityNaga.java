@@ -52,6 +52,8 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PowderSnowBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -686,8 +688,8 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
         }
 
         FluidState fluidstate = this.level().getFluidState(this.blockPosition());
-        if ((this.isInWater() || (this.isInFluidType(fluidstate) && fluidstate.getFluidType() != NeoForgeMod.LAVA_TYPE.value())) && this.isAffectedByFluids() && !this.canStandOnFluid(fluidstate)) {
-            if (this.isInWater() || (this.isInFluidType(fluidstate) && !this.moveInFluid(fluidstate, motion, gravity))) {
+        if (this.isInWater() && this.isAffectedByFluids() && !this.canStandOnFluid(fluidstate)) {
+            if (this.isInWater()) {
                 double y = this.getY();
                 float waterSpeed = this.isSprinting() ? 0.9F : this.getWaterSlowDown();
                 float swimSpeed = 0.02F;
@@ -750,13 +752,13 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
             BlockPos ground = new BlockPos((int) this.getX(), (int) (this.getBoundingBox().minY - 1.0D), (int) this.getZ());
             float f = 0.91F;
             if (this.onGround()) {
-                f = this.level().getBlockState(ground).getFriction(level(), ground, this) * 0.91F;
+                f = this.level().getBlockState(ground).getBlock().getFriction() * 0.91F;
             }
 
             float f1 = 0.16277137F / (f * f * f);
             f = 0.91F;
             if (this.onGround()) {
-                f = this.level().getBlockState(ground).getFriction(level(), ground, this) * 0.91F;
+                f = this.level().getBlockState(ground).getBlock().getFriction() * 0.91F;
             }
 
             this.moveRelative(this.onGround() ? 0.1F * f1 : 0.02F, motion);
@@ -858,7 +860,7 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
             double yd = Math.max(delta.y, -0.15F);
             // `this instanceof Player` faithfully reproduces vanilla's own check (only players suppress sliding down
             // ladders) - EntityNaga is never a Player so this branch is intentionally always false, matching intent.
-            if (yd < 0.0D && !this.getInBlockState().isScaffolding(this) && this.isSuppressingSlidingDownLadder() && false) {
+            if (yd < 0.0D && !this.getInBlockState().is(Blocks.SCAFFOLDING) && this.isSuppressingSlidingDownLadder() && false) {
                 yd = 0.0;
             }
             delta = new Vec3(xd, yd, zd);

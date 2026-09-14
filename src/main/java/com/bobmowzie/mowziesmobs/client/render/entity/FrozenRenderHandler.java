@@ -78,7 +78,7 @@ public class FrozenRenderHandler {
 
         @Override
         public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, S state, float yRot, float xRot) {
-            if (Boolean.TRUE.equals(state.getRenderData(FROZEN_RENDER_DATA_KEY)) && !state.isInvisible) {
+            if (Boolean.TRUE.equals(RenderDataHelper.get(state, FROZEN_RENDER_DATA_KEY)) && !state.isInvisible) {
                 int overlayCoords = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
 
                 submitNodeCollector.submitModel(getParentModel(), state, poseStack, RenderTypes.entityTranslucent(FROZEN_TEXTURE), lightCoords, overlayCoords, -1, null, state.outlineColor, null);

@@ -42,7 +42,6 @@ public class ItemSolVisage extends Item implements UmvuthanaMask, GeoItem {
         super(properties.humanoidArmor(MaterialHandler.SOL_VISAGE_MATERIAL, ArmorType.HELMET));
     }
 
-    @Override
     public boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer) {
         return true;
     }

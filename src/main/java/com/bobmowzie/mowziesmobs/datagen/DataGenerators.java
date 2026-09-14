@@ -23,21 +23,16 @@ public class DataGenerators {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent.Client event) {
         DataGenerator generator = event.getGenerator();
-        PackOutput output = event.getGenerator().getPackOutput();
+        DataGenerator.PackGenerator pack = generator.getVanillaPack(true);
+        PackOutput output = new PackOutput(java.nio.file.Path.of("src/generated/resources"));
         CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider();
 
-        // PORTING NOTE (1.21.1 -> 26.1.2): ExistingFileHelper was removed entirely from NeoForge (confirmed - no
-        // longer exists in net.neoforged.neoforge.common.data, and GatherDataEvent#getExistingFileHelper() is gone
-        // too), so all tag providers below dropped that constructor argument. MMItemTags's blockTags/TagLookup<Block>
-        // constructor argument was also dropped since NeoForge's ItemTagsProvider no longer threads it through the
-        // constructor (MMItemTags didn't use block-tag-copying anyway, so this is behavior-preserving).
         MMBlockTags blockTags = new MMBlockTags(output, provider);
-        generator.addProvider(true, blockTags);
-        generator.addProvider(true, new MMItemTags(output, provider));
-        generator.addProvider(true, new MMEntityTypeTags(output, provider));
-        generator.addProvider(true, new MMBiomeTags(output, provider));
-        // MMRecipes is now registered via its RecipeProvider.Runner (see MMRecipes.Runner's javadoc for why).
-        generator.addProvider(true, new MMRecipes.Runner(output, provider));
-        generator.addProvider(true, new RegistryDataGenerator(output, provider));
+        pack.addProvider(out -> blockTags);
+        pack.addProvider(out -> new MMItemTags(output, provider));
+        pack.addProvider(out -> new MMEntityTypeTags(output, provider));
+        pack.addProvider(out -> new MMBiomeTags(output, provider));
+        pack.addProvider(out -> new MMRecipes.Runner(output, provider));
+        pack.addProvider(out -> new RegistryDataGenerator(output, provider));
     }
 }

@@ -4,8 +4,10 @@ import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.block.BlockHandler;
 import com.bobmowzie.mowziesmobs.server.item.ItemHandler;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -65,30 +67,6 @@ public class MMItemTags extends ItemTagsProvider {
             this.appender.addOptionalTag(tag);
             return this;
         }
-
-        @Override
-        public MMTagAppender add(net.minecraft.tags.TagEntry entry) {
-            this.appender.add(entry);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender replace(boolean value) {
-            this.appender.replace(value);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender remove(net.minecraft.resources.ResourceKey<Item> element) {
-            this.appender.remove(element);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender remove(TagKey<Item> tag) {
-            this.appender.remove(tag);
-            return this;
-        }
     }
 
     @Override
@@ -107,8 +85,8 @@ public class MMItemTags extends ItemTagsProvider {
         // into TagAppender#add(TagEntry) (confirmed against real 26.1.2 net.minecraft.tags.TagEntry /
         // net.minecraft.data.tags.TagAppender source).
         tag(CAN_HIT_GROTTOL)
-                .add(net.minecraft.tags.TagEntry.optionalElement(Identifier.fromNamespaceAndPath("cagedmobs", "dnasamplerdiamond")))
-                .add(net.minecraft.tags.TagEntry.optionalElement(Identifier.fromNamespaceAndPath("cagedmobs", "dnasamplernetherite")));
+                .addOptional(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("cagedmobs", "dnasamplerdiamond")))
+                .addOptional(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("cagedmobs", "dnasamplernetherite")));
 
         tag(HAND_WEAPONS).add(ItemHandler.EARTHREND_GAUNTLET.value());
     }
@@ -173,6 +151,6 @@ public class MMItemTags extends ItemTagsProvider {
     }
 
     private static TagKey<Item> key(String path) {
-        return ItemTags.create(Identifier.fromNamespaceAndPath(MMCommon.MODID, path));
+        return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MMCommon.MODID, path));
     }
 }

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "mowziesmobs",
+  "version": "${version}",
+  "name": "Mowzie's Mobs",
+  "description": "Mowzie's Mobs adds a variety of high-quality fantasy creatures to your Minecraft world.",
+  "authors": [
+    "BobMowzie",
+    "Wadoo",
+    "Vakypanda",
+    "Noonyez",
+    "pau101"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/mowzies-mobs",
+    "sources": "https://github.com/BobMowzie/MowziesMobs-Public"
+  },
+  "license": "Custom",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.bobmowzie.mowziesmobs.fabric.MowziesMobsFabric"
+    ],
+    "client": [
+      "com.bobmowzie.mowziesmobs.fabric.MowziesMobsClientFabric"
+    ]
+  },
+  "mixins": [
+    "mowziesmobs.mixins.json"
+  ],
+  "accessWidener": "mowziesmobs.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~26.2",
+    "fabric-api": "*",
+    "geckolib": ">=5.5.0",
+    "forgeconfigapiport": ">=26.2.0"
+  }
+}

@@ -88,7 +88,7 @@ public final class MMCommon {
         PROXY.init();
         modBus.addListener(this::handleLoadComplete);
         modBus.addListener(this::onModConfigEvent);
-        modBus.addListener(SpawnHandler::registerSpawnPlacementTypes);
+        SpawnHandler.registerSpawnPlacementTypes();
         modBus.addListener(ItemHandler::modifyComponents);
 
         NeoForge.EVENT_BUS.register(new ServerEventHandler());

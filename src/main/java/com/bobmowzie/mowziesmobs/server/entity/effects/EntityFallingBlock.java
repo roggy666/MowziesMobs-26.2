@@ -60,15 +60,14 @@ public class EntityFallingBlock extends Entity {
         return false;
     }
 
-    @Override
     public void onAddedToLevel() {
         if (getDeltaMovement().x() > 0 || getDeltaMovement().z() > 0) setYRot((float) ((180f/Math.PI) * Math.atan2(getDeltaMovement().x(), getDeltaMovement().z())));
         setXRot(getXRot() + random.nextFloat() * 360);
-        super.onAddedToLevel();
     }
 
     @Override
     public void tick() {
+        if (firstTick) onAddedToLevel();
         if (getMode() == EnumFallingBlockMode.POPUP_ANIM) {
             setDeltaMovement(0, 0, 0);
         }

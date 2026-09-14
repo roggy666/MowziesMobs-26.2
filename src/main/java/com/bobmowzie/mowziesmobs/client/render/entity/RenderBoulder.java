@@ -63,7 +63,7 @@ public class RenderBoulder extends EntityRenderer<EntityBoulderBase, RenderBould
                     poseStack.mulPose(new Quaternionf().rotationXYZ(0.03f * (float) Math.cos(frame * 4f + 234f), 0.03f * (float) Math.cos(frame * 2.2f + 45), 0.03f * (float) Math.cos(frame * 3.5f + 409)));
                 }
             }
-            BlockModelResolver blockModelResolver = Minecraft.getInstance().getBlockModelResolver();
+            BlockModelResolver blockModelResolver = new BlockModelResolver(Minecraft.getInstance().getModelManager());
             AdvancedModelRenderer root;
             if (entityIn.boulderSize == EntityGeomancyBase.GeomancyTier.SMALL) root = model.boulder0block1;
             else if (entityIn.boulderSize == EntityGeomancyBase.GeomancyTier.MEDIUM) root = model.boulder1;

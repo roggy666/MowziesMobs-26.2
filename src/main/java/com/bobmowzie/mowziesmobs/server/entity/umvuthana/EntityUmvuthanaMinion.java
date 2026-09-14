@@ -69,7 +69,7 @@ public class EntityUmvuthanaMinion extends EntityUmvuthana implements LeaderSuns
         .addTrade(Items.BONE, 2, Items.GOLD_NUGGET, 2, 1)
         .build();
 
-    private static final EntityDataAccessor<Optional<Trade>> TRADE = SynchedEntityData.defineId(EntityUmvuthanaMinion.class, EntityHandler.OPTIONAL_TRADE.value());
+    private static final EntityDataAccessor<Optional<Trade>> TRADE = SynchedEntityData.defineId(EntityUmvuthanaMinion.class, EntityHandler.OPTIONAL_TRADE.get());
     //    private static final DataParameter<Integer> NUM_SALES = EntityDataManager.createKey(EntityBarakoaya.class, DataSerializers.VARINT);
     private static final EntityDataAccessor<Optional<UUID>> MISBEHAVED_PLAYER = SynchedEntityData.defineId(EntityUmvuthanaMinion.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID.get());
     private static final EntityDataAccessor<Boolean> IS_TRADING = SynchedEntityData.defineId(EntityUmvuthanaMinion.class, EntityDataSerializers.BOOLEAN);

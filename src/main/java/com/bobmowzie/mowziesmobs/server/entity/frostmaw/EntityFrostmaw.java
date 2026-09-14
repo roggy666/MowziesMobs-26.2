@@ -558,7 +558,7 @@ public class EntityFrostmaw extends MowzieLLibraryEntity implements Enemy {
                         }
 
                         if (player instanceof ServerPlayer serverPlayer) {
-                            AdvancementHandler.STEAL_ICE_CRYSTAL_TRIGGER.value().trigger(serverPlayer);
+                            AdvancementHandler.STEAL_ICE_CRYSTAL_TRIGGER.get().trigger(serverPlayer);
                         }
 
                         break;

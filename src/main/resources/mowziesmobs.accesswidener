@@ -1,0 +1,92 @@
+accessWidener	v2	official
+
+# Holder
+extendable	class	net/minecraft/core/Holder
+
+# ModelPart
+accessible	class	net/minecraft/client/model/geom/ModelPart
+extendable	class	net/minecraft/client/model/geom/ModelPart
+accessible	field	net/minecraft/client/model/geom/ModelPart	cubes	Ljava/util/List;
+accessible	field	net/minecraft/client/model/geom/ModelPart	children	Ljava/util/Map;
+
+# HumanoidModel
+accessible	field	net/minecraft/client/model/HumanoidModel	body	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/HumanoidModel	body	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/HumanoidModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/HumanoidModel	head	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/HumanoidModel	hat	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/HumanoidModel	hat	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/HumanoidModel	rightArm	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/HumanoidModel	rightArm	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/HumanoidModel	leftArm	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/HumanoidModel	leftArm	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/HumanoidModel	rightLeg	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/HumanoidModel	rightLeg	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/HumanoidModel	leftLeg	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/HumanoidModel	leftLeg	Lnet/minecraft/client/model/geom/ModelPart;
+
+# PlayerModel
+accessible	field	net/minecraft/client/model/player/PlayerModel	jacket	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/player/PlayerModel	jacket	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/player/PlayerModel	leftSleeve	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/player/PlayerModel	leftSleeve	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/player/PlayerModel	rightSleeve	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/player/PlayerModel	rightSleeve	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/player/PlayerModel	leftPants	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/player/PlayerModel	leftPants	Lnet/minecraft/client/model/geom/ModelPart;
+accessible	field	net/minecraft/client/model/player/PlayerModel	rightPants	Lnet/minecraft/client/model/geom/ModelPart;
+mutable	field	net/minecraft/client/model/player/PlayerModel	rightPants	Lnet/minecraft/client/model/geom/ModelPart;
+
+# Entity
+accessible	field	net/minecraft/world/entity/Entity	dimensions	Lnet/minecraft/world/entity/EntityDimensions;
+mutable	field	net/minecraft/world/entity/Entity	dimensions	Lnet/minecraft/world/entity/EntityDimensions;
+
+# HurtByTargetGoal
+accessible	field	net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal	toIgnoreAlert	[Ljava/lang/Class;
+
+# SinglePoolElement
+accessible	method	net/minecraft/world/level/levelgen/structure/pools/SinglePoolElement	getTemplate	(Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplateManager;)Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;
+
+# StructurePiecesBuilder
+accessible	field	net/minecraft/world/level/levelgen/structure/pieces/StructurePiecesBuilder	pieces	Ljava/util/List;
+
+# LivingEntity
+accessible	field	net/minecraft/world/entity/LivingEntity	lastHurt	F
+mutable	field	net/minecraft/world/entity/LivingEntity	lastHurt	F
+accessible	method	net/minecraft/world/entity/LivingEntity	getKnockback	(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)F
+
+# Player
+accessible	field	net/minecraft/world/entity/player/Player	hurtDir	F
+accessible	method	net/minecraft/world/entity/player/Player	getEnchantedDamage	(Lnet/minecraft/world/entity/Entity;FLnet/minecraft/world/damagesource/DamageSource;)F
+accessible	method	net/minecraft/server/level/ServerPlayer	getEnchantedDamage	(Lnet/minecraft/world/entity/Entity;FLnet/minecraft/world/damagesource/DamageSource;)F
+
+# LookAtPlayerGoal
+accessible	field	net/minecraft/world/entity/ai/goal/LookAtPlayerGoal	lookTime	I
+
+# ItemInHandRenderer
+accessible	method	net/minecraft/client/renderer/ItemInHandRenderer	renderPlayerArm	(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;IFFLnet/minecraft/world/entity/HumanoidArm;)V
+accessible	method	net/minecraft/client/renderer/ItemInHandRenderer	submitArmWithItem	(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V
+
+# AvatarRenderer
+accessible	method	net/minecraft/client/renderer/entity/player/AvatarRenderer	getArmPose	(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/world/entity/HumanoidArm;)Lnet/minecraft/client/model/HumanoidModel$ArmPose;
+
+# HumanoidArmorLayer
+accessible	method	net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer	usesInnerModel	(Lnet/minecraft/world/entity/EquipmentSlot;)Z
+accessible	method	net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer	getArmorModel	(Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/client/model/HumanoidModel;
+
+# ItemCooldowns
+accessible	field	net/minecraft/world/item/ItemCooldowns	cooldowns	Ljava/util/Map;
+
+# SimpleParticleType
+accessible	method	net/minecraft/core/particles/SimpleParticleType	<init>	(Z)V
+
+# LivingEntityRenderer
+accessible	method	net/minecraft/client/renderer/entity/LivingEntityRenderer	addLayer	(Lnet/minecraft/client/renderer/entity/layers/RenderLayer;)Z
+
+# Mob
+accessible	field	net/minecraft/world/entity/Mob	goalSelector	Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+accessible	field	net/minecraft/world/entity/Mob	targetSelector	Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+
+# GuiGraphicsExtractor
+accessible	method	net/minecraft/client/gui/GuiGraphicsExtractor	componentHoverEffect	(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Style;II)V
+

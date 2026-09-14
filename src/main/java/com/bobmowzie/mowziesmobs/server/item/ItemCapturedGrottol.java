@@ -33,10 +33,6 @@ public class ItemCapturedGrottol extends Item {
         super(properties);
     }
 
-    @Override
-    public int getMaxStackSize(ItemStack stack) {
-        return 1;
-    }
 
     @Override
     public InteractionResult useOn(UseOnContext context) {

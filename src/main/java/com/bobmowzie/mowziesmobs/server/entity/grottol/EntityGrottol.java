@@ -229,7 +229,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
                 if (level() instanceof ServerLevel serverLevel && isAlive()) {
                     spawnAtLocation(serverLevel, ItemHandler.CAPTURED_GROTTOL.get().create(this), 0.0F);
                     BlockState state = Blocks.STONE.defaultBlockState();
-                    SoundType sound = state.getBlock().getSoundType(state, level(), this.blockPosition(), entity);
+                    SoundType sound = state.getSoundType();
                     level().playSound(
                         null,
                         getX(), getY(), getZ(),
@@ -247,7 +247,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
                         );
                     }
                     discard() ;
-                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.GROTTOL_KILL_SILK_TOUCH_TRIGGER.value().trigger(serverPlayer);
+                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.GROTTOL_KILL_SILK_TOUCH_TRIGGER.get().trigger(serverPlayer);
                 }
                 return true;
             }
@@ -262,7 +262,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
             if (player.getMainHandItem().isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()) || player.getMainHandItem().is(MMItemTags.CAN_HIT_GROTTOL)) {
                 if (EnchantmentUtils.getLevel(Enchantments.FORTUNE, player.level(), player.getMainHandItem()) > 0) {
                     death = EnumDeathType.FORTUNE_PICKAXE;
-                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.GROTTOL_KILL_FORTUNE_TRIGGER.value().trigger(serverPlayer);
+                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.GROTTOL_KILL_FORTUNE_TRIGGER.get().trigger(serverPlayer);
                 } else {
                     death = EnumDeathType.PICKAXE;
                 }

@@ -19,7 +19,7 @@ public class MMBiomeTags extends BiomeTagsProvider {
     public static final TagKey<Biome> IS_MAGICAL = key("is_magical");
 
     public MMBiomeTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
-        super(output, provider, MMCommon.MODID);
+        super(output, provider);
     }
 
     @Override

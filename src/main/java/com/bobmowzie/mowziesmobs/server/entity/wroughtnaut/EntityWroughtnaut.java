@@ -514,7 +514,7 @@ public class EntityWroughtnaut extends MowzieLLibraryEntity implements Enemy {
                 if (block.getRenderShape() != RenderShape.INVISIBLE) {
                     level().addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, block), x, y, z, 0, 0, 0);
                     if (playSound && random.nextFloat() < 0.075F) {
-                        SoundType sound = block.getBlock().getSoundType(block, level(), pos, null);
+                        SoundType sound = block.getSoundType();
                         level().playLocalSound(getX(), getY(), getZ(), sound.getBreakSound(), SoundSource.BLOCKS, sound.getVolume() * 2, sound.getPitch() * 0.6F, false);
                         playSound = false;
                     }

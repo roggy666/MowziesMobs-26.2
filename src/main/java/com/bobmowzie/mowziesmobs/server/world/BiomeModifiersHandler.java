@@ -10,5 +10,5 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 public class BiomeModifiersHandler
 {
 	public static final DeferredRegister<MapCodec<? extends BiomeModifier>> REG = DeferredRegister.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, MMCommon.MODID);
-    public static final DeferredHolder<MapCodec<? extends BiomeModifier>, MapCodec<? extends BiomeModifier>> MOWZIE_MOB_SPAWNS = REG.register("mowzie_mob_spawns", MobSpawnBiomeModifier::makeCodec);
+    public static final DeferredHolder<MapCodec<? extends BiomeModifier>, ? extends MapCodec<? extends BiomeModifier>> MOWZIE_MOB_SPAWNS = REG.register("mowzie_mob_spawns", () -> (MapCodec<? extends BiomeModifier>) MobSpawnBiomeModifier.makeCodec());
 }

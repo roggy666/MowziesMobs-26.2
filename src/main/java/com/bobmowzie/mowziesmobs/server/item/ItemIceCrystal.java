@@ -57,7 +57,6 @@ public class ItemIceCrystal extends Item {
         return 72000;
     }
 
-    @Override
     public int getMaxDamage(ItemStack stack) {
         return ConfigHandler.COMMON.TOOLS_AND_ABILITIES.ICE_CRYSTAL.durability.get();
     }

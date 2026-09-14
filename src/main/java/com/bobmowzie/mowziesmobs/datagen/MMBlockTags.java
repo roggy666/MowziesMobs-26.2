@@ -3,6 +3,7 @@ package com.bobmowzie.mowziesmobs.datagen;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.block.BlockHandler;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
@@ -64,30 +65,6 @@ public class MMBlockTags extends BlockTagsProvider {
         @Override
         public MMTagAppender addOptionalTag(TagKey<Block> tag) {
             this.appender.addOptionalTag(tag);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender add(net.minecraft.tags.TagEntry entry) {
-            this.appender.add(entry);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender replace(boolean value) {
-            this.appender.replace(value);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender remove(net.minecraft.resources.ResourceKey<Block> element) {
-            this.appender.remove(element);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender remove(TagKey<Block> tag) {
-            this.appender.remove(tag);
             return this;
         }
     }
@@ -262,6 +239,6 @@ public class MMBlockTags extends BlockTagsProvider {
     }
 
     private static TagKey<Block> key(String path) {
-        return BlockTags.create(Identifier.fromNamespaceAndPath(MMCommon.MODID, path));
+        return TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(MMCommon.MODID, path));
     }
 }

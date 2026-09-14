@@ -52,12 +52,10 @@ public class EntityFrozenController extends Entity {
 
     }
 
-    @Override
     public boolean shouldRiderSit() {
         return false;
     }
 
-    @Override
     public boolean canRiderInteract() {
         return false;
     }
@@ -67,10 +65,6 @@ public class EntityFrozenController extends Entity {
         return this.position();
     }
 
-    @Override
-    public boolean canBeRiddenUnderFluidType(net.neoforged.neoforge.fluids.FluidType type, Entity rider) {
-        return true;
-    }
 
     @Override
     public void positionRider(Entity passenger, MoveFunction moveFunction) {

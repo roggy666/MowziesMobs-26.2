@@ -168,10 +168,6 @@ public class GongBlock extends BaseEntityBlock {
         return false;
     }
 
-    @Override
-    public PushReaction getPistonPushReaction(BlockState p_49765_) {
-        return PushReaction.DESTROY;
-    }
 
     private boolean doesGongFitInDirection(BlockPos pos, Direction direction, Level level) {
         for (int i = 0; i <= 2; i++) {
@@ -385,10 +381,6 @@ public class GongBlock extends BaseEntityBlock {
             return false;
         }
 
-        @Override
-        public PushReaction getPistonPushReaction(BlockState p_49765_) {
-            return PushReaction.DESTROY;
-        }
 
         @Override
         public Item asItem() {

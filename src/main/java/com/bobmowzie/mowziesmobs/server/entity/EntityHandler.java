@@ -49,34 +49,34 @@ public class EntityHandler {
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityFoliaath>> FOLIAATH = REG.register("foliaath", () -> EntityType.Builder.of(EntityFoliaath::new, MobCategory.MONSTER).sized(0.5f, 2.5f).clientTrackingRange(8).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("foliaath"))));
     public static final DeferredHolder<EntityType<?>, EntityType<EntityBabyFoliaath>> BABY_FOLIAATH = REG.register("baby_foliaath", () -> EntityType.Builder.of(EntityBabyFoliaath::new, MobCategory.MONSTER).clientTrackingRange(8).sized(0.4f, 0.4f).clientTrackingRange(8).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("baby_foliaath"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityWroughtnaut>> WROUGHTNAUT = REG.register("ferrous_wroughtnaut", () -> EntityType.Builder.of(EntityWroughtnaut::new, MobCategory.MONSTER).clientTrackingRange(8).sized(2.5f, 3.5f).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("ferrous_wroughtnaut"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityWroughtnaut>> WROUGHTNAUT = REG.register("ferrous_wroughtnaut", () -> EntityType.Builder.of(EntityWroughtnaut::new, MobCategory.MONSTER).clientTrackingRange(8).sized(2.5f, 3.5f).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("ferrous_wroughtnaut"))));
     private static EntityType.Builder<EntityUmvuthanaFollowerToRaptor> umvuthanaFollowerToRaptorBuilder() {
         return EntityType.Builder.of(EntityUmvuthanaFollowerToRaptor::new, MobCategory.MONSTER);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaFollowerToRaptor>> UMVUTHANA_FOLLOWER_TO_RAPTOR = REG.register("umvuthana_follower_raptor", () -> umvuthanaFollowerToRaptorBuilder().sized(MaskType.FEAR.entityWidth, MaskType.FEAR.entityHeight).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_follower_raptor"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaFollowerToRaptor>> UMVUTHANA_FOLLOWER_TO_RAPTOR = REG.register("umvuthana_follower_raptor", () -> umvuthanaFollowerToRaptorBuilder().sized(MaskType.FEAR.entityWidth, MaskType.FEAR.entityHeight).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_follower_raptor"))));
     private static EntityType.Builder<EntityUmvuthanaFollowerToPlayer> umvuthanaFollowerToPlayerBuilder() {
         return EntityType.Builder.of(EntityUmvuthanaFollowerToPlayer::new, MobCategory.MONSTER);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaFollowerToPlayer>> UMVUTHANA_FOLLOWER_TO_PLAYER = REG.register("umvuthana_follower_player", () -> umvuthanaFollowerToPlayerBuilder().sized(MaskType.FEAR.entityWidth, MaskType.FEAR.entityHeight).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_follower_player"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaFollowerToPlayer>> UMVUTHANA_FOLLOWER_TO_PLAYER = REG.register("umvuthana_follower_player", () -> umvuthanaFollowerToPlayerBuilder().sized(MaskType.FEAR.entityWidth, MaskType.FEAR.entityHeight).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_follower_player"))));
     private static EntityType.Builder<EntityUmvuthanaCraneToPlayer> umvuthanaCraneToPlayerBuilder() {
         return EntityType.Builder.of(EntityUmvuthanaCraneToPlayer::new, MobCategory.MONSTER);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaCraneToPlayer>> UMVUTHANA_CRANE_TO_PLAYER = REG.register("umvuthana_crane_player", () -> umvuthanaCraneToPlayerBuilder().sized(MaskType.FAITH.entityWidth, MaskType.FAITH.entityHeight).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_crane_player"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaMinion>> UMVUTHANA_MINION = REG.register("umvuthana", () -> EntityType.Builder.of(EntityUmvuthanaMinion::new, MobCategory.MONSTER).sized(MaskType.FEAR.entityWidth, MaskType.FEAR.entityHeight).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaRaptor>> UMVUTHANA_RAPTOR = REG.register("umvuthana_raptor", () -> EntityType.Builder.of(EntityUmvuthanaRaptor::new, MobCategory.MONSTER).sized(MaskType.FURY.entityWidth, MaskType.FURY.entityHeight).clientTrackingRange(8).setUpdateInterval(1).notInPeaceful().build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_raptor"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaCrane>> UMVUTHANA_CRANE = REG.register("umvuthana_crane", () -> EntityType.Builder.of(EntityUmvuthanaCrane::new, MobCategory.MONSTER).sized(MaskType.FEAR.entityWidth, MaskType.FEAR.entityHeight).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_crane"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthi>> UMVUTHI = REG.register("umvuthi", () -> EntityType.Builder.of(EntityUmvuthi::new, MobCategory.MONSTER).sized(1.5f, 3.2f).clientTrackingRange(10).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthi"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityFrostmaw>> FROSTMAW = REG.register("frostmaw", () -> EntityType.Builder.of(EntityFrostmaw::new, MobCategory.MONSTER).sized(4f, 4f).clientTrackingRange(10).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("frostmaw"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityGrottol>> GROTTOL = REG.register("grottol", () -> EntityType.Builder.of(EntityGrottol::new, MobCategory.MONSTER).sized(0.9F, 1.2F).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("grottol"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityLantern>> LANTERN = REG.register("lantern", () -> EntityType.Builder.of(EntityLantern::new, MobCategory.AMBIENT).sized(1.0f, 1.0f).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("lantern"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityNaga>> NAGA = REG.register("naga", () -> EntityType.Builder.of(EntityNaga::new, MobCategory.MONSTER).sized(3.0f, 1.0f).clientTrackingRange(13).canSpawnFarFromPlayer().setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("naga"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntitySculptor>> SCULPTOR = REG.register("sculptor", () -> EntityType.Builder.of(EntitySculptor::new, MobCategory.MISC).sized(1.0f, 2.3f).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("sculptor"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBluff>> BLUFF = REG.register("bluff", () -> EntityType.Builder.of(EntityBluff::new, MobCategory.MONSTER).sized(0.6F, 1.8F).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("bluff"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaCraneToPlayer>> UMVUTHANA_CRANE_TO_PLAYER = REG.register("umvuthana_crane_player", () -> umvuthanaCraneToPlayerBuilder().sized(MaskType.FAITH.entityWidth, MaskType.FAITH.entityHeight).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_crane_player"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaMinion>> UMVUTHANA_MINION = REG.register("umvuthana", () -> EntityType.Builder.of(EntityUmvuthanaMinion::new, MobCategory.MONSTER).sized(MaskType.FEAR.entityWidth, MaskType.FEAR.entityHeight).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaRaptor>> UMVUTHANA_RAPTOR = REG.register("umvuthana_raptor", () -> EntityType.Builder.of(EntityUmvuthanaRaptor::new, MobCategory.MONSTER).sized(MaskType.FURY.entityWidth, MaskType.FURY.entityHeight).clientTrackingRange(8).updateInterval(1).notInPeaceful().build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_raptor"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthanaCrane>> UMVUTHANA_CRANE = REG.register("umvuthana_crane", () -> EntityType.Builder.of(EntityUmvuthanaCrane::new, MobCategory.MONSTER).sized(MaskType.FEAR.entityWidth, MaskType.FEAR.entityHeight).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthana_crane"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityUmvuthi>> UMVUTHI = REG.register("umvuthi", () -> EntityType.Builder.of(EntityUmvuthi::new, MobCategory.MONSTER).sized(1.5f, 3.2f).clientTrackingRange(10).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("umvuthi"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityFrostmaw>> FROSTMAW = REG.register("frostmaw", () -> EntityType.Builder.of(EntityFrostmaw::new, MobCategory.MONSTER).sized(4f, 4f).clientTrackingRange(10).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("frostmaw"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityGrottol>> GROTTOL = REG.register("grottol", () -> EntityType.Builder.of(EntityGrottol::new, MobCategory.MONSTER).sized(0.9F, 1.2F).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("grottol"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityLantern>> LANTERN = REG.register("lantern", () -> EntityType.Builder.of(EntityLantern::new, MobCategory.AMBIENT).sized(1.0f, 1.0f).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("lantern"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityNaga>> NAGA = REG.register("naga", () -> EntityType.Builder.of(EntityNaga::new, MobCategory.MONSTER).sized(3.0f, 1.0f).clientTrackingRange(13).canSpawnFarFromPlayer().updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("naga"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntitySculptor>> SCULPTOR = REG.register("sculptor", () -> EntityType.Builder.of(EntitySculptor::new, MobCategory.MISC).sized(1.0f, 2.3f).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("sculptor"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityBluff>> BLUFF = REG.register("bluff", () -> EntityType.Builder.of(EntityBluff::new, MobCategory.MONSTER).sized(0.6F, 1.8F).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("bluff"))));
     private static EntityType.Builder<EntityElokosaFollowerToHowler> elokosaFollowerToHowlerBuilder() {
         return EntityType.Builder.of(EntityElokosaFollowerToHowler::new, MobCategory.MONSTER);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityElokosaFollowerToHowler>> ELOKOSA_FOLLOWER_TO_HOWLER = REG.register("elokosa_follower_howler", () -> elokosaFollowerToHowlerBuilder().sized(0.9F, 1.6F).clientTrackingRange(8).setUpdateInterval(1).notInPeaceful().build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("elokosa_follower_howler"))));
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityElokosaHowler>> ELOKOSA_HOWLER = REG.register("elokosa_howler", () -> EntityType.Builder.of(EntityElokosaHowler::new, MobCategory.MONSTER).sized(0.95F, 1.7F).clientTrackingRange(8).setUpdateInterval(1).notInPeaceful().build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("elokosa_howler"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityElokosaFollowerToHowler>> ELOKOSA_FOLLOWER_TO_HOWLER = REG.register("elokosa_follower_howler", () -> elokosaFollowerToHowlerBuilder().sized(0.9F, 1.6F).clientTrackingRange(8).updateInterval(1).notInPeaceful().build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("elokosa_follower_howler"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityElokosaHowler>> ELOKOSA_HOWLER = REG.register("elokosa_howler", () -> EntityType.Builder.of(EntityElokosaHowler::new, MobCategory.MONSTER).sized(0.95F, 1.7F).clientTrackingRange(8).updateInterval(1).notInPeaceful().build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("elokosa_howler"))));
 
     private static EntityType.Builder<EntitySunstrike> sunstrikeBuilder() {
         return EntityType.Builder.of(EntitySunstrike::new, MobCategory.MISC);
@@ -85,48 +85,48 @@ public class EntityHandler {
     private static EntityType.Builder<EntitySolarBeam> solarBeamBuilder() {
         return EntityType.Builder.of(EntitySolarBeam::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntitySolarBeam>> SOLAR_BEAM = REG.register("solar_beam", () -> solarBeamBuilder().sized(0.1F, 0.1F).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("solar_beam"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntitySolarBeam>> SOLAR_BEAM = REG.register("solar_beam", () -> solarBeamBuilder().sized(0.1F, 0.1F).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("solar_beam"))));
     private static EntityType.Builder<EntityBoulderProjectile> boulderProjectileBuilder() {
         return EntityType.Builder.of(EntityBoulderProjectile::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBoulderProjectile>> BOULDER_PROJECTILE = REG.register("boulder_projectile", () -> boulderProjectileBuilder().sized(1, 1).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("boulder_projectile"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityBoulderProjectile>> BOULDER_PROJECTILE = REG.register("boulder_projectile", () -> boulderProjectileBuilder().sized(1, 1).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("boulder_projectile"))));
     private static EntityType.Builder<EntityRockSling> rockSlingBuilder() {
         return EntityType.Builder.of(EntityRockSling::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityRockSling>> ROCK_SLING = REG.register("rock_sling", () -> rockSlingBuilder().sized(0.5f, 0.5f).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("rock_sling"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityRockSling>> ROCK_SLING = REG.register("rock_sling", () -> rockSlingBuilder().sized(0.5f, 0.5f).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("rock_sling"))));
     private static EntityType.Builder<EntityBoulderSculptor> boulderPlatformBuilder() {
         return EntityType.Builder.of(EntityBoulderSculptor::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBoulderSculptor>> BOULDER_SCULPTOR = REG.register("boulder_platform", () -> boulderPlatformBuilder().sized(1, 1).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("boulder_platform"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityBoulderSculptor>> BOULDER_SCULPTOR = REG.register("boulder_platform", () -> boulderPlatformBuilder().sized(1, 1).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("boulder_platform"))));
     private static EntityType.Builder<EntityBoulderSculptor.EntityBoulderSculptorCrumbling> boulderPlatformCrumblingBuilder() {
         return EntityType.Builder.of(EntityBoulderSculptor.EntityBoulderSculptorCrumbling::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBoulderSculptor.EntityBoulderSculptorCrumbling>> BOULDER_SCULPTOR_CRUMBLING = REG.register("boulder_platform_crumbling", () -> boulderPlatformCrumblingBuilder().sized(1, 1).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("boulder_platform_crumbling"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityBoulderSculptor.EntityBoulderSculptorCrumbling>> BOULDER_SCULPTOR_CRUMBLING = REG.register("boulder_platform_crumbling", () -> boulderPlatformCrumblingBuilder().sized(1, 1).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("boulder_platform_crumbling"))));
     private static EntityType.Builder<EntityPillar> pillarBuilder() {
         return EntityType.Builder.of(EntityPillar::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityPillar>> PILLAR = REG.register("pillar", () -> pillarBuilder().sized(1f, 1f).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("pillar"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityPillar>> PILLAR = REG.register("pillar", () -> pillarBuilder().sized(1f, 1f).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("pillar"))));
     private static EntityType.Builder<EntityPillar.EntityPillarSculptor> sculptorPillarBuilder() {
         return EntityType.Builder.of(EntityPillar.EntityPillarSculptor::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityPillar.EntityPillarSculptor>> PILLAR_SCULPTOR = REG.register("pillar_sculptor", () -> sculptorPillarBuilder().sized(1f, 1f).clientTrackingRange(8).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("pillar_sculptor"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityPillar.EntityPillarSculptor>> PILLAR_SCULPTOR = REG.register("pillar_sculptor", () -> sculptorPillarBuilder().sized(1f, 1f).clientTrackingRange(8).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("pillar_sculptor"))));
     private static EntityType.Builder<EntityPillarPiece> pillarPieceBuilder() {
         return EntityType.Builder.of(EntityPillarPiece::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityPillarPiece>> PILLAR_PIECE = REG.register("pillar_piece", () -> pillarPieceBuilder().sized(1f, 1f).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("pillar_piece"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityPillarPiece>> PILLAR_PIECE = REG.register("pillar_piece", () -> pillarPieceBuilder().sized(1f, 1f).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("pillar_piece"))));
 
     private static EntityType.Builder<EntityAxeAttack> axeAttackBuilder() {
         return EntityType.Builder.of(EntityAxeAttack::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityAxeAttack>> AXE_ATTACK = REG.register("axe_attack", () -> axeAttackBuilder().sized(1f, 1f).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("axe_attack"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityAxeAttack>> AXE_ATTACK = REG.register("axe_attack", () -> axeAttackBuilder().sized(1f, 1f).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("axe_attack"))));
     private static EntityType.Builder<EntityIceBreath> iceBreathBuilder() {
         return EntityType.Builder.of(EntityIceBreath::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityIceBreath>> ICE_BREATH = REG.register("ice_breath", () -> iceBreathBuilder().sized(0F, 0F).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("ice_breath"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityIceBreath>> ICE_BREATH = REG.register("ice_breath", () -> iceBreathBuilder().sized(0F, 0F).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("ice_breath"))));
     private static EntityType.Builder<EntityIceBall> iceBallBuilder() {
         return EntityType.Builder.of(EntityIceBall::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityIceBall>> ICE_BALL = REG.register("ice_ball", () -> iceBallBuilder().sized(0.5F, 0.5F).setUpdateInterval(20).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("ice_ball"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityIceBall>> ICE_BALL = REG.register("ice_ball", () -> iceBallBuilder().sized(0.5F, 0.5F).updateInterval(20).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("ice_ball"))));
     private static EntityType.Builder<EntityFrozenController> frozenControllerBuilder() {
         return EntityType.Builder.of(EntityFrozenController::new, MobCategory.MISC);
     }
@@ -134,15 +134,15 @@ public class EntityHandler {
     private static EntityType.Builder<EntityDart> dartBuilder() {
         return EntityType.Builder.of(EntityDart::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityDart>> DART = REG.register("dart", () -> dartBuilder().noSummon().sized(0.5F, 0.5F).setUpdateInterval(20).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("dart"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityDart>> DART = REG.register("dart", () -> dartBuilder().noSummon().sized(0.5F, 0.5F).updateInterval(20).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("dart"))));
     private static EntityType.Builder<EntityPoisonBall> poisonBallBuilder() {
         return EntityType.Builder.of(EntityPoisonBall::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityPoisonBall>> POISON_BALL = REG.register("poison_ball", () -> poisonBallBuilder().sized(0.5F, 0.5F).setUpdateInterval(20).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("poison_ball"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityPoisonBall>> POISON_BALL = REG.register("poison_ball", () -> poisonBallBuilder().sized(0.5F, 0.5F).updateInterval(20).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("poison_ball"))));
     private static EntityType.Builder<EntitySuperNova> superNovaBuilder() {
         return EntityType.Builder.of(EntitySuperNova::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntitySuperNova>> SUPER_NOVA = REG.register("super_nova", () -> superNovaBuilder().sized(1, 1).setUpdateInterval(Integer.MAX_VALUE).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("super_nova"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntitySuperNova>> SUPER_NOVA = REG.register("super_nova", () -> superNovaBuilder().sized(1, 1).updateInterval(Integer.MAX_VALUE).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("super_nova"))));
     private static EntityType.Builder<EntityFallingBlock> fallingBlockBuilder() {
         return EntityType.Builder.of(EntityFallingBlock::new, MobCategory.MISC);
     }
@@ -150,19 +150,19 @@ public class EntityHandler {
     private static EntityType.Builder<EntityBlockSwapper> blockSwapperBuilder() {
         return EntityType.Builder.of(EntityBlockSwapper::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBlockSwapper>> BLOCK_SWAPPER = REG.register("block_swapper", () -> blockSwapperBuilder().noSummon().sized(1, 1).setUpdateInterval(Integer.MAX_VALUE).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("block_swapper"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityBlockSwapper>> BLOCK_SWAPPER = REG.register("block_swapper", () -> blockSwapperBuilder().noSummon().sized(1, 1).updateInterval(Integer.MAX_VALUE).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("block_swapper"))));
     private static EntityType.Builder<EntityBlockSwapper.EntityBlockSwapperTunneling> blockSwapperTunnelingBuilder() {
         return EntityType.Builder.of(EntityBlockSwapper.EntityBlockSwapperTunneling::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityBlockSwapper.EntityBlockSwapperTunneling>> BLOCK_SWAPPER_TUNNELING = REG.register("block_swapper_tunneling", () -> blockSwapperTunnelingBuilder().noSummon().sized(1, 1).setUpdateInterval(Integer.MAX_VALUE).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("block_swapper_tunneling"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityBlockSwapper.EntityBlockSwapperTunneling>> BLOCK_SWAPPER_TUNNELING = REG.register("block_swapper_tunneling", () -> blockSwapperTunnelingBuilder().noSummon().sized(1, 1).updateInterval(Integer.MAX_VALUE).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("block_swapper_tunneling"))));
     private static EntityType.Builder<EntityCameraShake> cameraShakeBuilder() {
         return EntityType.Builder.of(EntityCameraShake::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityCameraShake>> CAMERA_SHAKE = REG.register("camera_shake", () -> cameraShakeBuilder().sized(1, 1).setUpdateInterval(Integer.MAX_VALUE).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("camera_shake"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityCameraShake>> CAMERA_SHAKE = REG.register("camera_shake", () -> cameraShakeBuilder().sized(1, 1).updateInterval(Integer.MAX_VALUE).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("camera_shake"))));
     private static EntityType.Builder<EntityFissure> fissureBuilder() {
         return EntityType.Builder.of(EntityFissure::new, MobCategory.MISC);
     }
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityFissure>> FISSURE = REG.register("fissure", () -> fissureBuilder().sized(1f, 1f).setUpdateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("fissure"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityFissure>> FISSURE = REG.register("fissure", () -> fissureBuilder().sized(1f, 1f).updateInterval(1).build(ResourceKey.create(Registries.ENTITY_TYPE, MMCommon.resource("fissure"))));
     private static EntityType.Builder<EntityFissurePiece> fissurePieceBuilder() {
         return EntityType.Builder.of(EntityFissurePiece::new, MobCategory.MISC);
     }

@@ -95,7 +95,7 @@ public abstract class EntityGeomancyBase extends EntityMagicEffect implements Ge
             }
         }
 
-        ResourceKey<Block> blockKey = blockState.getBlock().builtInRegistryHolder().getKey();
+        ResourceKey<Block> blockKey = blockState.getBlock().builtInRegistryHolder().key();
         if (blockKey != null) {
             String blockString = blockKey.identifier().toString();
             if (blockState.getBlock() instanceof SlabBlock && blockString.endsWith("_slab")) {

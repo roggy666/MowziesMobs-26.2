@@ -75,7 +75,6 @@ public class ItemEarthrendGauntlet extends Item implements GeoItem {
         return 72000;
     }
 
-    @Override
     public int getMaxDamage(ItemStack stack) {
         return ConfigHandler.COMMON.TOOLS_AND_ABILITIES.EARTHREND_GAUNTLET.durability.get();
     }
@@ -110,7 +109,6 @@ public class ItemEarthrendGauntlet extends Item implements GeoItem {
         return PlayState.CONTINUE;
     }
 
-    @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity, InteractionHand hand) {
         if (DataHandler.getData(entity, DataHandler.ABILITY_DATA).getActiveAbility() == null) {
             if (entity.getUseItem() != stack) {
@@ -119,17 +117,16 @@ public class ItemEarthrendGauntlet extends Item implements GeoItem {
                 }
             }
         }
-        return super.onEntitySwing(stack, entity, hand);
+        return false;
     }
 
-    @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         if (player.getUseItem() != stack) {
             if (entity.level() instanceof ServerLevel) {
                 triggerAnim(entity, GeoItem.getOrAssignId(stack, (ServerLevel) entity.level()), CONTROLLER_NAME, ATTACK_ANIM_NAME);
             }
         }
-        return super.onLeftClickEntity(stack, player, entity);
+        return false;
     }
 
     @Override

@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class MMEntityTypeTags extends EntityTypeTagsProvider {
     public MMEntityTypeTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
-        super(output, provider, MMCommon.MODID);
+        super(output, provider);
     }
 
     public static class MMTagAppender implements net.minecraft.data.tags.TagAppender<EntityType<?>> {
@@ -60,30 +60,6 @@ public class MMEntityTypeTags extends EntityTypeTagsProvider {
         @Override
         public MMTagAppender addOptionalTag(TagKey<EntityType<?>> tag) {
             this.appender.addOptionalTag(tag);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender add(net.minecraft.tags.TagEntry entry) {
-            this.appender.add(entry);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender replace(boolean value) {
-            this.appender.replace(value);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender remove(net.minecraft.resources.ResourceKey<EntityType<?>> element) {
-            this.appender.remove(element);
-            return this;
-        }
-
-        @Override
-        public MMTagAppender remove(TagKey<EntityType<?>> tag) {
-            this.appender.remove(tag);
             return this;
         }
     }
