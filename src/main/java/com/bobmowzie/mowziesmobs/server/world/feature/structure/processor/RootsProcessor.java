@@ -19,13 +19,13 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
-public class RootsProcessor extends StructureProcessor {
+public class RootsProcessor implements StructureProcessor {
     public static final RootsProcessor INSTANCE = new RootsProcessor();
     public static final MapCodec<RootsProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
 
     @Override
-    protected StructureProcessorType<?> getType() {
-        return ProcessorHandler.ROOTS_PROCESSOR.value();
+    public MapCodec<? extends StructureProcessor> codec() {
+        return CODEC;
     }
 
     @Override

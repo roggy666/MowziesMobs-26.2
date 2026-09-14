@@ -177,13 +177,13 @@ public abstract class ElokosaLeapGoal extends Goal {
         EntityDimensions entityDimensions = elokosa.getDimensions(Pose.STANDING);
         Vec3 leapLocation;
         if (jump.getSurfaceDirection().getAxis().isHorizontal()) {
-            leapLocation = jump.getJumpTarget().offset(jump.getSurfaceDirection().getUnitVec3i()).getBottomCenter();
+            leapLocation = Vec3.atBottomCenterOf(jump.getJumpTarget().offset(jump.getSurfaceDirection().getUnitVec3i()));
         }
         else if (jump.getSurfaceDirection() == Direction.DOWN) {
-            leapLocation = jump.getJumpTarget().getBottomCenter().subtract(0, entityDimensions.height(), 0);
+            leapLocation = Vec3.atBottomCenterOf(jump.getJumpTarget()).subtract(0, entityDimensions.height(), 0);
         }
         else {
-            leapLocation = jump.getJumpTarget().above().getBottomCenter();
+            leapLocation = Vec3.atBottomCenterOf(jump.getJumpTarget().above());
         }
         return leapLocation;//.add(0, 0.5, 0);
     }
@@ -191,7 +191,7 @@ public abstract class ElokosaLeapGoal extends Goal {
     protected boolean isAcceptableLandingPosition(PossibleJump jump) {
         Level level = elokosa.level();
         if (!level.getBlockState(jump.getJumpTarget()).isSolid() && !level.getBlockState(jump.getJumpTarget()).isLadder(level, jump.getJumpTarget(), elokosa)) return false;
-        if (elokosa.distanceToSqr(jump.getJumpTarget().getBottomCenter()) < 6) return false;
+        if (elokosa.distanceToSqr(Vec3.atBottomCenterOf(jump.getJumpTarget())) < 6) return false;
 
         EntityDimensions entityDimensions = elokosa.getDimensions(Pose.STANDING);
         Vec3 leapLocation = getLandingPositionFromJump(jump);

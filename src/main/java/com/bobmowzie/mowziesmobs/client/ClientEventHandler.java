@@ -74,7 +74,7 @@ public class ClientEventHandler {
         event.setCanceled(true);
 
         if (event.getHand() == InteractionHand.MAIN_HAND) {
-            CameraRenderState cameraState = Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
+            CameraRenderState cameraState = Minecraft.getInstance().gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
             firstPersonRenderer.renderHands((AbstractClientPlayer) player, geckoPlayerFirstPerson, event.getInterpolatedPitch(), event.getPartialTick(), event.getPoseStack(), event.getSubmitNodeCollector(), cameraState, event.getPackedLight());
         }
     }
@@ -109,7 +109,7 @@ public class ClientEventHandler {
         if (!(renderer instanceof GeckoRenderPlayer geckoRenderPlayer)) return;
 
         event.setCanceled(true);
-        CameraRenderState cameraState = Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
+        CameraRenderState cameraState = Minecraft.getInstance().gameRenderer.gameRenderState().levelRenderState.cameraRenderState;
         geckoRenderPlayer.render((AbstractClientPlayer) player, geckoPlayer, event.getPoseStack(), event.getSubmitNodeCollector(), cameraState, renderState.lightCoords, event.getPartialTick());
     }
 
@@ -231,7 +231,7 @@ public class ClientEventHandler {
                 if (event.getName() == VanillaGuiLayers.VEHICLE_HEALTH) {
                     event.setCanceled(true);
                 }
-                Minecraft.getInstance().gui.setOverlayMessage(Component.empty(), false);
+                Minecraft.getInstance().gui.hud.setOverlayMessage(Component.empty(), false);
             }
         }
     }

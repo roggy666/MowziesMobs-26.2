@@ -89,7 +89,7 @@ public class AdvancedTerrainParticle extends AdvancedParticleBase {
     @Override
     public int getLightCoords(float p_108291_) {
         int i = super.getLightCoords(p_108291_);
-        return i == 0 && this.level.hasChunkAt(this.pos) ? LevelRenderer.getLightCoords(this.level, this.pos) : i;
+        return i == 0 && this.level.hasChunkAt(this.pos) ? net.minecraft.util.LightCoordsUtil.getLightCoords(this.level, this.pos) : i;
     }
 
     public static class Factory implements ParticleProvider<TerrainParticleType> {

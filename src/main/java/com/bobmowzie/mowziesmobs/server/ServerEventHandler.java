@@ -458,8 +458,8 @@ public final class ServerEventHandler {
             block.is(BlockTags.PLANKS) ||
             block.is(BlockTags.LOGS) ||
             block.is(BlockTags.LEAVES) ||
-            block.getBlock() == Blocks.LIGHT_GRAY_TERRACOTTA ||
-            block.getBlock() == Blocks.RED_TERRACOTTA ||
+            block.getBlock() == Blocks.DYED_TERRACOTTA.lightGray() ||
+            block.getBlock() == Blocks.DYED_TERRACOTTA.red() ||
             block.getBlock() == Blocks.SMOOTH_RED_SANDSTONE_SLAB ||
             block.getBlock() == Blocks.SMOOTH_RED_SANDSTONE ||
             block.getBlock() == Blocks.SMOOTH_RED_SANDSTONE_STAIRS ||

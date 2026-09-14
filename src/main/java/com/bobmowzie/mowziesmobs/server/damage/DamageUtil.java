@@ -101,7 +101,7 @@ public class DamageUtil {
             if (target instanceof Player) {
                 ((Player)target).hurtDir = (float)(Mth.atan2(d0, d1) * (180D / Math.PI) - (double)target.getYRot());
             }
-            target.knockback(0.4F, d1, d0);
+            target.knockback(0.4F, d1, d0, source, 0.0F);
         }
         else
         {

@@ -395,13 +395,13 @@ public class AdvancedParticleBase extends SingleQuadParticle {
     }
 
     public static void spawnAlwaysVisibleParticle(Level world, Holder<ParticleType<?>> particle, double distanceLimit, double x, double y, double z, double motionX, double motionY, double motionZ, ParticleRotation rotation, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
         boolean overrideLimiter = camera.position().distanceToSqr(x, y, z) < distanceLimit * distanceLimit;
         world.addAlwaysVisibleParticle(new AdvancedParticleType(particle, rotation, components, (float) red, (float) green, (float) blue, (float) alpha, (float) scale, (float) duration, (float) airDrag, emissive, canCollide), overrideLimiter, x, y, z, motionX, motionY, motionZ);
     }
 
     public static void spawnAlwaysVisibleParticle(Level world, Holder<ParticleType<?>> particle, double distanceLimit, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
         boolean overrideLimiter = camera.position().distanceToSqr(x, y, z) < distanceLimit * distanceLimit;
         ParticleRotation rotation = faceCamera ? new ParticleRotation.FaceCamera((float) faceCameraAngle) : new ParticleRotation.EulerAngles((float)yaw, (float)pitch, (float)roll);
         world.addAlwaysVisibleParticle(new AdvancedParticleType(particle, rotation, components, (float) red, (float) green, (float) blue, (float) alpha, (float) scale, (float) duration, (float) airDrag, emissive, canCollide), overrideLimiter, x, y, z, motionX, motionY, motionZ);

@@ -1,7 +1,7 @@
 package com.bobmowzie.mowziesmobs.server.advancement;
 
 import com.bobmowzie.mowziesmobs.MMCommon;
-import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.triggers.CriterionTrigger;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;

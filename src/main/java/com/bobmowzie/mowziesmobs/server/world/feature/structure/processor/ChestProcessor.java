@@ -15,7 +15,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.storage.loot.LootTable;
 
-public class ChestProcessor extends StructureProcessor {
+public class ChestProcessor implements StructureProcessor {
     public static final MapCodec<ChestProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     // PORTING NOTE (1.21.1 -> 26.1.2): ResourceKey#location() was renamed to identifier() (confirmed
@@ -30,8 +30,8 @@ public class ChestProcessor extends StructureProcessor {
     }
 
     @Override
-    protected StructureProcessorType<?> getType() {
-        return ProcessorHandler.CHEST_PROCESSOR.value();
+    public MapCodec<? extends StructureProcessor> codec() {
+        return CODEC;
     }
 
     @Override

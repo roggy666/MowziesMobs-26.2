@@ -16,9 +16,14 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.jetbrains.annotations.NotNull;
 
-public class MonasteryStairsProcessor extends StructureProcessor {
+public class MonasteryStairsProcessor implements StructureProcessor {
     public static final MonasteryStairsProcessor INSTANCE = new MonasteryStairsProcessor();
     public static final MapCodec<MonasteryStairsProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
+
+    @Override
+    public MapCodec<? extends StructureProcessor> codec() {
+        return CODEC;
+    }
 
     private static final BlockState andesiteStairs = Blocks.ANDESITE_STAIRS.defaultBlockState();
     private static final BlockState cobbledDeepslate = Blocks.COBBLED_DEEPSLATE.defaultBlockState();
@@ -88,10 +93,5 @@ public class MonasteryStairsProcessor extends StructureProcessor {
         float v = random.nextFloat();
         if (v > 0.7) return Blocks.POLISHED_DEEPSLATE.defaultBlockState();
         else return Blocks.COBBLED_DEEPSLATE.defaultBlockState();
-    }
-
-    @Override
-    protected @NotNull StructureProcessorType<?> getType() {
-        return ProcessorHandler.STAIRS_PROCESSOR.value();
     }
 }

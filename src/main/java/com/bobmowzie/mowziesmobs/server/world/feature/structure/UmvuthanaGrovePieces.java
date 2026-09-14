@@ -371,7 +371,7 @@ public class UmvuthanaGrovePieces {
             }
             worldIn.setBlock(pos, state, 2);
             if (BLOCKS_NEEDING_POSTPROCESSING.contains(state.getBlock())) {
-                worldIn.getChunk(pos).markPosForPostprocessing(pos);
+                worldIn.getChunk(pos).markPosForPostProcessing(pos);
             }
         }
 
@@ -411,7 +411,7 @@ public class UmvuthanaGrovePieces {
             int k = startPos.getZ();
             while(!Block.canSupportRigidBlock(worldIn, new BlockPos(i, j, k)) && j > 1) {
                 BlockPos pos = new BlockPos(i, j, k);
-                setBlockState(worldIn, pos, rand.nextFloat() < 0.5 ? Blocks.STRIPPED_MANGROVE_LOG.defaultBlockState() : Blocks.RED_TERRACOTTA.defaultBlockState());
+                setBlockState(worldIn, pos, rand.nextFloat() < 0.5 ? Blocks.STRIPPED_MANGROVE_LOG.defaultBlockState() : Blocks.DYED_TERRACOTTA.red().defaultBlockState());
                 --j;
             }
         }

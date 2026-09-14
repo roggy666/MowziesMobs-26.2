@@ -24,6 +24,79 @@ public class MMBlockTags extends BlockTagsProvider {
         super(output, lookupProvider, MMCommon.MODID);
     }
 
+    public static class MMTagAppender implements net.minecraft.data.tags.TagAppender<Block> {
+        private final net.minecraft.data.tags.TagAppender<Block> appender;
+
+        public MMTagAppender(net.minecraft.data.tags.TagAppender<Block> appender) {
+            this.appender = appender;
+        }
+
+        public MMTagAppender add(Block block) {
+            this.appender.add(block.builtInRegistryHolder().key());
+            return this;
+        }
+
+        public MMTagAppender add(Block... blocks) {
+            for (Block block : blocks) {
+                this.appender.add(block.builtInRegistryHolder().key());
+            }
+            return this;
+        }
+
+        @Override
+        public MMTagAppender add(net.minecraft.resources.ResourceKey<Block> element) {
+            this.appender.add(element);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender addOptional(net.minecraft.resources.ResourceKey<Block> element) {
+            this.appender.addOptional(element);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender addTag(TagKey<Block> tag) {
+            this.appender.addTag(tag);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender addOptionalTag(TagKey<Block> tag) {
+            this.appender.addOptionalTag(tag);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender add(net.minecraft.tags.TagEntry entry) {
+            this.appender.add(entry);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender replace(boolean value) {
+            this.appender.replace(value);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender remove(net.minecraft.resources.ResourceKey<Block> element) {
+            this.appender.remove(element);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender remove(TagKey<Block> tag) {
+            this.appender.remove(tag);
+            return this;
+        }
+    }
+
+    @Override
+    protected MMTagAppender tag(TagKey<Block> tag) {
+        return new MMTagAppender(super.tag(tag));
+    }
+
     @Override
     protected void addTags(@NotNull HolderLookup.Provider provider) {
         addToVanillaTags();
@@ -159,22 +232,7 @@ public class MMBlockTags extends BlockTagsProvider {
     }
 
     private void tagConcretePowder(TagKey<Block> key) {
-        tag(key)
-                .add(Blocks.WHITE_CONCRETE_POWDER)
-                .add(Blocks.LIGHT_GRAY_CONCRETE_POWDER)
-                .add(Blocks.GRAY_CONCRETE_POWDER)
-                .add(Blocks.BLACK_CONCRETE_POWDER)
-                .add(Blocks.BROWN_CONCRETE_POWDER)
-                .add(Blocks.RED_CONCRETE_POWDER)
-                .add(Blocks.ORANGE_CONCRETE_POWDER)
-                .add(Blocks.YELLOW_CONCRETE_POWDER)
-                .add(Blocks.LIME_CONCRETE_POWDER)
-                .add(Blocks.GREEN_CONCRETE_POWDER)
-                .add(Blocks.CYAN_CONCRETE_POWDER)
-                .add(Blocks.LIGHT_BLUE_CONCRETE_POWDER)
-                .add(Blocks.PURPLE_CONCRETE_POWDER)
-                .add(Blocks.MAGENTA_CONCRETE_POWDER)
-                .add(Blocks.PINK_CONCRETE_POWDER);
+        Blocks.CONCRETE_POWDER.asList().forEach(block -> tag(key).add(block));
     }
 
     private void tagConcrete(TagKey<Block> key) {

@@ -420,7 +420,7 @@ public class EntityBluff extends MowzieGeckoEntity {
             if (!bluff.onGround()) return false;
 
             Path path = bluff.groundNav.createPath(target, 0);
-            return path == null || path.getEndNode() == null || path.getEndNode().asVec3().add(0.5, 0.5, 0.5).distanceToSqr(path.getTarget().getCenter()) > 4;
+            return path == null || path.getEndNode() == null || path.getEndNode().asVec3().add(0.5, 0.5, 0.5).distanceToSqr(Vec3.atCenterOf(path.getTarget())) > 4;
         }
 
         @Override
@@ -429,7 +429,7 @@ public class EntityBluff extends MowzieGeckoEntity {
             if (target == null) return false;
 
             Path path = bluff.groundNav.createPath(target, 0);
-            return path == null || path.getEndNode() == null || path.getEndNode().asVec3().add(0.5, 0.5, 0.5).distanceToSqr(path.getTarget().getCenter()) > 4;
+            return path == null || path.getEndNode() == null || path.getEndNode().asVec3().add(0.5, 0.5, 0.5).distanceToSqr(Vec3.atCenterOf(path.getTarget())) > 4;
         }
 
         @Override

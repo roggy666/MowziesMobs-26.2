@@ -197,7 +197,7 @@ public class RenderSunstrike extends EntityRenderer<EntitySunstrike, RenderSunst
 
         PoseStack beamStack = new PoseStack();
         beamStack.last().set(parentPose);
-        beamStack.mulPose(MathUtils.quatFromRotationXYZ(0, -Minecraft.getInstance().gameRenderer.getMainCamera().yRot(), 0, true));
+        beamStack.mulPose(MathUtils.quatFromRotationXYZ(0, -Minecraft.getInstance().gameRenderer.mainCamera().yRot(), 0, true));
         drawBeam(drawing, drawTime, strikeTime, opacity, maxY, beamStack, builder, packedLightIn);
     }
 

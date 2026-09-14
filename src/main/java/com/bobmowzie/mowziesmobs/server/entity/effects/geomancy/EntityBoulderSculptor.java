@@ -305,7 +305,7 @@ public class EntityBoulderSculptor extends EntityBoulderProjectile {
         for (int i = 0; i < substeps; i++) {
             double time = (totalTime/(double)substeps) * i;
             Vec3 jumpPosition = new Vec3(0, gravity * time * time, 0).add(jumpVel.scale(time)).add(startPos);
-            AABB playerBounds = EntityType.PLAYER.getDimensions().makeBoundingBox(jumpPosition).expandTowards(0, 0.5, 0);
+            AABB playerBounds = EntityTypes.PLAYER.getDimensions().makeBoundingBox(jumpPosition).expandTowards(0, 0.5, 0);
             if (thisBounds.intersects(playerBounds)) return false;
         }
 

@@ -8,6 +8,7 @@ import com.bobmowzie.mowziesmobs.server.entity.MowzieEntity;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -42,7 +43,7 @@ public class ClientLayerRegistry {
     private static void addLayerIfApplicable(EntityType<? extends LivingEntity> entityType, EntityRenderersEvent.AddLayers event) {
         LivingEntityRenderer<?, ?, ?> renderer = null;
 
-        if (entityType != EntityType.ENDER_DRAGON) {
+        if (entityType != EntityTypes.ENDER_DRAGON) {
             try {
                 if (event.getRenderer(entityType) instanceof LivingEntityRenderer<?,?,?> livingRenderer) {
                     renderer = livingRenderer;

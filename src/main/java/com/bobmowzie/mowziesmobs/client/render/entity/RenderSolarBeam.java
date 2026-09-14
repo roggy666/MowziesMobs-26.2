@@ -158,14 +158,14 @@ public class RenderSolarBeam extends EntityRenderer<EntitySolarBeam, RenderSolar
         matrixStackIn.mulPose(MathUtils.quatFromRotationXYZ(-pitch, 0, 0, true));
         matrixStackIn.pushPose();
         if (!clearerView) {
-            matrixStackIn.mulPose(MathUtils.quatFromRotationXYZ(0, Minecraft.getInstance().gameRenderer.getMainCamera().xRot() + 90, 0, true));
+            matrixStackIn.mulPose(MathUtils.quatFromRotationXYZ(0, Minecraft.getInstance().gameRenderer.mainCamera().xRot() + 90, 0, true));
         }
         drawBeam(clearerView, length, frame, matrixStackIn.last().pose(), matrixStackIn.last().normal(), builder, packedLightIn);
         matrixStackIn.popPose();
 
         if (!clearerView) {
             matrixStackIn.pushPose();
-            matrixStackIn.mulPose(MathUtils.quatFromRotationXYZ(0, -Minecraft.getInstance().gameRenderer.getMainCamera().xRot() - 90, 0, true));
+            matrixStackIn.mulPose(MathUtils.quatFromRotationXYZ(0, -Minecraft.getInstance().gameRenderer.mainCamera().xRot() - 90, 0, true));
             drawBeam(clearerView, length, frame, matrixStackIn.last().pose(), matrixStackIn.last().normal(), builder, packedLightIn);
             matrixStackIn.popPose();
         }

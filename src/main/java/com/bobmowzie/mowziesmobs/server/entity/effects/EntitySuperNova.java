@@ -89,7 +89,7 @@ public class EntitySuperNova extends EntityMagicEffect {
                         if (hitWithFire) {
                             Vec3 diff = livingEntity.position().subtract(position());
                             diff = diff.normalize();
-                            livingEntity.knockback(0.4f, -diff.x, -diff.z);
+                            livingEntity.knockback(0.4f, -diff.x, -diff.z, damageSources().mobProjectile(this, getCaster()), (float) damageMob);
                             livingEntity.igniteForSeconds(5);
                         }
                     }

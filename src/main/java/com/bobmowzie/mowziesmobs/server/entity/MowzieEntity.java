@@ -378,7 +378,9 @@ public abstract class MowzieEntity extends PathfinderMob implements IEntityWithC
                     livingTarget.knockback(
                             knockback * 0.5F,
                             Mth.sin(getYRot() * (float) (Math.PI / 180.0)),
-                            -Mth.cos(getYRot() * (float) (Math.PI / 180.0))
+                            -Mth.cos(getYRot() * (float) (Math.PI / 180.0)),
+                            damagesource,
+                            damage
                     );
 
                     setDeltaMovement(getDeltaMovement().multiply(0.6, 1, 0.6));

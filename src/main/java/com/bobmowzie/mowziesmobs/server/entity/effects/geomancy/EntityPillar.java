@@ -266,7 +266,7 @@ public class EntityPillar extends EntityGeomancyBase implements IGeomancyRumbler
             particlePos = particlePos.yRot((float) (random.nextFloat() * 2 * Math.PI));
             particlePos = particlePos.xRot((float) (random.nextFloat() * 2 * Math.PI));
             particlePos = particlePos.add(0, getHeight() * random.nextFloat(), 0);
-            Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+            Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
             boolean overrideLimiter = camera.position().distanceToSqr(getX(), getY(), getZ()) < 64 * 64;
             level().addAlwaysVisibleParticle(new BlockParticleOption(ParticleTypes.BLOCK, getBlock()), overrideLimiter, getX() + particlePos.x, getY() + 0.5 + particlePos.y, getZ() + particlePos.z, particlePos.x, particlePos.y, particlePos.z);
         }

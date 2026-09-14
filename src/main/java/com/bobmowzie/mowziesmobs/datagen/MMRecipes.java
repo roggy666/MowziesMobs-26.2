@@ -3,9 +3,9 @@ package com.bobmowzie.mowziesmobs.datagen;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.block.BlockHandler;
 import com.bobmowzie.mowziesmobs.server.item.ItemHandler;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.criterion.InventoryChangeTrigger;
-import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.triggers.Criterion;
+import net.minecraft.advancements.triggers.InventoryChangeTrigger;
+import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
@@ -88,14 +88,14 @@ public class MMRecipes extends RecipeProvider {
 
         shapeless(RecipeCategory.BUILDING_BLOCKS, BlockHandler.PAINTED_ACACIA.value(), 4)
                 .requires(Items.ACACIA_PLANKS, 4)
-                .requires(Items.YELLOW_DYE)
-                .requires(Items.WHITE_DYE)
-                .requires(Items.CYAN_DYE)
+                .requires(Items.DYE.yellow())
+                .requires(Items.DYE.white())
+                .requires(Items.DYE.cyan())
                 .unlockedBy("has_painted_acacia_materials", has(
                         BlockHandler.PAINTED_ACACIA.value(),
-                        Items.YELLOW_DYE,
-                        Items.WHITE_DYE,
-                        Items.CYAN_DYE)
+                        Items.DYE.yellow(),
+                        Items.DYE.white(),
+                        Items.DYE.cyan())
                 )
                 .save(output);
 

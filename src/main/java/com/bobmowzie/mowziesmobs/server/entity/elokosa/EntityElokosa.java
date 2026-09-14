@@ -620,8 +620,8 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
     }
 
     @Override
-    public void knockback(double strength, double x, double z) {
-        super.knockback(strength, x, z);
+    public void knockback(double strength, double x, double z, DamageSource source, float damage, boolean comesFromEffect) {
+        super.knockback(strength, x, z, source, damage, comesFromEffect);
         knockBackAngle = Math.toDegrees(Math.atan2(z, x));
     }
 
@@ -707,7 +707,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
 
     public static boolean isChosenBlockOkay(PathfinderMob mob, BlockPos blockpos) {
         if (!mob.level().getBlockState(blockpos).isSolid()) return false;
-        if (mob.distanceToSqr(blockpos.getBottomCenter()) < 6) return false;
+        if (mob.distanceToSqr(Vec3.atBottomCenterOf(blockpos)) < 6) return false;
         PathNavigation pathnavigation = mob.getNavigation();
         Path path = pathnavigation.createPath(blockpos, 0, 2);
         if (path == null || path.getDistToTarget() > 5) {
@@ -765,7 +765,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
     }
 
     public static BlockPos findClosestPosWithRaycast(PathfinderMob mob, BlockPos pos) {
-        BlockHitResult result = mob.level().clip(new ClipContext(mob.position().add(0, mob.getBbHeight()/2, 0), pos.getCenter(), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, mob));
+        BlockHitResult result = mob.level().clip(new ClipContext(mob.position().add(0, mob.getBbHeight()/2, 0), Vec3.atCenterOf(pos), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, mob));
         if (result.getType() == HitResult.Type.BLOCK) {
             return result.getBlockPos();//.offset(result.getDirection().getUnitVec3i());
         }
@@ -1681,7 +1681,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
         protected int scoreJump(BlockPos pos, Direction dir) {
             if (elokosa instanceof EntityElokosaFollower<? extends LivingEntity> elokosaFollower && elokosaFollower.getLeader() != null) {
                 LivingEntity leader = elokosaFollower.getLeader();
-                Vec3 vecBetween = leader.position().subtract(pos.getBottomCenter());
+                Vec3 vecBetween = leader.position().subtract(Vec3.atBottomCenterOf(pos));
                 double distance = vecBetween.lengthSqr();
                 int distScore = (int) Mth.clampedMap(distance, 10 * 10, 25 * 25, 30, 0);
                 return super.scoreJump(pos, dir) + distScore;
@@ -1708,7 +1708,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
                 return super.scoreJump(pos, dir);
             }
             else {
-                Vec3 vecBetween = elokosa.getTarget().position().add(0, 12, 0).subtract(pos.getBottomCenter());
+                Vec3 vecBetween = elokosa.getTarget().position().add(0, 12, 0).subtract(Vec3.atBottomCenterOf(pos));
                 double distance = vecBetween.lengthSqr();
                 int distScore = (int) Mth.clampedMap(distance, 10 * 10, 25 * 25, 30, 0);
                 return super.scoreJump(pos, dir) + distScore;
@@ -1771,7 +1771,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
                 return super.scoreJump(pos, dir);
             }
             else {
-                Vec3 vecBetween = elokosa.getTarget().position().add(0, 12, 0).subtract(pos.getBottomCenter());
+                Vec3 vecBetween = elokosa.getTarget().position().add(0, 12, 0).subtract(Vec3.atBottomCenterOf(pos));
                 double distance = vecBetween.lengthSqr();
                 int distScore = (int) Mth.clampedMap(distance, 10 * 10, 25 * 25, 30, 0);
                 return super.scoreJump(pos, dir) + distScore;
@@ -1818,7 +1818,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
             }
             else {
                 LivingEntity entityEvading = elokosa.fleeGoal.getEntityEvading();
-                Vec3 vecBetween = entityEvading.position().subtract(pos.getBottomCenter());
+                Vec3 vecBetween = entityEvading.position().subtract(Vec3.atBottomCenterOf(pos));
                 double distance = vecBetween.lengthSqr();
                 int distScore = (int) Mth.clampedMap(distance, 7 * 7, 25 * 25, 0, 30);
                 return super.scoreJump(pos, dir) + distScore;

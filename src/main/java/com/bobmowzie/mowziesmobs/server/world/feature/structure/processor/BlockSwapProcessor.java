@@ -16,7 +16,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 
 import java.util.List;
 
-public class BlockSwapProcessor extends StructureProcessor {
+public class BlockSwapProcessor implements StructureProcessor {
     public static final MapCodec<BlockSwapProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     BlockState.CODEC.listOf().fieldOf("to_replace").forGetter(config -> config.toReplace),
@@ -35,8 +35,8 @@ public class BlockSwapProcessor extends StructureProcessor {
     }
 
     @Override
-    protected StructureProcessorType<?> getType() {
-        return ProcessorHandler.BLOCK_SWAP_PROCESSOR.value();
+    public MapCodec<? extends StructureProcessor> codec() {
+        return CODEC;
     }
 
     @Override

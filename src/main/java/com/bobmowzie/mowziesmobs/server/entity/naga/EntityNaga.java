@@ -47,7 +47,6 @@ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.util.AirAndWaterRandomPos;
 import net.minecraft.world.entity.ai.util.HoverRandomPos;
-import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
@@ -74,7 +73,7 @@ import java.util.Optional;
 /**
  * Created by BobMowzie on 9/9/2018.
  */
-public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob, Enemy, FlyingAnimal {
+public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob, Enemy {
     public DynamicChain dc;
     public Vec3[] mouthPos;
 
@@ -317,7 +316,6 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
         return flyingpathnavigator;
     }
 
-    @Override
     public boolean isFlying() {
         return !this.onGround();
     }

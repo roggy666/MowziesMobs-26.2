@@ -144,7 +144,7 @@ public class RenderFissurePiece extends EntityRenderer<EntityFissurePiece, Rende
         if (segmentVec.get(perp) == 0) return Optional.empty();
 
         whichBorder.step();
-        Vec3 colliderCenter = pos.getCenter().add(whichBorder.getStepX() / 2d, whichBorder.getStepY() / 2d, whichBorder.getStepZ() / 2d);
+        Vec3 colliderCenter = Vec3.atCenterOf(pos).add(whichBorder.getStepX() / 2d, whichBorder.getStepY() / 2d, whichBorder.getStepZ() / 2d);
         double segmentPos = colliderCenter.get(perp);
         Vec3 intersect;
         if (segmentVec.get(axis) == 0) {

@@ -15,13 +15,13 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
-public class BaseProcessor extends StructureProcessor {
+public class BaseProcessor implements StructureProcessor {
     public static final BaseProcessor INSTANCE = new BaseProcessor();
     public static final MapCodec<BaseProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
 
     @Override
-    protected StructureProcessorType<?> getType() {
-        return ProcessorHandler.BASE_PROCESSOR.value();
+    public MapCodec<? extends StructureProcessor> codec() {
+        return CODEC;
     }
 
     @Override

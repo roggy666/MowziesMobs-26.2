@@ -69,7 +69,7 @@ public class EntityIceBreath extends EntityMagicEffect {
         float yComp = (float) (Math.sin(pitch));
         float zComp = (float) (Math.cos(yaw) * Math.cos(pitch));
         if (level().isClientSide()) {
-            Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+            Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
             boolean overrideLimiter = camera.position().distanceToSqr(getX(), getY(), getZ()) < 64 * 64;
             if (tickCount % 8 == 0) {
                 level().addAlwaysVisibleParticle(new ParticleRing.Data(yaw, -pitch, 40, 1f, 1f, 1f, 1f, (int) (110 * spread), false, ParticleRing.EnumRingBehavior.GROW), overrideLimiter, getX(), getY(), getZ(), 0.5f * xComp, 0.5f * yComp, 0.5f * zComp);

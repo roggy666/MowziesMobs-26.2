@@ -20,6 +20,79 @@ public class MMEntityTypeTags extends EntityTypeTagsProvider {
         super(output, provider, MMCommon.MODID);
     }
 
+    public static class MMTagAppender implements net.minecraft.data.tags.TagAppender<EntityType<?>> {
+        private final net.minecraft.data.tags.TagAppender<EntityType<?>> appender;
+
+        public MMTagAppender(net.minecraft.data.tags.TagAppender<EntityType<?>> appender) {
+            this.appender = appender;
+        }
+
+        public MMTagAppender add(EntityType<?> entityType) {
+            this.appender.add(entityType.builtInRegistryHolder().key());
+            return this;
+        }
+
+        public MMTagAppender add(EntityType<?>... entityTypes) {
+            for (EntityType<?> entityType : entityTypes) {
+                this.appender.add(entityType.builtInRegistryHolder().key());
+            }
+            return this;
+        }
+
+        @Override
+        public MMTagAppender add(net.minecraft.resources.ResourceKey<EntityType<?>> element) {
+            this.appender.add(element);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender addOptional(net.minecraft.resources.ResourceKey<EntityType<?>> element) {
+            this.appender.addOptional(element);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender addTag(TagKey<EntityType<?>> tag) {
+            this.appender.addTag(tag);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender addOptionalTag(TagKey<EntityType<?>> tag) {
+            this.appender.addOptionalTag(tag);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender add(net.minecraft.tags.TagEntry entry) {
+            this.appender.add(entry);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender replace(boolean value) {
+            this.appender.replace(value);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender remove(net.minecraft.resources.ResourceKey<EntityType<?>> element) {
+            this.appender.remove(element);
+            return this;
+        }
+
+        @Override
+        public MMTagAppender remove(TagKey<EntityType<?>> tag) {
+            this.appender.remove(tag);
+            return this;
+        }
+    }
+
+    @Override
+    protected MMTagAppender tag(TagKey<EntityType<?>> tag) {
+        return new MMTagAppender(super.tag(tag));
+    }
+
     @Override
     protected void addTags(@NotNull HolderLookup.Provider provider) {
         addToVanillaTags();

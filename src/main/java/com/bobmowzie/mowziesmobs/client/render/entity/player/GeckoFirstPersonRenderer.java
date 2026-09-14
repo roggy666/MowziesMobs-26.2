@@ -239,7 +239,7 @@ public class GeckoFirstPersonRenderer extends GeoObjectRenderer<GeckoPlayer, Voi
                 itemInHandRenderer.renderPlayerArm(newMatrixStack, renderTasks, pendingPackedLight, 0.0F, 0.0F, logicalSide);
             } else {
                 InteractionHand hand = isMainHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-                itemInHandRenderer.renderArmWithItem(pendingPlayer, pendingPartialTick, pendingPitch, hand, 0.0F, stack, 0.0F, newMatrixStack, renderTasks, pendingPackedLight);
+                itemInHandRenderer.submitArmWithItem(pendingPlayer, pendingPartialTick, pendingPitch, hand, 0.0F, stack, 0.0F, newMatrixStack, renderTasks, pendingPackedLight);
             }
 
             poseStack.popPose();

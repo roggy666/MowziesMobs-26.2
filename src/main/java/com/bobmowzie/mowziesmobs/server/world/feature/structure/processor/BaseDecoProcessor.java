@@ -16,9 +16,14 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
-public class BaseDecoProcessor extends StructureProcessor {
+public class BaseDecoProcessor implements StructureProcessor {
     public static final BaseDecoProcessor INSTANCE = new BaseDecoProcessor();
     public static final MapCodec<BaseDecoProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
+
+    @Override
+    public MapCodec<? extends StructureProcessor> codec() {
+        return CODEC;
+    }
 
     private static final BlockState trapDoorBottom = Blocks.DARK_OAK_TRAPDOOR.defaultBlockState();
     private static final BlockState trapDoorTop = Blocks.DARK_OAK_TRAPDOOR.defaultBlockState().setValue(TrapDoorBlock.HALF, Half.TOP);
@@ -37,11 +42,6 @@ public class BaseDecoProcessor extends StructureProcessor {
     };
 
     @Override
-    protected StructureProcessorType<?> getType() {
-        return ProcessorHandler.BASE_DECO_PROCESSOR.value();
-    }
-
-    @Override
     public StructureTemplate.StructureBlockInfo process(LevelReader levelReader, BlockPos jigsawPiecePos, BlockPos jigsawPieceBottomCenterPos, StructureTemplate.StructureBlockInfo blockInfoLocal, StructureTemplate.StructureBlockInfo blockInfoGlobal, StructurePlaceSettings structurePlacementData, StructureTemplate template) {
         if (blockInfoGlobal.state().is(Blocks.PURPUR_STAIRS)) {
             if (levelReader instanceof WorldGenRegion worldGenRegion && !worldGenRegion.getCenter().equals(ChunkPos.containing(blockInfoGlobal.pos()))) {
@@ -52,7 +52,7 @@ public class BaseDecoProcessor extends StructureProcessor {
             facing = structurePlacementData.getRotation().rotate(facing);
             RandomSource random = structurePlacementData.getRandom(blockInfoGlobal.pos());
 
-            blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos(), Blocks.RED_TERRACOTTA.defaultBlockState(), blockInfoGlobal.nbt());
+            blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos(), Blocks.DYED_TERRACOTTA.red().defaultBlockState(), blockInfoGlobal.nbt());
             for (int x = 0; x < 7; x++) {
                 for (int y = 0; y < 4; y++) {
                     BlockState state = DECO[y][x];

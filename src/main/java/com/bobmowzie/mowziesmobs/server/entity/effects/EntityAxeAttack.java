@@ -278,7 +278,7 @@ public class EntityAxeAttack extends EntityMagicEffect {
 
                 if (knockback > 0) {
                     if (targetEntity instanceof LivingEntity livingTarget) {
-                        livingTarget.knockback(knockback * 0.5F * knockbackMult, Mth.sin(player.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(player.getYRot() * ((float) Math.PI / 180F)));
+                        livingTarget.knockback(knockback * 0.5F * knockbackMult, Mth.sin(player.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(player.getYRot() * ((float) Math.PI / 180F)), damageSource, damage);
                     } else {
                         targetEntity.push(-Mth.sin(player.getYRot() * ((float) Math.PI / 180F)) * knockback * 0.5F * knockbackMult, 0.1D, Mth.cos(player.getYRot() * ((float) Math.PI / 180F)) * knockback * 0.5F * knockbackMult);
                     }
