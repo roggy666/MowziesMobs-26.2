@@ -35,8 +35,8 @@ class EventBusImpl implements IEventBus {
 
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(SubscribeEvent.class)) {
-                if (isStatic && !java.lang.reflect.Modifier.isStatic(method.getModifiers())) continue;
-                if (!isStatic && java.lang.reflect.Modifier.isStatic(method.getModifiers())) continue;
+                boolean methodIsStatic = java.lang.reflect.Modifier.isStatic(method.getModifiers());
+                if (isStatic && !methodIsStatic) continue;
                 if (method.getParameterCount() != 1) continue;
 
                 Class<?> eventType = method.getParameterTypes()[0];
@@ -44,7 +44,7 @@ class EventBusImpl implements IEventBus {
 
                 listeners.computeIfAbsent(eventType, k -> new CopyOnWriteArrayList<>()).add(event -> {
                     try {
-                        method.invoke(isStatic ? null : target, event);
+                        method.invoke(methodIsStatic ? null : target, event);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

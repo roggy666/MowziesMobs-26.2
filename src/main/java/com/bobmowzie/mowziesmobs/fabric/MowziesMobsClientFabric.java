@@ -40,6 +40,7 @@ public class MowziesMobsClientFabric implements ClientModInitializer {
         LayerHandler.registerLayers(new EntityRenderersEvent.RegisterLayerDefinitions());
 
         // Client event bus subscriber
+        NeoForge.EVENT_BUS.register(new ClientEventHandler());
         NeoForge.EVENT_BUS.register(ClientEventHandler.class);
 
         // Load complete

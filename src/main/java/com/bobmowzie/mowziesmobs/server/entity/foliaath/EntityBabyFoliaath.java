@@ -19,7 +19,10 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -164,12 +167,37 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
         return null;
     }
 
+    public static boolean isMeat(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        return (stack.is(ItemTags.MEAT) || stack.is(Tags.Items.FOODS_RAW_MEAT) || stack.is(Tags.Items.FOODS_COOKED_MEAT))
+                && stack.has(net.minecraft.core.component.DataComponents.FOOD);
+    }
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (isMeat(stack)) {
+            if (getHungry() && getAnimation() == NO_ANIMATION) {
+                if (!level().isClientSide()) {
+                    ItemStack eatingStack = stack.split(1);
+                    setEating(eatingStack);
+                    AnimationHandler.INSTANCE.sendAnimationMessage(this, EAT_ANIMATION);
+                    playSound(MMSounds.ENTITY_FOLIAATH_BABY_EAT.get(), 0.5F, 1.2F);
+                    incrementGrowth();
+                    setHungry(false);
+                }
+                return InteractionResult.SUCCESS;
+            } else {
+                return InteractionResult.CONSUME;
+            }
+        }
+        return super.mobInteract(player, hand);
+    }
+
     private boolean arePlayersCarryingMeat(List<Player> players) {
         if (!players.isEmpty()) {
             for (Player player : players) {
-                ItemStack stack = player.getMainHandItem();
-                // TODO :: add own tag?
-                if ((stack.is(Tags.Items.FOODS_RAW_MEAT) || stack.is(Tags.Items.FOODS_COOKED_MEAT)) && stack.has(net.minecraft.core.component.DataComponents.FOOD)) {
+                if (isMeat(player.getMainHandItem()) || isMeat(player.getOffhandItem())) {
                     return true;
                 }
             }
@@ -227,8 +255,7 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
         for (Entity entityNeighbor : list) {
             if (entityNeighbor instanceof ItemEntity itemEntity && distanceTo(entityNeighbor) <= radius) {
                 ItemStack stack = itemEntity.getItem();
-                // TODO :: add own tag?
-                if ((stack.is(Tags.Items.FOODS_RAW_MEAT) || stack.is(Tags.Items.FOODS_COOKED_MEAT)) && stack.has(net.minecraft.core.component.DataComponents.FOOD)) {
+                if (isMeat(stack)) {
                     listEntityItem.add(itemEntity);
                 }
             }

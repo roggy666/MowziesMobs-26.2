@@ -6,11 +6,17 @@
   "refmap": "mowziesmobs.refmap.json",
   "mixins": [
     "ArmorMaterialMixin",
-    "BlockBehaviourMixin"
+    "BlockBehaviourMixin",
+    "LivingEntityMixin",
+    "ServerLevelMixin"
   ],
   "client": [
     "client.GeoModelMixin",
-    "client.HumanoidArmorLayerAccess"
+    "client.HumanoidArmorLayerAccess",
+    "client.ClientLevelMixin",
+    "client.MinecraftMixin",
+    "client.BossHealthOverlayMixin",
+    "client.HumanoidArmorLayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

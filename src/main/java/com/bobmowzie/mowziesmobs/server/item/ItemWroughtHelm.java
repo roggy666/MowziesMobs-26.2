@@ -39,14 +39,18 @@ public class ItemWroughtHelm extends Item {
         public static final ArmorRender INSTANCE = new ArmorRender();
         private static HumanoidModel<?> MODEL;
 
-        @Override
-        public Model getHumanoidArmorModel(ItemStack itemStack, EquipmentClientInfo.LayerType layerType, Model original) {
+        public static Model getArmorModel() {
             if (MODEL == null) {
                 EntityModelSet models = Minecraft.getInstance().getEntityModels();
                 ModelPart root = models.bakeLayer(LayerHandler.WROUGHT_HELM_LAYER);
                 MODEL = new WroughtHelmModel<>(root);
             }
             return MODEL;
+        }
+
+        @Override
+        public Model getHumanoidArmorModel(ItemStack itemStack, EquipmentClientInfo.LayerType layerType, Model original) {
+            return getArmorModel();
         }
 
         @Override
