@@ -16,6 +16,7 @@
     "sources": "https://github.com/BobMowzie/MowziesMobs-Public"
   },
   "license": "Custom",
+  "icon": "assets/mowziesmobs/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [

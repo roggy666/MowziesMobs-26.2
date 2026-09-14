@@ -151,6 +151,7 @@
   "item.mowziesmobs.elokosa_paw_new.text.2": "Eclipsed status effects are restored when Eclipse ends",
 
   "item.mowziesmobs.music_disc_petiole": "Music Disc",
+  "item.mowziesmobs.music_disc_petiole.desc": "LudoCrypt - Petiole",
   "jukebox_song.mowziesmobs.14": "LudoCrypt - Petiole",
 
   "item.mowziesmobs.foliaath_spawn_egg": "Foliaath Spawn Egg",
@@ -175,8 +176,18 @@
   "block.mowziesmobs.grottol": "Grottol",
   "block.mowziesmobs.clawed_log": "Clawed Log",
   "block.mowziesmobs.gong": "Gong",
+  "block.mowziesmobs.gong_part": "Gong Part",
   "block.mowziesmobs.raked_sand": "Raked Sand",
   "block.mowziesmobs.red_raked_sand": "Red Raked Sand",
+  "item.mowziesmobs.painted_acacia": "Painted Acacia Wood",
+  "item.mowziesmobs.painted_acacia_slab": "Painted Acacia Wood Slab",
+  "item.mowziesmobs.thatch_block": "Thatch",
+  "item.mowziesmobs.clawed_log": "Clawed Log",
+  "item.mowziesmobs.gong": "Gong",
+  "item.mowziesmobs.gong_part": "Gong Part",
+  "item.mowziesmobs.raked_sand": "Raked Sand",
+  "item.mowziesmobs.red_raked_sand": "Red Raked Sand",
+  "item.mowziesmobs.logo": "Mowzie's Mobs Logo",
 
   "_comment": "Potions",
   "effect.mowziesmobs.suns_blessing": "Sun's Blessing",

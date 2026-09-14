@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.item;
 
+import com.bobmowzie.mowziesmobs.server.ability.Ability;
 import com.bobmowzie.mowziesmobs.server.ability.AbilityHandler;
 import com.bobmowzie.mowziesmobs.server.capability.DataHandler;
 import com.bobmowzie.mowziesmobs.server.config.ConfigHandler;
@@ -29,13 +30,19 @@ public class ItemIceCrystal extends Item {
     public InteractionResult use(Level worldIn, Player player, InteractionHand handIn) {
         ItemStack stack = player.getItemInHand(handIn);
         player.startUsingItem(handIn);
-        if (stack.getDamageValue() + 5 < stack.getMaxDamage() || ConfigHandler.COMMON.TOOLS_AND_ABILITIES.ICE_CRYSTAL.breakable.get()) {
+        boolean breakable = ConfigHandler.COMMON.TOOLS_AND_ABILITIES.ICE_CRYSTAL.breakable.get();
+        if (!breakable || stack.getDamageValue() + 5 < stack.getMaxDamage()) {
             if (!worldIn.isClientSide()) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.ICE_BREATH_ABILITY);
-            stack.hurtAndBreak(5, player, handIn.asEquipmentSlot());
+            if (breakable) {
+                stack.hurtAndBreak(5, player, handIn.asEquipmentSlot());
+            }
             player.startUsingItem(handIn);
             return InteractionResult.SUCCESS;
         } else {
-            DataHandler.getData(player, DataHandler.ABILITY_DATA).getAbilityMap().get(AbilityHandler.ICE_BREATH_ABILITY).end();
+            Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.ICE_BREATH_ABILITY);
+            if (ability != null && ability.isUsing()) {
+                ability.end();
+            }
         }
         return super.use(worldIn, player, handIn);
     }
@@ -43,12 +50,12 @@ public class ItemIceCrystal extends Item {
     // PORTING NOTE (1.21.1 -> 26.1.2): Item#releaseUsing now returns boolean instead of void.
     @Override
     public boolean releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-//        if (entityLiving instanceof Player) {
-//            Ability<?>iceBreathAbility = AbilityHandler.INSTANCE.getAbility(entityLiving, AbilityHandler.ICE_BREATH_ABILITY);
-//            if (iceBreathAbility != null && iceBreathAbility.isUsing()) {
-//                iceBreathAbility.end();
-//            }
-//        }
+        if (entityLiving instanceof Player player) {
+            Ability<?> iceBreathAbility = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.ICE_BREATH_ABILITY);
+            if (iceBreathAbility != null && iceBreathAbility.isUsing()) {
+                iceBreathAbility.end();
+            }
+        }
         return super.releaseUsing(stack, worldIn, entityLiving, timeLeft);
     }
 

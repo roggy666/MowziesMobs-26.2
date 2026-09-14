@@ -34,7 +34,7 @@ public final class BlockHandler {
 
     public static DeferredHolder<Block, Block> registerBlockAndItem(String name, Supplier<Block> block){
         DeferredHolder<Block, Block> blockObj = REG.register(name, block);
-        ItemHandler.REG.register(name, () -> new BlockItem(blockObj.get(), new Item.Properties().setId(net.minecraft.resources.ResourceKey.create(Registries.ITEM, MMCommon.resource(name)))));
+        ItemHandler.REG.register(name, () -> new BlockItem(blockObj.get(), new Item.Properties().useBlockDescriptionPrefix().setId(net.minecraft.resources.ResourceKey.create(Registries.ITEM, MMCommon.resource(name)))));
         return blockObj;
     }
 

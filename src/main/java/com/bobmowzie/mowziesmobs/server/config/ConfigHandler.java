@@ -662,7 +662,7 @@ public final class ConfigHandler {
         public final ModConfigSpec.BooleanValue breakable;
 
         public final ModConfigSpec.IntValue durability;
-        public int durabilityValue;
+        public int durabilityValue = 600;
 
         public final ModConfigSpec.IntValue freezeDuration;
     }
@@ -691,7 +691,7 @@ public final class ConfigHandler {
         public final ModConfigSpec.BooleanValue breakable;
 
         public final ModConfigSpec.IntValue durability;
-        public int durabilityValue;
+        public int durabilityValue = 400;
 
         public final ToolConfig toolConfig;
 

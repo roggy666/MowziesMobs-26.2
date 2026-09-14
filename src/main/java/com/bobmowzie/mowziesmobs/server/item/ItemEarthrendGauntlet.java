@@ -1,6 +1,7 @@
 package com.bobmowzie.mowziesmobs.server.item;
 
 import com.bobmowzie.mowziesmobs.client.render.item.RenderEarthrendGauntlet;
+import com.bobmowzie.mowziesmobs.server.ability.Ability;
 import com.bobmowzie.mowziesmobs.server.ability.AbilityHandler;
 import com.bobmowzie.mowziesmobs.server.capability.DataHandler;
 import com.bobmowzie.mowziesmobs.server.config.ConfigHandler;
@@ -59,13 +60,17 @@ public class ItemEarthrendGauntlet extends Item implements GeoItem {
     public InteractionResult use(Level worldIn, Player player, InteractionHand handIn) {
         ItemStack stack = player.getItemInHand(handIn);
         player.startUsingItem(handIn);
-        if (stack.getDamageValue() + 5 < stack.getMaxDamage() || ConfigHandler.COMMON.TOOLS_AND_ABILITIES.EARTHREND_GAUNTLET.breakable.get()) {
+        boolean breakable = ConfigHandler.COMMON.TOOLS_AND_ABILITIES.EARTHREND_GAUNTLET.breakable.get();
+        if (!breakable || stack.getDamageValue() + 5 < stack.getMaxDamage()) {
             if (!worldIn.isClientSide()) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.TUNNELING_ABILITY);
             player.startUsingItem(handIn);
             return InteractionResult.SUCCESS;
         }
         else {
-            DataHandler.getData(player, DataHandler.ABILITY_DATA).getAbilityMap().get(AbilityHandler.TUNNELING_ABILITY).end();
+            Ability<?> ability = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.TUNNELING_ABILITY);
+            if (ability != null && ability.isUsing()) {
+                ability.end();
+            }
         }
         return super.use(worldIn, player, handIn);
     }
