@@ -18,21 +18,29 @@ import java.util.function.Supplier;
 public class EntityRenderersEvent extends Event {
     public static class AddLayers extends EntityRenderersEvent {
         private final EntityRendererProvider.Context context;
+        private final java.util.Map<EntityType<?>, EntityRenderer<?, ?>> renderers;
+        private final java.util.Map<PlayerModelType, ? extends LivingEntityRenderer<?, ?, ?>> playerRenderers;
 
         public AddLayers(EntityRendererProvider.Context context) {
+            this(context, null, null);
+        }
+
+        public AddLayers(EntityRendererProvider.Context context, java.util.Map<EntityType<?>, EntityRenderer<?, ?>> renderers, java.util.Map<PlayerModelType, ? extends LivingEntityRenderer<?, ?, ?>> playerRenderers) {
             this.context = context;
+            this.renderers = renderers;
+            this.playerRenderers = playerRenderers;
         }
 
         public Set<PlayerModelType> getSkins() {
-            return Collections.emptySet();
+            return playerRenderers != null ? playerRenderers.keySet() : Collections.emptySet();
         }
 
         public LivingEntityRenderer<?, ?, ?> getPlayerRenderer(PlayerModelType skin) {
-            return null;
+            return playerRenderers != null ? playerRenderers.get(skin) : null;
         }
 
         public EntityRenderer<?, ?> getRenderer(EntityType<? extends LivingEntity> entityType) {
-            return null;
+            return renderers != null ? renderers.get(entityType) : null;
         }
 
         public EntityRendererProvider.Context getContext() {

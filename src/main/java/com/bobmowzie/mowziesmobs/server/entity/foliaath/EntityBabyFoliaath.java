@@ -33,6 +33,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
@@ -98,7 +99,7 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
         setDeltaMovement(0, getDeltaMovement().y, 0);
         yBodyRot = 0;
 
-        if (arePlayersCarryingMeat(getPlayersNearby(3, 3, 3, 3)) && getAnimation() == NO_ANIMATION && getHungry()) {
+        if (arePlayersCarryingMeat(getPlayersNearby(3, 3, 3, 3)) && getAnimation() == NO_ANIMATION) {
             activate.increaseTimer();
         } else {
             activate.decreaseTimer();
@@ -109,14 +110,14 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
         }
         prevActivate = activate.getTimer();
 
-        if (!level().isClientSide() && getHungry() && getAnimation() == NO_ANIMATION) {
-            for (ItemEntity meat : getMeatsNearby(0.4, 0.2, 0.4, 0.4)) {
+        if (!level().isClientSide() && getAnimation() == NO_ANIMATION) {
+            for (ItemEntity meat : getMeatsNearby(1.0, 0.5, 1.0, 1.5)) {
                 ItemStack stack = meat.getItem().split(1);
                 if (!stack.isEmpty()) {
                     setEating(stack);
                     AnimationHandler.INSTANCE.sendAnimationMessage(this, EAT_ANIMATION);
                     playSound(MMSounds.ENTITY_FOLIAATH_BABY_EAT.get(), 0.5F, 1.2F);
-                    incrementGrowth();
+                    setGrowth(getGrowth() + 60);
                     setHungry(false);
                     break;
                 }
@@ -133,26 +134,16 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
             if (tickCount % 20 == 0 && !getHungry()) {
                 incrementGrowth();
             }
-            // TODO: cleanup this poor logic
             setInfant(getGrowth() < 600);
-            if (getInfant()) {
-                setHungry(false);
-            }
-            if (getGrowth() == 600) {
+            if (getGrowth() == 600 || getGrowth() == 1200 || getGrowth() == 1800) {
                 setHungry(true);
             }
-            if (getGrowth() == 1200) {
-                setHungry(true);
-            }
-            if (getGrowth() == 1800) {
-                setHungry(true);
-            }
-            if (getGrowth() == 2400) {
+            if (getGrowth() >= 2400) {
                 EntityFoliaath adultFoliaath = new EntityFoliaath(EntityHandler.FOLIAATH.get(), level());
                 adultFoliaath.setPos(getX(), getY(), getZ());
                 adultFoliaath.setCanDespawn(false);
                 level().addFreshEntity(adultFoliaath);
-                discard() ;
+                discard();
             }
         }
     }
@@ -169,21 +160,31 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
 
     public static boolean isMeat(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        return (stack.is(ItemTags.MEAT) || stack.is(Tags.Items.FOODS_RAW_MEAT) || stack.is(Tags.Items.FOODS_COOKED_MEAT))
-                && stack.has(net.minecraft.core.component.DataComponents.FOOD);
+        if (stack.is(ItemTags.MEAT) || stack.is(Tags.Items.FOODS_RAW_MEAT) || stack.is(Tags.Items.FOODS_COOKED_MEAT)) {
+            return true;
+        }
+        if (stack.is(Items.PORKCHOP) || stack.is(Items.COOKED_PORKCHOP)
+                || stack.is(Items.BEEF) || stack.is(Items.COOKED_BEEF)
+                || stack.is(Items.CHICKEN) || stack.is(Items.COOKED_CHICKEN)
+                || stack.is(Items.MUTTON) || stack.is(Items.COOKED_MUTTON)
+                || stack.is(Items.RABBIT) || stack.is(Items.COOKED_RABBIT)
+                || stack.is(Items.ROTTEN_FLESH)) {
+            return true;
+        }
+        return stack.has(net.minecraft.core.component.DataComponents.FOOD);
     }
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (isMeat(stack)) {
-            if (getHungry() && getAnimation() == NO_ANIMATION) {
+            if (getAnimation() == NO_ANIMATION) {
                 if (!level().isClientSide()) {
-                    ItemStack eatingStack = stack.split(1);
+                    ItemStack eatingStack = stack.consumeAndReturn(1, player);
                     setEating(eatingStack);
                     AnimationHandler.INSTANCE.sendAnimationMessage(this, EAT_ANIMATION);
                     playSound(MMSounds.ENTITY_FOLIAATH_BABY_EAT.get(), 0.5F, 1.2F);
-                    incrementGrowth();
+                    setGrowth(getGrowth() + 60);
                     setHungry(false);
                 }
                 return InteractionResult.SUCCESS;

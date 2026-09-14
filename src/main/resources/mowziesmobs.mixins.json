@@ -16,7 +16,8 @@
     "client.ClientLevelMixin",
     "client.MinecraftMixin",
     "client.BossHealthOverlayMixin",
-    "client.HumanoidArmorLayerMixin"
+    "client.HumanoidArmorLayerMixin",
+    "client.EntityRenderDispatcherMixin"
   ],
   "injectors": {
     "defaultRequire": 1

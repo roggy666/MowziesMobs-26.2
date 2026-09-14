@@ -53,6 +53,9 @@ public abstract class BossHealthOverlayMixin {
                 graphics.text(this.minecraft.font, name, nameX, nameY, -1);
             }
             y += customEvent.getIncrement();
+            if (y >= graphics.guiHeight() / 3) {
+                break;
+            }
         }
 
         profiler.pop();

@@ -236,7 +236,9 @@ public abstract class GeckoPlayer implements GeoEntity {
 			modelSlim = GECKO_MODEL_THIRD_PERSON_SLIM;
 			rendererSlim = GECKO_RENDERER_THIRD_PERSON_SLIM;
 
-			getAnimatableInstanceCache().getManagerForId(renderer.getInstanceId(this, null));
+			if (renderer != null) {
+				getAnimatableInstanceCache().getManagerForId(renderer.getInstanceId(this, null));
+			}
 		}
 
 		public boolean isPlayerSlim() {
