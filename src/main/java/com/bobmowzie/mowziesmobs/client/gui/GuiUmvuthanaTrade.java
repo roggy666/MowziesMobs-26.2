@@ -52,8 +52,8 @@ public final class GuiUmvuthanaTrade extends AbstractContainerScreen<ContainerUm
     @Override
     protected void extractLabels(GuiGraphicsExtractor guiGraphics, int x, int y) {
         String title = I18n.get("entity.mowziesmobs.umvuthana.trade");
-        guiGraphics.text(font, title, (int) (imageWidth / 2f - font.width(title) / 2f + 26), 6, 4210752, false);
-        guiGraphics.text(font, I18n.get("container.inventory"), 8, imageHeight - 96 + 2, 4210752, false);
+        guiGraphics.text(font, title, (int) (imageWidth / 2f - font.width(title) / 2f + 26), 6, 0xFF404040, false);
+        guiGraphics.text(font, I18n.get("container.inventory"), 8, imageHeight - 96 + 2, 0xFF404040, false);
     }
 
     @Override

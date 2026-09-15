@@ -1,5 +1,7 @@
 package com.bobmowzie.mowziesmobs.client.particle;
 
+import com.bobmowzie.mowziesmobs.client.particle.util.CustomParticleGroup;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleGroupRegistry;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.client.particle.types.AdvancedParticleType;
 import com.bobmowzie.mowziesmobs.client.particle.types.DecalParticleType;
@@ -121,6 +123,7 @@ public class ParticleHandler {
     public static final ParticleType<RibbonParticleType> RIBBON_SQUIGGLE = registerRibbon("ribbon_squiggle");
 
     public static void registerParticles() {
+        ParticleGroupRegistry.register(CustomParticleGroup.RENDER_TYPE, CustomParticleGroup::new);
         ParticleProviderRegistry event = ParticleProviderRegistry.getInstance();
         event.register(ParticleHandler.SPARKLE, ParticleSparkle.Provider::new);
         event.register(ParticleHandler.VANILLA_CLOUD_EXTENDED, ParticleVanillaCloudExtended.Provider::new);

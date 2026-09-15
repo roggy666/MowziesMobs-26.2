@@ -69,12 +69,12 @@ public final class GuiSculptorTrade extends AbstractContainerScreen<ContainerScu
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor guiGraphics, int x, int y) {
-        guiGraphics.text(font, title, (int) (imageWidth / 2f - font.width(title) / 2f) + 30, 6, 0x404040, false);
-        guiGraphics.text(font, I18n.get("container.inventory"), 8, imageHeight - 96 + 2, 0x404040, false);
+        guiGraphics.text(font, title, (int) (imageWidth / 2f - font.width(title) / 2f) + 30, 6, 0xFF404040, false);
+        guiGraphics.text(font, I18n.get("container.inventory"), 8, imageHeight - 96 + 2, 0xFF404040, false);
         if (sculptor != null) {
             if (sculptor.isTestObstructed()) {
                 String blocked = I18n.get("entity.mowziesmobs.sculptor.trade.blocked");
-                guiGraphics.text(font, blocked, (int) (imageWidth / 2f - font.width(blocked) / 2f) + 30, 42, 0x404040, false);
+                guiGraphics.text(font, blocked, (int) (imageWidth / 2f - font.width(blocked) / 2f) + 30, 42, 0xFF404040, false);
             }
             if (prevBlocked != sculptor.isTestObstructed()) {
                 onChange(inventory);

@@ -1,5 +1,7 @@
 package com.bobmowzie.mowziesmobs.client.render;
 
+import net.minecraft.client.renderer.rendertype.OutputTarget;
+import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
@@ -120,6 +122,14 @@ public abstract class MMRenderType {
             .build();
     public static final SingleQuadParticle.Layer PARTICLE_LAYER_TRANSLUCENT_NO_DEPTH =
             new SingleQuadParticle.Layer(true, TextureAtlas.LOCATION_PARTICLES, PARTICLE_NO_DEPTH_PIPELINE);
+
+    private static final OutputTarget PARTICLES_TARGET = new OutputTarget("mowziesmobs_particles_target", () -> Minecraft.getInstance().levelRenderer.particlesTarget());
+    /** Particle-sheet render type for particles that draw their own geometry (ribbons, screen-space quads). */
+    public static final RenderType CUSTOM_PARTICLES = RenderType.create("mowziesmobs_custom_particles", RenderSetup.builder(PARTICLE_NO_DEPTH_PIPELINE)
+            .withTexture("Sampler0", TextureAtlas.LOCATION_PARTICLES)
+            .useLightmap()
+            .setOutputTarget(PARTICLES_TARGET)
+            .createRenderSetup());
 
     // FOLLOW-UP FIX: 26.1.2 composites translucent content from several separate render targets (main scene,
     // translucent entities, item entities, particles, weather, clouds - see LevelTargetBundle/transparency.json/
