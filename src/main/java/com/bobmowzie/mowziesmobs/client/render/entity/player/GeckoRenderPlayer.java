@@ -2,6 +2,7 @@ package com.bobmowzie.mowziesmobs.client.render.entity.player;
 
 import com.bobmowzie.mowziesmobs.client.model.entity.ModelGeckoPlayerThirdPerson;
 import com.bobmowzie.mowziesmobs.client.render.entity.layer.GeckoPlayerArmorLayer;
+import com.bobmowzie.mowziesmobs.client.render.entity.layer.GeckoPlayerCapeLayer;
 import com.bobmowzie.mowziesmobs.client.render.entity.layer.GeckoPlayerItemInHandLayer;
 import com.bobmowzie.mowziesmobs.client.render.entity.layer.SolarFlareLayer;
 import com.bobmowzie.mowziesmobs.server.ability.Ability;
@@ -151,11 +152,13 @@ public class GeckoRenderPlayer extends GeoObjectRenderer<GeckoPlayer, Void, GeoR
     private final GeckoPlayerItemInHandLayer itemInHandLayer = new GeckoPlayerItemInHandLayer(this);
     private final SolarFlareLayer solarFlareLayer = new SolarFlareLayer(this);
     private final GeckoPlayerArmorLayer armorLayer;
+    private final GeckoPlayerCapeLayer capeLayer;
 
     public GeckoRenderPlayer(ModelGeckoPlayerThirdPerson geoModel, EntityRendererProvider.Context context) {
         super(geoModel);
         this.geoModel = geoModel;
         this.armorLayer = new GeckoPlayerArmorLayer(context.getModelSet(), context.getEquipmentAssets());
+        this.capeLayer = new GeckoPlayerCapeLayer(context.getModelSet(), context.getEquipmentAssets());
     }
 
     public ModelGeckoPlayerThirdPerson getGeckoModel() {
@@ -395,6 +398,7 @@ public class GeckoRenderPlayer extends GeoObjectRenderer<GeckoPlayer, Void, GeoR
             // uses - see GeckoPlayerArmorLayer's own javadoc for why this sidesteps the "no live bone world
             // transform outside GeckoLib's own render pass" wall instead of fighting it.
             armorLayer.registerListeners(renderPassInfo, renderTasks, player);
+            capeLayer.registerListeners(renderPassInfo, renderTasks, player, renderPassInfo.renderState().getPartialTick());
         }
     }
 

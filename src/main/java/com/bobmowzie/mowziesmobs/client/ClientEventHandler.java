@@ -2,6 +2,7 @@ package com.bobmowzie.mowziesmobs.client;
 
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.client.gui.CustomBossBar;
+import com.bobmowzie.mowziesmobs.client.render.block.SculptorBlockHighlightRenderer;
 import com.bobmowzie.mowziesmobs.client.render.entity.player.GeckoFirstPersonRenderer;
 import com.bobmowzie.mowziesmobs.client.render.entity.player.GeckoPlayer;
 import com.bobmowzie.mowziesmobs.client.render.entity.player.GeckoRenderPlayer;
@@ -63,6 +64,7 @@ public class ClientEventHandler {
             }
         });
         HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS, FROZEN_OVERLAY_ELEMENT, (graphics, deltaTracker) -> renderFrozenOverlay(graphics));
+        SculptorBlockHighlightRenderer.register();
     }
 
     /**

@@ -18,6 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class LivingEntityRendererMixin {
+    // Frozen entities keep the pose they had when they froze
+    @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At("HEAD"))
+    private void mowziesmobs$lockFrozenPose(LivingEntity entity, LivingEntityRenderState state, float partialTick, CallbackInfo ci) {
+        FrozenRenderHandler.lockFrozenPose(entity);
+    }
+
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At("TAIL"))
     private void mowziesmobs$extractRenderState(LivingEntity entity, LivingEntityRenderState state, float partialTick, CallbackInfo ci) {
         state.setData(FrozenRenderHandler.FROZEN_RENDER_DATA_KEY, DataHandler.getData(entity, DataHandler.FROZEN_DATA).getFrozen());

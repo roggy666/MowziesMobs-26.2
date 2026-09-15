@@ -1,5 +1,7 @@
 package com.bobmowzie.mowziesmobs.client.particle;
 
+import com.bobmowzie.mowziesmobs.client.particle.util.CustomParticleGroup;
+import com.bobmowzie.mowziesmobs.client.particle.util.CustomGeometryParticle;
 import com.bobmowzie.mowziesmobs.client.particle.types.AdvancedParticleType;
 import com.bobmowzie.mowziesmobs.client.particle.types.RibbonParticleType;
 import com.bobmowzie.mowziesmobs.client.particle.util.AdvancedParticleBase;
@@ -22,20 +24,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
-// ARCHITECTURAL LIMITATION (see final report): each ribbon "segment" is a quadrilateral whose two edges are
-// independently sized (offsetDir at the trailing vs. leading control point of the segment can have different
-// lengths/directions), i.e. an arbitrary quad, not a rotated *square*. The new particle rendering pipeline
-// (QuadParticleRenderState#add(), reached via SingleQuadParticle#extract()) only accepts "world position +
-// rotation quaternion + one uniform scale" per call, which can only describe a rotated square - it cannot
-// represent this geometry. Reproducing this particle requires a custom net.minecraft.client.particle.ParticleGroup
-// (registered via NeoForge's RegisterParticleGroupsEvent) with its own render-state/renderer that writes
-// arbitrary quads into a VertexConsumer, the way this class's render() method used to. That is out of scope
-// for this file (it needs new infrastructure, likely alongside MMRenderType under client/render, which is out
-// of scope for this pass) so getGroup() below returns NO_RENDER: the particle still ticks (so ribbon-following
-// components like RibbonComponent.Trail keep working), it just doesn't draw anything until that custom
-// renderer exists. The old render() logic is kept below (renamed off @Override, with the handful of renamed
-// Camera APIs updated) so it's ready to be reconnected once a custom render pipeline exists.
-public class ParticleRibbon extends AdvancedParticleBase {
+public class ParticleRibbon extends AdvancedParticleBase implements CustomGeometryParticle {
     public Vec3[] positions;
     public Vec3[] prevPositions;
 
@@ -54,10 +43,8 @@ public class ParticleRibbon extends AdvancedParticleBase {
         super.updatePosition();
     }
 
-    // NB: not an @Override anymore - Particle#render(VertexConsumer, Camera, float) no longer exists. See the
-    // class-level comment above for why this can't currently be reconnected to the new extract()-based
-    // pipeline, and what would be needed to do so.
-    public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+    @Override
+    public void renderCustom(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
         alpha = prevAlpha + (alpha - prevAlpha) * partialTicks;
         if (alpha < 0.01) alpha = 0.01f;
         rCol = prevRed + (red - prevRed) * partialTicks;
@@ -237,11 +224,14 @@ public class ParticleRibbon extends AdvancedParticleBase {
         return getV1();
     }
 
-    // See class-level comment: ribbon geometry can't be represented by the new single-quad extraction API, so
-    // this intentionally opts out of drawing (NO_RENDER) rather than silently drawing one incorrect quad.
     @Override
     public ParticleRenderType getGroup() {
-        return ParticleRenderType.NO_RENDER;
+        return CustomParticleGroup.RENDER_TYPE;
+    }
+
+    @Override
+    public AABB getCustomBoundingBox() {
+        return getBoundingBox();
     }
 
     public static final class Provider implements ParticleProvider<RibbonParticleType> {

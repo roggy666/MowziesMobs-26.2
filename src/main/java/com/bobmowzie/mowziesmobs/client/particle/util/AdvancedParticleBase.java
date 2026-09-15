@@ -1,5 +1,7 @@
 package com.bobmowzie.mowziesmobs.client.particle.util;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.world.phys.AABB;
 import com.bobmowzie.mowziesmobs.client.model.tools.MathUtils;
 import com.bobmowzie.mowziesmobs.client.particle.ParticleRibbon;
 import com.bobmowzie.mowziesmobs.client.particle.types.AdvancedParticleType;
@@ -21,7 +23,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class AdvancedParticleBase extends SingleQuadParticle {
+public class AdvancedParticleBase extends SingleQuadParticle implements CustomGeometryParticle {
     public boolean doRender;
 
     public float airDrag;
@@ -40,12 +42,7 @@ public class AdvancedParticleBase extends SingleQuadParticle {
 
     public ParticleRibbon ribbon;
 
-    // NOTE: "screen space" particles (HUD-anchored quads built from a raw PoseStack transform, see
-    // applyTransformToVerticesScreenSpace below and ParticleComponent.ScreenSpace) have no supported
-    // rendering path in this MC version - see the extract() override for details. The fields/flag are
-    // preserved so ParticleComponent.ScreenSpace and any dependent logic keep compiling and behaving the
-    // same way up until the point of rendering; the particle will simply not draw anything while
-    // isScreenSpace is true.
+    // Screen-space particles (ParticleComponent.ScreenSpace) are anchored to the camera and drawn through CustomParticleGroup
     public boolean isScreenSpace;
     public float screenX;
     public float screenY;
@@ -79,6 +76,7 @@ public class AdvancedParticleBase extends SingleQuadParticle {
 
         for (ParticleComponent component : components) {
             component.init(this);
+            if (component instanceof ParticleComponent.ScreenSpace) isScreenSpace = true;
         }
 
         this.xo = this.x;
@@ -96,7 +94,42 @@ public class AdvancedParticleBase extends SingleQuadParticle {
 
     @Override
     public @NotNull ParticleRenderType getGroup() {
-        return ParticleRenderType.SINGLE_QUADS;
+        return isScreenSpace ? CustomParticleGroup.RENDER_TYPE : ParticleRenderType.SINGLE_QUADS;
+    }
+
+    @Override
+    public AABB getCustomBoundingBox() {
+        return getBoundingBox();
+    }
+
+    @Override
+    public boolean isAlwaysVisible() {
+        return isScreenSpace;
+    }
+
+    /** Draws the particle as a quad anchored in front of the camera (screen-space particles). */
+    @Override
+    public void renderCustom(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+        interpolateProperties(partialTicks);
+        if (!doRender) return;
+
+        Quaternionf quaternion = computeRotation(renderInfo, partialTicks);
+        Vector3f[] avector3f = new Vector3f[]{new Vector3f(-1.0F, -1.0F, 0.0F), new Vector3f(-1.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F), new Vector3f(1.0F, -1.0F, 0.0F)};
+        applyTransformToVerticesScreenSpace(renderInfo, partialTicks, avector3f, quaternion, particleScale * 0.1f);
+
+        float f7 = this.getU0();
+        float f8 = this.getU1();
+        float f5 = this.getV0();
+        float f6 = this.getV1();
+        int j = this.getLightCoords(partialTicks);
+        buffer.addVertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z()).setUv(f8, f6).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(j);
+        buffer.addVertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).setUv(f8, f5).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(j);
+        buffer.addVertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).setUv(f7, f5).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(j);
+        buffer.addVertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z()).setUv(f7, f6).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(j);
+
+        for (ParticleComponent component : components) {
+            component.postRender(this, buffer, renderInfo, partialTicks, j);
+        }
     }
 
     @Override
@@ -188,19 +221,7 @@ public class AdvancedParticleBase extends SingleQuadParticle {
         this.gravity = gravity;
     }
 
-    // NB: Particle#render(VertexConsumer, Camera, float) and Particle#getRenderBoundingBox(float) no longer
-    // exist in this MC version. Frustum culling of particles is now done directly against the particle's
-    // (x, y, z) point (see QuadParticleGroup#extractRenderState), so there is no longer a bounding-box hook
-    // for "always visible" (e.g. screen-space) particles to override - this is consistent with screen-space
-    // particles not having a supported rendering path at all right now (see class-level note above).
-    //
-    // The quaternion-selection logic below (FaceCamera / EulerAngles / OrientVector) is preserved verbatim
-    // from the old render() override; only the final vertex-emission step changed, from manually writing 4
-    // vertices into a VertexConsumer to delegating to SingleQuadParticle#extractRotatedQuad, which performs
-    // the equivalent rotate+scale+translate math internally from the same (quaternion, position, quadSize)
-    // inputs.
-    @Override
-    public void extract(QuadParticleRenderState particleTypeRenderState, Camera renderInfo, float partialTicks) {
+    protected void interpolateProperties(float partialTicks) {
         alpha = prevAlpha + (alpha - prevAlpha) * partialTicks;
         rCol = prevRed + (red - prevRed) * partialTicks;
         gCol = prevGreen + (green - prevGreen) * partialTicks;
@@ -212,13 +233,9 @@ public class AdvancedParticleBase extends SingleQuadParticle {
         }
 
         if (alpha < 0.01) alpha = 0.0f;
+    }
 
-        if (!doRender) return;
-
-        // TODO: screen-space particles have no supported rendering path anymore (see class-level note) -
-        // skip drawing rather than emitting an incorrect world-space quad.
-        if (isScreenSpace) return;
-
+    protected Quaternionf computeRotation(Camera renderInfo, float partialTicks) {
         Quaternionf quaternion = new Quaternionf(0.0F, 0.0F, 0.0F, 1.0F);
         if (rotation instanceof ParticleRotation.FaceCamera faceCameraRot) {
             if (faceCameraRot.angle == 0.0F && faceCameraRot.prevAngle == 0.0F) {
@@ -251,6 +268,14 @@ public class AdvancedParticleBase extends SingleQuadParticle {
             quaternion.mul(quatY);
             quaternion.mul(quatX);
         }
+        return quaternion;
+    }
+
+    @Override
+    public void extract(QuadParticleRenderState particleTypeRenderState, Camera renderInfo, float partialTicks) {
+        interpolateProperties(partialTicks);
+        if (!doRender || isScreenSpace) return;
+        Quaternionf quaternion = computeRotation(renderInfo, partialTicks);
 
         Vec3 cameraPos = renderInfo.position();
         float f = (float)(Mth.lerp(partialTicks, this.xo, this.x) - cameraPos.x());
@@ -274,11 +299,7 @@ public class AdvancedParticleBase extends SingleQuadParticle {
         }
     }
 
-    // Preserved for reference / potential future use: this was the old per-vertex screen-space transform used
-    // when isScreenSpace was true. It is no longer invoked from extract() because a PoseStack-based transform
-    // (which includes a (1,1,-1) reflection, not just rotation+uniform scale) cannot be represented by
-    // QuadParticleRenderState#add(), which only accepts a world position + rotation quaternion + uniform
-    // scale per quad. See the class-level note above.
+    // Camera-anchored transform for screen-space particles
     protected void applyTransformToVerticesScreenSpace(Camera renderInfo, float partialTicks, Vector3f[] avector3f, Quaternionf quaternion, float scale) {
         PoseStack posestack = new PoseStack();
         posestack.mulPose(renderInfo.rotation());

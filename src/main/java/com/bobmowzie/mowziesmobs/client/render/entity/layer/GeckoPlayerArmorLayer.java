@@ -108,7 +108,7 @@ public class GeckoPlayerArmorLayer {
     // custom mobs, and something about how it reads this rig's bone cube geometry (units, or which cube got
     // selected off a multi-cube bone) didn't hold here. Reverted to this hand-tuned constant; magnitude is a
     // visual-fit value, not derived from a fixed geometric ratio - retune here if the overlap direction reverses.
-    private static final float BODY_PIVOT_LIFT_SIXTEENTHS = 12f;
+    static final float BODY_PIVOT_LIFT_SIXTEENTHS = 12f;
 
     public void registerListeners(RenderPassInfo<GeoRenderState> renderPassInfo, SubmitNodeCollector renderTasks, AbstractClientPlayer player) {
         boolean slim = player.getSkin().model().name().equals("SLIM");

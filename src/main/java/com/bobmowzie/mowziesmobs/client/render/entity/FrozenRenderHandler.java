@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.client.render.entity;
 
+import com.bobmowzie.mowziesmobs.server.capability.FrozenData;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.capability.DataHandler;
 import com.geckolib.animatable.GeoEntity;
@@ -79,6 +80,21 @@ public class FrozenRenderHandler {
                     poseStack.popPose();
                 });
             }
+        }
+    }
+
+    /** Pins a frozen entity to the rotation and animation it had when it froze, right before its render state is extracted. */
+    public static void lockFrozenPose(LivingEntity entity) {
+        FrozenData data = DataHandler.getData(entity, DataHandler.FROZEN_DATA);
+        if (data.getFrozen() && data.getPrevFrozen()) {
+            entity.setYRot(entity.yRotO = data.getFrozenYaw());
+            entity.setXRot(entity.xRotO = data.getFrozenPitch());
+            entity.yHeadRot = entity.yHeadRotO = data.getFrozenYawHead();
+            entity.yBodyRot = entity.yBodyRotO = data.getFrozenRenderYawOffset();
+            entity.attackAnim = entity.oAttackAnim = data.getFrozenSwingProgress();
+            entity.walkAnimation.setSpeed(0);
+            entity.walkAnimation.stop();
+            entity.setShiftKeyDown(false);
         }
     }
 
