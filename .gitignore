@@ -4,3 +4,6 @@ build/
 *.txt
 .idea/
 *.iml
+run/
+runs/
+forgemini*.md

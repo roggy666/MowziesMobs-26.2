@@ -55477,7 +55477,7 @@
 							"easing": "easeInQuad"
 						},
 						"0.6": {
-							"vector": ["27.5+Math.cos((query.anim_time - 0.5) * 180) * -4 -NaN", 0, 0],
+							"vector": ["27.5+Math.cos((query.anim_time - 0.5) * 180) * -4", 0, 0],
 							"easing": "easeOutQuad"
 						},
 						"0.8": {
@@ -55508,7 +55508,7 @@
 							"easing": "easeInQuad"
 						},
 						"0.6": {
-							"vector": ["40+Math.cos((query.anim_time - 0.75) * 180) * -4 -NaN", 0, 0],
+							"vector": ["40+Math.cos((query.anim_time - 0.75) * 180) * -4", 0, 0],
 							"easing": "easeOutQuad"
 						},
 						"0.8": {
@@ -55539,7 +55539,7 @@
 							"easing": "easeInQuad"
 						},
 						"0.6": {
-							"vector": ["20+Math.cos((query.anim_time - 1) * 180) * -4 -NaN", 0, 0],
+							"vector": ["20+Math.cos((query.anim_time - 1) * 180) * -4", 0, 0],
 							"easing": "easeOutQuad"
 						},
 						"0.8": {

@@ -26,8 +26,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.event.RenderFrameEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import com.geckolib.animation.object.LoopType;
 
 public class SpawnBoulderAbility extends PlayerAbility {
@@ -60,8 +58,8 @@ public class SpawnBoulderAbility extends PlayerAbility {
 
     @Override
     public InteractionHand getActiveHand() {
-        if (getUser().getMainHandItem().is(ItemHandler.EARTHREND_GAUNTLET.get())) return InteractionHand.MAIN_HAND;
-        if (getUser().getOffhandItem().is(ItemHandler.EARTHREND_GAUNTLET.get())) return InteractionHand.OFF_HAND;
+        if (getUser().getMainHandItem().is(ItemHandler.EARTHREND_GAUNTLET)) return InteractionHand.MAIN_HAND;
+        if (getUser().getOffhandItem().is(ItemHandler.EARTHREND_GAUNTLET)) return InteractionHand.OFF_HAND;
         return InteractionHand.MAIN_HAND;
     }
 
@@ -112,7 +110,7 @@ public class SpawnBoulderAbility extends PlayerAbility {
                             new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, ParticleComponent.KeyTrack.startAndEnd(0, 40f), false)
                     });
                 }
-                getUser().playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL.get(), 1, 1f);
+                getUser().playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL, 1, 1f);
             }
 
             int size = getBoulderSize().index + 1;
@@ -163,7 +161,7 @@ public class SpawnBoulderAbility extends PlayerAbility {
             playAnimation("spawn_boulder_end", LoopType.DEFAULT, true, false);
         }
 
-        EntityBoulderProjectile boulder = new EntityBoulderProjectile(EntityHandler.BOULDER_PROJECTILE.get(), getUser().level(), getUser(), spawnBoulderBlock, spawnBoulderPos, getBoulderSize());
+        EntityBoulderProjectile boulder = new EntityBoulderProjectile(EntityHandler.BOULDER_PROJECTILE, getUser().level(), getUser(), spawnBoulderBlock, spawnBoulderPos, getBoulderSize());
         boulder.setPos(spawnBoulderPos.getX() + 0.5F, spawnBoulderPos.getY() + 2, spawnBoulderPos.getZ() + 0.5F);
         if (!getUser().level().isClientSide() && boulder.checkCanSpawn()) {
             getUser().level().addFreshEntity(boulder);
@@ -210,22 +208,22 @@ public class SpawnBoulderAbility extends PlayerAbility {
     }
 
     @Override
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        super.onRightClickBlock(event);
-        if (!event.getLevel().isClientSide()) AbilityHandler.INSTANCE.sendAbilityMessage(event.getEntity(), AbilityHandler.SPAWN_BOULDER_ABILITY);
+    public void onRightClickBlock(Player player, InteractionHand hand, BlockHitResult hitResult) {
+        super.onRightClickBlock(player, hand, hitResult);
+        if (!player.level().isClientSide()) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.SPAWN_BOULDER_ABILITY);
     }
 
     @Override
-    public void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
-        super.onRightClickEmpty(event);
-        AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(event.getEntity(), AbilityHandler.SPAWN_BOULDER_ABILITY);
+    public void onRightClickEmpty(Player player, InteractionHand hand) {
+        super.onRightClickEmpty(player, hand);
+        AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(player, AbilityHandler.SPAWN_BOULDER_ABILITY);
     }
 
     @Override
-    public void onRenderTick(RenderFrameEvent event) {
-        super.onRenderTick(event);
+    public void onRenderTick(float partialTick) {
+        super.onRenderTick(partialTick);
         if (isUsing() && getCurrentSection().sectionType == AbilitySection.AbilitySectionType.STARTUP && getTicksInUse() > 1) {
-            Vec3 playerEyes = getUser().getEyePosition(event.getPartialTick());
+            Vec3 playerEyes = getUser().getEyePosition(partialTick);
             Vec3 vec = playerEyes.subtract(lookPos).normalize();
             float yaw = (float) Math.atan2(vec.z, vec.x);
             float pitch = (float) Math.asin(vec.y);

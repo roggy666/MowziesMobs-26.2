@@ -138,7 +138,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
     public static final AbilityType<EntitySculptor, SimpleAnimationAbility<EntitySculptor>> TALK_ABILITY = new AbilityType<>("talk", (type, entity) -> new SimpleAnimationAbility<>(type, entity, RawAnimation.begin().thenPlay("talk"), 27, true) {
         @Override
         public void start() {
-            getUser().playSound(MMSounds.ENTITY_SCULPTOR_GREETING.get(), 1, 1);
+            getUser().playSound(MMSounds.ENTITY_SCULPTOR_GREETING, 1, 1);
             super.start();
         }
     });
@@ -147,14 +147,14 @@ public class EntitySculptor extends MowzieGeckoEntity {
         public void tickUsing() {
             super.tickUsing();
             if (getTicksInUse() == 10) {
-                getUser().playSound(MMSounds.ENTITY_SCULPTOR_HM.get(), 1, 1);
+                getUser().playSound(MMSounds.ENTITY_SCULPTOR_HM, 1, 1);
             }
         }
     });
     public static final AbilityType<EntitySculptor, SimpleAnimationAbility<EntitySculptor>> LAUGH_ABILITY = new AbilityType<>("laugh", (type, entity) -> new SimpleAnimationAbility<>(type, entity,RawAnimation.begin().thenPlay("laugh"), 58, true) {
         @Override
         public void start() {
-            getUser().playSound(MMSounds.ENTITY_SCULPTOR_LAUGH.get(), 1, 1);
+            getUser().playSound(MMSounds.ENTITY_SCULPTOR_LAUGH, 1, 1);
             super.start();
         }
     });
@@ -162,7 +162,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
     private static final EntityDataAccessor<ItemStack> DESIRES = SynchedEntityData.defineId(EntitySculptor.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<Boolean> IS_TRADING = SynchedEntityData.defineId(EntitySculptor.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> IS_FIGHTING = SynchedEntityData.defineId(EntitySculptor.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Optional<UUID>> TESTING_PLAYER = SynchedEntityData.defineId(EntitySculptor.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID.get());
+    private static final EntityDataAccessor<Optional<UUID>> TESTING_PLAYER = SynchedEntityData.defineId(EntitySculptor.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID);
 
     private Player customer;
     private Player testingPlayer;
@@ -197,7 +197,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
 
         TEST_HEIGHT = ConfigHandler.COMMON.MOBS.SCULPTOR.testHeight.get();
 
-        heldStaff = new ItemStack(ItemHandler.SCULPTOR_STAFF.get());
+        heldStaff = new ItemStack(ItemHandler.SCULPTOR_STAFF);
 
         if (world.isClientSide()) {
             beardChain = new GeckoDynamicChain(this);
@@ -326,7 +326,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return MMSounds.ENTITY_SCULPTOR_HURT.get();
+        return MMSounds.ENTITY_SCULPTOR_HURT;
     }
 
     @Override
@@ -335,7 +335,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
         if (!isFighting()) {
             if (isTestObstructed) {
                 if (random.nextFloat() > 0.5) {
-                    playSound(MMSounds.ENTITY_SCULPTOR_HM.get(), 1, 1);
+                    playSound(MMSounds.ENTITY_SCULPTOR_HM, 1, 1);
                 }
             }
             else {
@@ -480,7 +480,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
 //        if (level().isClientSide() && dc != null && dc.p.length > 0 && dc.p[0] != null) {
 //            for (int i = 0; i < dc.p.length; i++) {
 //                ParticleRotation.FaceCamera faceCamera = new ParticleRotation.FaceCamera(0);
-//                AdvancedParticleBase.spawnAlwaysVisibleParticle(level(), ParticleHandler.PIXEL.get(), 64, dc.p[i].x, dc.p[i].y, dc.p[i].z, 0, 0, 0, faceCamera, 1, 0.83f, 1, 0.39f, 1, 1, 1, true, false, new ParticleComponent[0]);
+//                AdvancedParticleBase.spawnAlwaysVisibleParticle(level(), ParticleHandler.PIXEL, 64, dc.p[i].x, dc.p[i].y, dc.p[i].z, 0, 0, 0, faceCamera, 1, 0.83f, 1, 0.39f, 1, 1, 1, true, false, new ParticleComponent[0]);
 //            }
 //        }
 
@@ -728,7 +728,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
                 sendAbilityMessage(PASS_TEST);
 
                 if (player instanceof ServerPlayer serverPlayer) {
-                    AdvancementHandler.SCULPTOR_CHALLENGE_TRIGGER.get().trigger(serverPlayer);
+                    AdvancementHandler.SCULPTOR_CHALLENGE_TRIGGER.trigger(serverPlayer);
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -769,13 +769,13 @@ public class EntitySculptor extends MowzieGeckoEntity {
         controller.setSoundKeyframeHandler(state -> {
             String sound = state.keyframeData().getSound();
             if (sound.equals("make_gauntlet_effects")) {
-                this.level().playSound(MMCommon.PROXY.getLocalPlayer(), getX(), getY(), getZ(), MMSounds.ENTITY_SCULPTOR_MAKE_GAUNTLET_EFFECTS.get(), SoundSource.NEUTRAL, 1, 1);
+                this.level().playSound(MMCommon.PROXY.getLocalPlayer(), getX(), getY(), getZ(), MMSounds.ENTITY_SCULPTOR_MAKE_GAUNTLET_EFFECTS, SoundSource.NEUTRAL, 1, 1);
             }
             else if (sound.equals("make_gauntlet_piece")) {
-                this.level().playSound(MMCommon.PROXY.getLocalPlayer(), getX(), getY(), getZ(), MMSounds.ENTITY_SCULPTOR_MAKE_GAUNTLET_PIECE.get(), SoundSource.NEUTRAL, 1, 0.7f + 0.6f * random.nextFloat());
+                this.level().playSound(MMCommon.PROXY.getLocalPlayer(), getX(), getY(), getZ(), MMSounds.ENTITY_SCULPTOR_MAKE_GAUNTLET_PIECE, SoundSource.NEUTRAL, 1, 0.7f + 0.6f * random.nextFloat());
             }
             else if (sound.equals("clap1")) {
-                this.level().playSound(MMCommon.PROXY.getLocalPlayer(), getX(), getY(), getZ(), MMSounds.ENTITY_SCULPTOR_CLAP.get(), SoundSource.NEUTRAL, 1, 0.7f + 0.6f * random.nextFloat());
+                this.level().playSound(MMCommon.PROXY.getLocalPlayer(), getX(), getY(), getZ(), MMSounds.ENTITY_SCULPTOR_CLAP, SoundSource.NEUTRAL, 1, 0.7f + 0.6f * random.nextFloat());
             }
         });
     }
@@ -925,7 +925,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
                 float angleInc = (float) (2f * Math.PI) / ((float) numStartBoulders * 2f);
                 float angle = angleOffset + angleInc * (i * 2) + rand.nextFloat() * angleInc;
                 Vec3 spawnBoulderPos = sculptor.pillar.position().add(new Vec3(rand.nextFloat() * 3 + 3, 0, 0).yRot(angle));
-                EntityBoulderSculptor boulderPlatform = new EntityBoulderSculptor(EntityHandler.BOULDER_SCULPTOR.get(), sculptor.level(), sculptor, Blocks.STONE.defaultBlockState(), BlockPos.ZERO, EntityGeomancyBase.GeomancyTier.MEDIUM);
+                EntityBoulderSculptor boulderPlatform = new EntityBoulderSculptor(EntityHandler.BOULDER_SCULPTOR, sculptor.level(), sculptor, Blocks.STONE.defaultBlockState(), BlockPos.ZERO, EntityGeomancyBase.GeomancyTier.MEDIUM);
                 boulderPlatform.setPos(spawnBoulderPos.add(0, 1, 0));
                 if (i == 0) boulderPlatform.setMainPath();
                 sculptor.level().addFreshEntity(boulderPlatform);
@@ -937,12 +937,12 @@ public class EntitySculptor extends MowzieGeckoEntity {
         protected void beginSection(AbilitySection section) {
             super.beginSection(section);
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.STARTUP) {
-                getUser().playSound(MMSounds.ENTITY_SCULPTOR_TEST_START.get(), 1, 1);
+                getUser().playSound(MMSounds.ENTITY_SCULPTOR_TEST_START, 1, 1);
             }
             if (!getUser().level().isClientSide() && section.sectionType == AbilitySection.AbilitySectionType.ACTIVE && spawnPillarPos != null) {
 
                 if (spawnPillarBlock == null || !EffectGeomancy.isBlockUseable(spawnPillarBlock)) spawnPillarBlock = Blocks.STONE.defaultBlockState();
-                getUser().pillar = new EntityPillar.EntityPillarSculptor(EntityHandler.PILLAR_SCULPTOR.get(), getUser().level(), getUser(), Blocks.STONE.defaultBlockState(), spawnPillarPos);
+                getUser().pillar = new EntityPillar.EntityPillarSculptor(EntityHandler.PILLAR_SCULPTOR, getUser().level(), getUser(), Blocks.STONE.defaultBlockState(), spawnPillarPos);
                 getUser().pillar.setTier(EntityGeomancyBase.GeomancyTier.SMALL);
                 getUser().pillar.setPos(spawnPillarPos.getX() + 0.5F, spawnPillarPos.getY() + 1, spawnPillarPos.getZ() + 0.5F);
                 getUser().pillar.setDoRemoveTimer(false);
@@ -1060,7 +1060,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
         @Override
         protected void playFinishingAnimation() {
             playAnimation(TEST_FAIL_END);
-            getUser().playSound(MMSounds.ENTITY_SCULPTOR_DISAPPOINT.get());
+            getUser().playSound(MMSounds.ENTITY_SCULPTOR_DISAPPOINT);
         }
     }
 
@@ -1089,10 +1089,10 @@ public class EntitySculptor extends MowzieGeckoEntity {
         public void tickUsing() {
             super.tickUsing();
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.ACTIVE && getTicksInSection() == 15) {
-                getUser().playSound(MMSounds.ENTITY_SCULPTOR_CONGRATS.get());
+                getUser().playSound(MMSounds.ENTITY_SCULPTOR_CONGRATS);
             }
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.RECOVERY && getTicksInSection() == 40) {
-                getUser().playSound(MMSounds.ENTITY_SCULPTOR_MAKE_GAUNTLET.get());
+                getUser().playSound(MMSounds.ENTITY_SCULPTOR_MAKE_GAUNTLET);
             }
 
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.RECOVERY && getTicksInSection() == 134 && !getUser().level().isClientSide()) {
@@ -1100,7 +1100,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
             }
 
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.ACTIVE && getTicksInSection() % 9 == 0) {
-                getUser().playSound(MMSounds.ENTITY_SCULPTOR_CLAP.get(), 1, 0.8f + getUser().random.nextFloat() * 0.3f);
+                getUser().playSound(MMSounds.ENTITY_SCULPTOR_CLAP, 1, 0.8f + getUser().random.nextFloat() * 0.3f);
             }
         }
 
@@ -1236,7 +1236,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
             super.tickUsing();
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.STARTUP && getTicksInSection() == 4) {
                 if (getUser().random.nextFloat() > 0.66) {
-                    getUser().playSound(MMSounds.ENTITY_SCULPTOR_ATTACK.get(), 2, 0.95f + getUser().random.nextFloat() * 0.1f);
+                    getUser().playSound(MMSounds.ENTITY_SCULPTOR_ATTACK, 2, 0.95f + getUser().random.nextFloat() * 0.1f);
                 }
             }
         }
@@ -1333,7 +1333,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
             }
 
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.RECOVERY && getTicksInSection() == 20) {
-                getUser().playSound(MMSounds.ENTITY_SCULPTOR_DEATH.get());
+                getUser().playSound(MMSounds.ENTITY_SCULPTOR_DEATH);
             }
         }
 
@@ -1342,8 +1342,8 @@ public class EntitySculptor extends MowzieGeckoEntity {
             super.beginSection(section);
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.RECOVERY) {
                 playAnimation(DEATH_END);
-                getUser().playSound(MMSounds.MISC_GROUNDHIT_1.get(), 1, 1.2f);
-                getUser().playSound(MMSounds.ENTITY_SCULPTOR_HURT.get());
+                getUser().playSound(MMSounds.MISC_GROUNDHIT_1, 1, 1.2f);
+                getUser().playSound(MMSounds.ENTITY_SCULPTOR_HURT);
             }
         }
 
@@ -1418,10 +1418,10 @@ public class EntitySculptor extends MowzieGeckoEntity {
             }
 
             if (getTicksInUse() == 8) {
-                getUser().playSound(MMSounds.ENTITY_SCULPTOR_DISAPPEAR_EFFECTS.get());
+                getUser().playSound(MMSounds.ENTITY_SCULPTOR_DISAPPEAR_EFFECTS);
             }
             if (getTicksInUse() == 15) {
-                getUser().playSound(MMSounds.ENTITY_SCULPTOR_DISAPPEAR.get());
+                getUser().playSound(MMSounds.ENTITY_SCULPTOR_DISAPPEAR);
             }
         }
 
@@ -1478,7 +1478,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
             super.beginSection(section);
             if (!getUser().level().isClientSide()) {
                 if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.STARTUP) {
-                    boulder = new EntityBoulderProjectile(EntityHandler.BOULDER_PROJECTILE.get(), getUser().level(), getUser(), Blocks.STONE.defaultBlockState(), BlockPos.ZERO, EntityGeomancyBase.GeomancyTier.SMALL);
+                    boulder = new EntityBoulderProjectile(EntityHandler.BOULDER_PROJECTILE, getUser().level(), getUser(), Blocks.STONE.defaultBlockState(), BlockPos.ZERO, EntityGeomancyBase.GeomancyTier.SMALL);
 
                     Vec3 betweenSculptorAndProjectile = getUser().guardProjectileTarget.position().subtract(getUser().position()).normalize();
                     boulder.setPos(getUser().position().add(0, getUser().getBbHeight() / 2f, 0).add(betweenSculptorAndProjectile.scale(2.0f).subtract(0, boulder.getBbHeight()/2.0f, 0)));
@@ -1489,7 +1489,7 @@ public class EntitySculptor extends MowzieGeckoEntity {
                 } else if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.ACTIVE && getBoulder() != null) {
                     if (target != null && !target.isRemoved() && target instanceof LivingEntity) {
                         AttackAbility.shootBoulderAtTarget((LivingEntity) target, prevTargetPos, getBoulder(), 0.45f);
-                        getUser().playSound(MMSounds.ENTITY_SCULPTOR_ATTACK.get(), 2, 0.95f + getUser().random.nextFloat() * 0.1f);
+                        getUser().playSound(MMSounds.ENTITY_SCULPTOR_ATTACK, 2, 0.95f + getUser().random.nextFloat() * 0.1f);
                     }
                     else {
                         getBoulder().explode();

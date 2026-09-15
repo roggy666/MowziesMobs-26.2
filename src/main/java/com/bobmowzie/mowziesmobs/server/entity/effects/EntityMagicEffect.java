@@ -23,7 +23,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
+import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.UUID;
 public abstract class EntityMagicEffect extends Entity implements ILinkedEntity {
     private LivingEntity cachedCaster;
     protected boolean hasSyncedCaster = false;
-    private static final EntityDataAccessor<Optional<UUID>> CASTER = SynchedEntityData.defineId(EntityMagicEffect.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID.get());
+    private static final EntityDataAccessor<Optional<UUID>> CASTER = SynchedEntityData.defineId(EntityMagicEffect.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID);
 
     public EntityMagicEffect(EntityType<? extends EntityMagicEffect> type, Level worldIn) {
         super(type, worldIn);
@@ -74,7 +74,7 @@ public abstract class EntityMagicEffect extends Entity implements ILinkedEntity 
             Entity entity = ((ServerLevel)this.level()).getEntity(this.getCasterID().get());
             if (entity instanceof LivingEntity) {
                 cachedCaster = (LivingEntity) entity;
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(this, MessageLinkEntities.fromEntity(this, cachedCaster));
+                NetworkHandler.sendToPlayersTrackingEntityAndSelf(this, MessageLinkEntities.fromEntity(this, cachedCaster));
             }
             return this.cachedCaster;
         } else {

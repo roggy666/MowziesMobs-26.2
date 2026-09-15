@@ -2,24 +2,28 @@ package com.bobmowzie.mowziesmobs.server.potion;
 
 import com.bobmowzie.mowziesmobs.MMCommon;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class EffectHandler {
-	public static final DeferredRegister<MobEffect> REG = DeferredRegister.create(Registries.MOB_EFFECT, MMCommon.MODID);
-	
-    public static final DeferredHolder<MobEffect, EffectSunsBlessing> SUNS_BLESSING = REG.register("suns_blessing", EffectSunsBlessing::new);
-    public static final DeferredHolder<MobEffect, EffectGeomancy> GEOMANCY = REG.register("geomancy", EffectGeomancy::new);
-    public static final DeferredHolder<MobEffect, EffectFrozen> FROZEN = REG.register("frozen", EffectFrozen::new);
-    public static final DeferredHolder<MobEffect, EffectPoisonResist> POISON_RESIST = REG.register("poison_resist", EffectPoisonResist::new);
-    public static final DeferredHolder<MobEffect, EffectSunblock> SUNBLOCK = REG.register("sunblock", EffectSunblock::new);
-    public static final DeferredHolder<MobEffect, EffectMoonsCurse> MOONS_CURSE = REG.register("moons_curse", EffectMoonsCurse::new);
-    public static final DeferredHolder<MobEffect, EffectFragility> FRAGILITY = REG.register("fragility", EffectFragility::new);
-    public static final DeferredHolder<MobEffect, EffectEclipsed> ECLIPSED = REG.register("eclipsed", EffectEclipsed::new);
+    public static final Holder<MobEffect> SUNS_BLESSING = register("suns_blessing", new EffectSunsBlessing());
+    public static final Holder<MobEffect> GEOMANCY = register("geomancy", new EffectGeomancy());
+    public static final Holder<MobEffect> FROZEN = register("frozen", new EffectFrozen());
+    public static final Holder<MobEffect> POISON_RESIST = register("poison_resist", new EffectPoisonResist());
+    public static final Holder<MobEffect> SUNBLOCK = register("sunblock", new EffectSunblock());
+    public static final Holder<MobEffect> MOONS_CURSE = register("moons_curse", new EffectMoonsCurse());
+    public static final Holder<MobEffect> FRAGILITY = register("fragility", new EffectFragility());
+    public static final Holder<MobEffect> ECLIPSED = register("eclipsed", new EffectEclipsed());
+
+    private static Holder<MobEffect> register(String name, MobEffect effect) {
+        return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, MMCommon.resource(name), effect);
+    }
+
+    public static void register() {
+    }
 
     public static void addOrCombineEffect(LivingEntity entity, Holder<MobEffect> effect, int duration, int amplifier, boolean ambient, boolean showParticles) {
         if (effect == null) return;

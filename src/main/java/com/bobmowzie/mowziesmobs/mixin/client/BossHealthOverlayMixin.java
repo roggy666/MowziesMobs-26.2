@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.mixin.client;
 
+import com.bobmowzie.mowziesmobs.client.ClientEventHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.BossHealthOverlay;
@@ -8,8 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.BossEvent;
-import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,6 +19,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Replaces vanilla boss bar extraction so that bosses with a {@link com.bobmowzie.mowziesmobs.client.gui.CustomBossBar}
+ * render their own bar (and advance the stacking offset by their own height).
+ */
 @Mixin(BossHealthOverlay.class)
 public abstract class BossHealthOverlayMixin {
     @Shadow @Final private Minecraft minecraft;
@@ -27,7 +30,7 @@ public abstract class BossHealthOverlayMixin {
     @Shadow protected abstract void extractBar(GuiGraphicsExtractor graphics, int x, int y, BossEvent event);
 
     @Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
-    private void mm$onExtractRenderState(GuiGraphicsExtractor graphics, CallbackInfo ci) {
+    private void mowziesmobs$onExtractRenderState(GuiGraphicsExtractor graphics, CallbackInfo ci) {
         if (this.events.isEmpty()) {
             return;
         }
@@ -40,11 +43,10 @@ public abstract class BossHealthOverlayMixin {
 
         for (LerpingBossEvent event : this.events.values()) {
             int x = guiWidth / 2 - 91;
-            CustomizeGuiOverlayEvent.BossEventProgress customEvent = new CustomizeGuiOverlayEvent.BossEventProgress(graphics, x, y, event);
-            customEvent.setIncrement(19);
-            NeoForge.EVENT_BUS.post(customEvent);
+            int increment = ClientEventHandler.onRenderBossBar(graphics, x, y, event);
 
-            if (!customEvent.isCanceled()) {
+            if (increment < 0) {
+                increment = 19;
                 this.extractBar(graphics, x, y, event);
                 Component name = event.getName();
                 int nameWidth = this.minecraft.font.width(name);
@@ -52,7 +54,7 @@ public abstract class BossHealthOverlayMixin {
                 int nameY = y - 9;
                 graphics.text(this.minecraft.font, name, nameX, nameY, -1);
             }
-            y += customEvent.getIncrement();
+            y += increment;
             if (y >= graphics.guiHeight() / 3) {
                 break;
             }

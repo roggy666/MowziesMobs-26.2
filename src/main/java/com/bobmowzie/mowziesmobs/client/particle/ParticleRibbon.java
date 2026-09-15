@@ -14,7 +14,6 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -260,11 +259,11 @@ public class ParticleRibbon extends AdvancedParticleBase {
         }
     }
 
-    public static void spawnRibbon(Level world, Holder<ParticleType<?>> particle, int length, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double scale, double r, double g, double b, double a, double drag, double duration, boolean emissive) {
+    public static void spawnRibbon(Level world, ParticleType<?> particle, int length, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double scale, double r, double g, double b, double a, double drag, double duration, boolean emissive) {
         spawnRibbon(world, particle, length, x, y, z, motionX, motionY, motionZ, faceCamera, yaw, pitch, roll, scale, r, g, b, a, drag, duration, emissive, new ParticleComponent[]{});
     }
 
-    public static void spawnRibbon(Level world, Holder<ParticleType<?>> particle, int length, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, ParticleComponent[] components) {
+    public static void spawnRibbon(Level world, ParticleType<?> particle, int length, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, ParticleComponent[] components) {
         ParticleRotation rotation = faceCamera ? new ParticleRotation.FaceCamera((float) 0) : new ParticleRotation.EulerAngles((float)yaw, (float)pitch, (float)roll);
         AdvancedParticleType base = new AdvancedParticleType(particle, rotation, components, (float) red, (float) green, (float) blue, (float) alpha, (float) scale, (float) duration, (float) airDrag, emissive, false);
         world.addParticle(new RibbonParticleType(base, length), x, y, z, motionX, motionY, motionZ);

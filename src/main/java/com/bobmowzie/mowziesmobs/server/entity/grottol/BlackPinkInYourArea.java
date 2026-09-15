@@ -4,7 +4,7 @@ import com.bobmowzie.mowziesmobs.server.message.MessageBlackPinkInYourArea;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
+import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 
 import java.util.function.BiConsumer;
 
@@ -13,7 +13,7 @@ public final class BlackPinkInYourArea implements BiConsumer<Level, AbstractMine
 
     @Override
     public void accept(Level world, AbstractMinecart minecart) {
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(minecart, MessageBlackPinkInYourArea.fromMinecraft(minecart));
+        NetworkHandler.sendToPlayersTrackingEntityAndSelf(minecart, MessageBlackPinkInYourArea.fromMinecraft(minecart));
         if (!world.isClientSide()) {
             Entity rider = minecart.getFirstPassenger();
             if (rider instanceof EntityGrottol grottol) {

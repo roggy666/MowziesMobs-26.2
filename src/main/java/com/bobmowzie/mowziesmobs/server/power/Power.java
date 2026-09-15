@@ -1,14 +1,14 @@
 package com.bobmowzie.mowziesmobs.server.power;
 
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.InteractionHand;
 import com.bobmowzie.mowziesmobs.server.capability.PlayerData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.List;
 
@@ -20,43 +20,43 @@ public abstract class Power {
         this.data = data;
     }
 
-    public void tick(PlayerTickEvent event) {
+    public void tick(Player player) {
 
     }
 
-    public void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
+    public void onRightClickEmpty(Player player, InteractionHand hand) {
 
     }
 
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+    public void onRightClickBlock(Player player, InteractionHand hand, BlockHitResult hitResult) {
 
     }
 
-    public void onRightClickWithItem(PlayerInteractEvent.RightClickItem event) {
+    public void onRightClickWithItem(Player player, InteractionHand hand) {
 
     }
 
-    public void onRightClickEntity(PlayerInteractEvent.EntityInteract event) {
+    public void onRightClickEntity(Player player, InteractionHand hand, Entity target) {
 
     }
 
-    public void onLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
+    public void onLeftClickEmpty(Player player) {
 
     }
 
-    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+    public void onLeftClickBlock(Player player, BlockPos pos, Direction direction) {
 
     }
 
-    public void onLeftClickEntity(AttackEntityEvent event) {
+    public void onLeftClickEntity(Player player, Entity target) {
 
     }
 
-    public void onTakeDamage(LivingDamageEvent.Post event) {
+    public void onTakeDamage(Player player, DamageSource source, float damage) {
 
     }
 
-    public void onJump(LivingEvent.LivingJumpEvent event) {
+    public void onJump(Player player) {
 
     }
 

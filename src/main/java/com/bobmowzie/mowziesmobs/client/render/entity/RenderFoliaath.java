@@ -13,13 +13,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 
-/**
- * PORTING NOTE (see PORTING_NOTES.md "MobRenderer-based ones using LLibrary models" section): {@link ModelFoliaath}
- * extends LLibrary's {@code AdvancedModelBase}, which can no longer be the model type parameter of
- * {@code MobRenderer<T,S,M>} - ported to a plain {@code EntityRenderer<T,XRenderState>} carrying a live entity
- * reference, same pattern as the other LLibrary-model renderers in this scope.
- */
-public class RenderFoliaath extends EntityRenderer<EntityFoliaath, RenderFoliaath.FoliaathRenderState> {
+public class RenderFoliaath extends MowzieLLibraryRenderer<EntityFoliaath, RenderFoliaath.FoliaathRenderState> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/entity/foliaath.png");
 
     private final ModelFoliaath<EntityFoliaath> model = new ModelFoliaath<>();
@@ -37,22 +31,20 @@ public class RenderFoliaath extends EntityRenderer<EntityFoliaath, RenderFoliaat
     public void extractRenderState(EntityFoliaath entity, FoliaathRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
 
-        state.entity = entity;
-        state.yRot = entity.getYRot(partialTicks);
     }
 
     @Override
     public void submit(FoliaathRenderState state, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
+        setupRotations(poseStack, state);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0F, -1.501F, 0.0F);
 
         renderTasks.submitCustomGeometry(poseStack, model.renderType(TEXTURE), (pose, vertexConsumer) -> {
             poseStack.pushPose();
             poseStack.last().set(pose);
-            model.setupAnim(state.entity, 0, 0, state.ageInTicks, 0, 0);
-            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, -1);
+            model.setupAnim(state.entity, state.limbSwing, state.limbSwingAmount, state.ageInTicks, state.headYaw, state.headPitch);
+            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, state.overlay, -1);
             poseStack.popPose();
         });
 
@@ -61,8 +53,6 @@ public class RenderFoliaath extends EntityRenderer<EntityFoliaath, RenderFoliaat
         super.submit(state, poseStack, renderTasks, cameraState);
     }
 
-    public static class FoliaathRenderState extends EntityRenderState {
-        public EntityFoliaath entity;
-        public float yRot;
+    public static class FoliaathRenderState extends MowzieLLibraryRenderer.State<EntityFoliaath> {
     }
 }

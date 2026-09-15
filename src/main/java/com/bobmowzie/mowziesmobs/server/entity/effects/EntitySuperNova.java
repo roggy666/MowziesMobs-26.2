@@ -41,7 +41,7 @@ public class EntitySuperNova extends EntityMagicEffect {
 
         if (tickCount == 1) {
             EntityCameraShake.cameraShake(level(), position(), 30, 0.05f, 10, 30);
-            playSound(MMSounds.ENTITY_SUPERNOVA_END.get(), 3f, 1f);
+            playSound(MMSounds.ENTITY_SUPERNOVA_END, 3f, 1f);
             if (level().isClientSide()) {
                 float scale = 8.2f;
                 for (int i = 0; i < 15; i++) {

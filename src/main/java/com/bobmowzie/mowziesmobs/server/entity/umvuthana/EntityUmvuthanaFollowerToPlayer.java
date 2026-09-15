@@ -56,7 +56,7 @@ public class EntityUmvuthanaFollowerToPlayer extends EntityUmvuthanaFollower<Pla
     @Override
     protected void defineSynchedData(@NotNull SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(MASK_STORED, new ItemStack(ItemHandler.UMVUTHANA_MASK_FURY.get(), 1));
+        builder.define(MASK_STORED, new ItemStack(ItemHandler.UMVUTHANA_MASK_FURY, 1));
     }
 
     @Override
@@ -104,7 +104,7 @@ public class EntityUmvuthanaFollowerToPlayer extends EntityUmvuthanaFollower<Pla
     private void deactivate() {
         if (getActive() && getActiveAbilityType() != DEACTIVATE_ABILITY) {
             AbilityHandler.INSTANCE.sendAbilityMessage(this, DEACTIVATE_ABILITY);
-            playSound(MMSounds.ENTITY_UMVUTHANA_RETRACT.get(), 1, 1);
+            playSound(MMSounds.ENTITY_UMVUTHANA_RETRACT, 1, 1);
         }
     }
 

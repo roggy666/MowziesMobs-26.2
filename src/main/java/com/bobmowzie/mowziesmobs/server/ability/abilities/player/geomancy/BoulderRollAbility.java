@@ -1,12 +1,12 @@
 package com.bobmowzie.mowziesmobs.server.ability.abilities.player.geomancy;
 
+import net.minecraft.world.InteractionHand;
 import com.bobmowzie.mowziesmobs.client.model.tools.geckolib.MowzieGeoBone;
 import com.bobmowzie.mowziesmobs.client.model.tools.geckolib.MowzieGeoModel;
 import com.bobmowzie.mowziesmobs.client.render.entity.player.GeckoPlayer;
 import com.bobmowzie.mowziesmobs.server.ability.*;
 import com.bobmowzie.mowziesmobs.server.potion.EffectHandler;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animation.state.AnimationTest;
 import com.geckolib.animation.object.PlayState;
@@ -57,9 +57,9 @@ public class BoulderRollAbility extends PlayerAbility {
     }
 
     @Override
-    public void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
-        super.onRightClickEmpty(event);
-        AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(event.getEntity(), AbilityHandler.BOULDER_ROLL_ABILITY);
+    public void onRightClickEmpty(Player player, InteractionHand hand) {
+        super.onRightClickEmpty(player, hand);
+        AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(player, AbilityHandler.BOULDER_ROLL_ABILITY);
     }
 
     @Override

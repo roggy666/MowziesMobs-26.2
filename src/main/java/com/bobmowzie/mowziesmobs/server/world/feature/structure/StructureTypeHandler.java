@@ -4,33 +4,31 @@ import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.config.ConfigHandler;
 import com.bobmowzie.mowziesmobs.server.world.BiomeChecker;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public class StructureTypeHandler {
-    public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPE_REG = DeferredRegister.create(Registries.STRUCTURE_TYPE, MMCommon.MODID);
-    public static final DeferredRegister<StructurePieceType> STRUCTURE_PIECE_TYPE_REG = DeferredRegister.create(Registries.STRUCTURE_PIECE, MMCommon.MODID);
+    public static final StructureType<WroughtnautChamberStructure> WROUGHTNAUT_CHAMBER = registerStructureType("wrought_chamber", () -> WroughtnautChamberStructure.CODEC);
+    public static final StructurePieceType WROUGHTNAUT_CHAMBER_PIECE = registerStructurePieceType("wrought_chamber_template", WroughtnautChamberPieces.Piece::new);
 
-    public static DeferredHolder<StructureType<?>, StructureType<WroughtnautChamberStructure>> WROUGHTNAUT_CHAMBER = registerStructureType("wrought_chamber", () -> () -> WroughtnautChamberStructure.CODEC);
-    public static DeferredHolder<StructurePieceType, StructurePieceType> WROUGHTNAUT_CHAMBER_PIECE = registerStructurePieceType("wrought_chamber_template", WroughtnautChamberPieces.Piece::new);
+    public static final StructureType<UmvuthanaGroveStructure> UMVUTHANA_GROVE = registerStructureType("umvuthana_grove", () -> UmvuthanaGroveStructure.CODEC);
+    public static final StructurePieceType UMVUTHANA_GROVE_PIECE = registerStructurePieceType("umvuthana_grove_template", UmvuthanaGrovePieces.Piece::new);
+    public static final StructurePieceType UMVUTHANA_FIREPIT = registerStructurePieceType("umvuthana_firepit", UmvuthanaGrovePieces.FirepitPiece::new);
 
-    public static DeferredHolder<StructureType<?>, StructureType<UmvuthanaGroveStructure>> UMVUTHANA_GROVE = registerStructureType("umvuthana_grove", () -> () -> UmvuthanaGroveStructure.CODEC);
-    public static DeferredHolder<StructurePieceType, StructurePieceType> UMVUTHANA_GROVE_PIECE = registerStructurePieceType("umvuthana_grove_template", UmvuthanaGrovePieces.Piece::new);
-    public static DeferredHolder<StructurePieceType, StructurePieceType> UMVUTHANA_FIREPIT = registerStructurePieceType("umvuthana_firepit", UmvuthanaGrovePieces.FirepitPiece::new);
+    public static final StructureType<FrostmawStructure> FROSTMAW = registerStructureType("frostmaw_spawn", () -> FrostmawStructure.CODEC);
+    public static final StructurePieceType FROSTMAW_PIECE = registerStructurePieceType("frostmaw_template", FrostmawPieces.FrostmawPiece::new);
 
-    public static DeferredHolder<StructureType<?>, StructureType<FrostmawStructure>> FROSTMAW = registerStructureType("frostmaw_spawn", () -> () -> FrostmawStructure.CODEC);
-    public static DeferredHolder<StructurePieceType, StructurePieceType> FROSTMAW_PIECE = registerStructurePieceType("frostmaw_template", FrostmawPieces.FrostmawPiece::new);
-
-    public static DeferredHolder<StructureType<?>, StructureType<MonasteryStructure>> MONASTERY = registerStructureType("monastery", () -> () -> MonasteryStructure.CODEC);
+    public static final StructureType<MonasteryStructure> MONASTERY = registerStructureType("monastery", () -> MonasteryStructure.CODEC);
 
     public static BiomeChecker FERROUS_WROUGHTNAUT_BIOME_CHECKER;
     public static final Set<Holder<Biome>> FERROUS_WROUGHTNAUT_BIOMES = new HashSet<>();
@@ -41,12 +39,22 @@ public class StructureTypeHandler {
     public static BiomeChecker SCULPTOR_BIOME_CHECKER;
     public static final Set<Holder<Biome>> SCULPTOR_BIOMES = new HashSet<>();
 
-    private static <T extends Structure> DeferredHolder<StructureType<?>, StructureType<T>> registerStructureType(String name, Supplier<StructureType<T>> structure) {
-        return STRUCTURE_TYPE_REG.register(name, structure);
+    private static <T extends Structure> StructureType<T> registerStructureType(String name, StructureType<T> structure) {
+        return Registry.register(BuiltInRegistries.STRUCTURE_TYPE, MMCommon.resource(name), structure);
     }
 
-    private static DeferredHolder<StructurePieceType, StructurePieceType> registerStructurePieceType(String name, StructurePieceType structurePieceType) {
-        return STRUCTURE_PIECE_TYPE_REG.register(name, () -> structurePieceType);
+    private static StructurePieceType registerStructurePieceType(String name, StructurePieceType structurePieceType) {
+        return Registry.register(BuiltInRegistries.STRUCTURE_PIECE, MMCommon.resource(name), structurePieceType);
+    }
+
+    public static void register() {
+        BiomeModifications.create(MMCommon.resource("structure_biomes")).add(ModificationPhase.ADDITIONS, ctx -> true, (ctx, modifier) -> addBiomeSpawns(ctx.getBiomeHolder()));
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
+            FERROUS_WROUGHTNAUT_BIOMES.clear();
+            UMVUTHI_BIOMES.clear();
+            FROSTMAW_BIOMES.clear();
+            SCULPTOR_BIOMES.clear();
+        });
     }
 
     public static void addBiomeSpawns(Holder<Biome> biomeKey) {

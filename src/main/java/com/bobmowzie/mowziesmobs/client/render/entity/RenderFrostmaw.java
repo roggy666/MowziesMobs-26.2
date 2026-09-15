@@ -33,14 +33,14 @@ import net.minecraft.world.phys.Vec3;
  * {@code AdvancedModelRenderer}, always addressable). Kept in {@link #submit} in the same relative position/timing
  * as the old post-{@code super.render()} call.
  */
-public class RenderFrostmaw extends EntityRenderer<EntityFrostmaw, RenderFrostmaw.FrostmawRenderState> {
+public class RenderFrostmaw extends MowzieLLibraryRenderer<EntityFrostmaw, RenderFrostmaw.FrostmawRenderState> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/entity/frostmaw.png");
 
     private final ModelFrostmaw<EntityFrostmaw> model = new ModelFrostmaw<>();
     private final ItemLayer<FrostmawRenderState, EntityFrostmaw> iceCrystalHandLayer = new ItemLayer<>(
-            state -> state.entity, model.iceCrystalHand, () -> ItemHandler.ICE_CRYSTAL.get().getDefaultInstance(), ItemDisplayContext.GROUND);
+            state -> state.entity, model.iceCrystalHand, () -> ItemHandler.ICE_CRYSTAL.getDefaultInstance(), ItemDisplayContext.GROUND);
     private final ItemLayer<FrostmawRenderState, EntityFrostmaw> iceCrystalLayer = new ItemLayer<>(
-            state -> state.entity, model.iceCrystal, () -> ItemHandler.ICE_CRYSTAL.get().getDefaultInstance(), ItemDisplayContext.GROUND);
+            state -> state.entity, model.iceCrystal, () -> ItemHandler.ICE_CRYSTAL.getDefaultInstance(), ItemDisplayContext.GROUND);
 
     public RenderFrostmaw(EntityRendererProvider.Context mgr) {
         super(mgr);
@@ -55,8 +55,6 @@ public class RenderFrostmaw extends EntityRenderer<EntityFrostmaw, RenderFrostma
     public void extractRenderState(EntityFrostmaw entity, FrostmawRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
 
-        state.entity = entity;
-        state.yRot = entity.getYRot(partialTicks);
     }
 
     @Override
@@ -64,15 +62,15 @@ public class RenderFrostmaw extends EntityRenderer<EntityFrostmaw, RenderFrostma
         EntityFrostmaw entity = state.entity;
 
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
+        setupRotations(poseStack, state);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0F, -1.501F, 0.0F);
 
         renderTasks.submitCustomGeometry(poseStack, model.renderType(TEXTURE), (pose, vertexConsumer) -> {
             poseStack.pushPose();
             poseStack.last().set(pose);
-            model.setupAnim(entity, 0, 0, state.ageInTicks, 0, 0);
-            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, -1);
+            model.setupAnim(entity, state.limbSwing, state.limbSwingAmount, state.ageInTicks, state.headYaw, state.headPitch);
+            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, state.overlay, -1);
             poseStack.popPose();
         });
 
@@ -89,7 +87,7 @@ public class RenderFrostmaw extends EntityRenderer<EntityFrostmaw, RenderFrostma
             // pose, since the actual draw's own setupAnim call above runs later (deferred, inside
             // submitCustomGeometry's callback) - see this class's javadoc. Matches the original's timing (read
             // immediately after the model was posed for rendering) for the common single-instance-on-screen case.
-            model.setupAnim(entity, 0, 0, state.ageInTicks, 0, 0);
+            model.setupAnim(entity, state.limbSwing, state.limbSwingAmount, state.ageInTicks, state.headYaw, state.headPitch);
             Vec3 rightHandPos = MowzieRenderUtils.getWorldPosFromModel(entity, state.yRot, model.rightHandSocket);
             Vec3 leftHandPos = MowzieRenderUtils.getWorldPosFromModel(entity, state.yRot, model.leftHandSocket);
             Vec3 mouthPos = MowzieRenderUtils.getWorldPosFromModel(entity, state.yRot, model.mouthSocket);
@@ -99,8 +97,6 @@ public class RenderFrostmaw extends EntityRenderer<EntityFrostmaw, RenderFrostma
         }
     }
 
-    public static class FrostmawRenderState extends EntityRenderState {
-        public EntityFrostmaw entity;
-        public float yRot;
+    public static class FrostmawRenderState extends MowzieLLibraryRenderer.State<EntityFrostmaw> {
     }
 }

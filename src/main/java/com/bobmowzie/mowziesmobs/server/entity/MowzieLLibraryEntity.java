@@ -1,9 +1,12 @@
 package com.bobmowzie.mowziesmobs.server.entity;
 
+import net.minecraft.server.level.ServerEntity;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import com.ilexiconn.llibrary.server.animation.Animation;
 import com.ilexiconn.llibrary.server.animation.AnimationHandler;
 import com.ilexiconn.llibrary.server.animation.IAnimatedEntity;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -82,16 +85,19 @@ public abstract class MowzieLLibraryEntity extends MowzieEntity implements IAnim
         return 20;
     }
 
+    // The current animation (index + tick) is packed into the spawn packet's data field so that players that start
+    // tracking this entity mid-animation see the right pose
     @Override
-    public void writeSpawnData(@NotNull RegistryFriendlyByteBuf buffer) {
-        buffer.writeInt(ArrayUtils.indexOf(this.getAnimations(), this.getAnimation()));
-        buffer.writeInt(this.getAnimationTick());
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(@NotNull ServerEntity serverEntity) {
+        int animOrdinal = ArrayUtils.indexOf(this.getAnimations(), this.getAnimation());
+        return new ClientboundAddEntityPacket(this, serverEntity, ((animOrdinal + 1) << 16) | (this.getAnimationTick() & 0xFFFF));
     }
 
     @Override
-    public void readSpawnData(@NotNull RegistryFriendlyByteBuf buffer) {
-        int animOrdinal = buffer.readInt();
-        int animTick = buffer.readInt();
+    public void recreateFromPacket(@NotNull ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        int animOrdinal = (packet.getData() >>> 16) - 1;
+        int animTick = packet.getData() & 0xFFFF;
         this.setAnimation(animOrdinal == -1 ? IAnimatedEntity.NO_ANIMATION : this.getAnimations()[animOrdinal]);
         this.setAnimationTick(animTick);
     }

@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.entity.foliaath;
 
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import com.bobmowzie.mowziesmobs.client.model.tools.ControlledAnimation;
 import com.bobmowzie.mowziesmobs.server.ai.animation.AnimationBabyFoliaathEatAI;
 import com.bobmowzie.mowziesmobs.server.entity.EntityHandler;
@@ -40,7 +41,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
         }
 
         if (activate.getTimer() == 1 && prevActivate - activate.getTimer() < 0) {
-            playSound(MMSounds.ENTITY_FOLIAATH_GRUNT.get(), 0.5F, 1.5F);
+            playSound(MMSounds.ENTITY_FOLIAATH_GRUNT, 0.5F, 1.5F);
         }
         prevActivate = activate.getTimer();
 
@@ -116,7 +116,7 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
                 if (!stack.isEmpty()) {
                     setEating(stack);
                     AnimationHandler.INSTANCE.sendAnimationMessage(this, EAT_ANIMATION);
-                    playSound(MMSounds.ENTITY_FOLIAATH_BABY_EAT.get(), 0.5F, 1.2F);
+                    playSound(MMSounds.ENTITY_FOLIAATH_BABY_EAT, 0.5F, 1.2F);
                     setGrowth(getGrowth() + 60);
                     setHungry(false);
                     break;
@@ -139,7 +139,7 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
                 setHungry(true);
             }
             if (getGrowth() >= 2400) {
-                EntityFoliaath adultFoliaath = new EntityFoliaath(EntityHandler.FOLIAATH.get(), level());
+                EntityFoliaath adultFoliaath = new EntityFoliaath(EntityHandler.FOLIAATH, level());
                 adultFoliaath.setPos(getX(), getY(), getZ());
                 adultFoliaath.setCanDespawn(false);
                 level().addFreshEntity(adultFoliaath);
@@ -160,7 +160,7 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
 
     public static boolean isMeat(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        if (stack.is(ItemTags.MEAT) || stack.is(Tags.Items.FOODS_RAW_MEAT) || stack.is(Tags.Items.FOODS_COOKED_MEAT)) {
+        if (stack.is(ItemTags.MEAT) || stack.is(ConventionalItemTags.RAW_MEAT_FOODS) || stack.is(ConventionalItemTags.COOKED_MEAT_FOODS)) {
             return true;
         }
         if (stack.is(Items.PORKCHOP) || stack.is(Items.COOKED_PORKCHOP)
@@ -183,7 +183,7 @@ public class EntityBabyFoliaath extends MowzieLLibraryEntity {
                     ItemStack eatingStack = stack.consumeAndReturn(1, player);
                     setEating(eatingStack);
                     AnimationHandler.INSTANCE.sendAnimationMessage(this, EAT_ANIMATION);
-                    playSound(MMSounds.ENTITY_FOLIAATH_BABY_EAT.get(), 0.5F, 1.2F);
+                    playSound(MMSounds.ENTITY_FOLIAATH_BABY_EAT, 0.5F, 1.2F);
                     setGrowth(getGrowth() + 60);
                     setHungry(false);
                 }

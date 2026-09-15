@@ -108,20 +108,20 @@ public class EntityBluff extends MowzieGeckoEntity {
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource p_21239_) {
-        return MMSounds.ENTITY_BLUFF_HURT.get();
+        return MMSounds.ENTITY_BLUFF_HURT;
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
-        playSound(MMSounds.ENTITY_BLUFF_DEATH.get(), 1, 1.1f);
+        playSound(MMSounds.ENTITY_BLUFF_DEATH, 1, 1.1f);
         return null;
     }
 
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() {
-        return MMSounds.ENTITY_BLUFF_IDLE.get();
+        return MMSounds.ENTITY_BLUFF_IDLE;
     }
 
     @Override
@@ -311,7 +311,7 @@ public class EntityBluff extends MowzieGeckoEntity {
                 prevTargetPos = entityTarget.position().add(0, entityTarget.getBbHeight() / 2.0, 0);
             }
             playAnimation(ATTACK_START_ANIMATION);
-            getUser().playSound(MMSounds.ENTITY_BLUFF_ATTACK.get(), 1, 1.2f);
+            getUser().playSound(MMSounds.ENTITY_BLUFF_ATTACK, 1, 1.2f);
         }
 
         @Override
@@ -331,8 +331,7 @@ public class EntityBluff extends MowzieGeckoEntity {
                 fallSpeed -= 2;
                 fallSpeed = Math.max(fallSpeed, -7);
                 getUser().setDeltaMovement(0, fallSpeed, 0);
-                // FIXME 26.1.2 port: Entity#hasImpulse was removed entirely with no direct replacement found;
-                // setDeltaMovement above should still apply the velocity, just without this manual sync flag.
+                getUser().needsSync = true;
             }
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.MISC) {
                 if (getUser().onGround()) {
@@ -353,7 +352,7 @@ public class EntityBluff extends MowzieGeckoEntity {
         protected void beginSection(AbilitySection section) {
             super.beginSection(section);
             if (section.sectionType == AbilitySection.AbilitySectionType.ACTIVE) {
-                getUser().playSound(MMSounds.EFFECT_GEOMANCY_HIT_MEDIUM.get(0).get(), 1, 1.2f);
+                getUser().playSound(MMSounds.EFFECT_GEOMANCY_HIT_MEDIUM.get(0), 1, 1.2f);
                 if (!getLevel().isClientSide()) {
                     shootFissureAtTarget(getUser().getTarget(), prevTargetPos, 0.1f);
 
@@ -381,7 +380,7 @@ public class EntityBluff extends MowzieGeckoEntity {
         }
 
         public void shootFissureAtTarget(LivingEntity target, Vec3 prevTargetPos, float timeScale) {
-            EntityFissure fissure = new EntityFissure(EntityHandler.FISSURE.get(), getLevel());
+            EntityFissure fissure = new EntityFissure(EntityHandler.FISSURE, getLevel());
             fissure.setOwner(getUser());
             fissure.setPos(getUser().position());
 

@@ -2,17 +2,15 @@ package com.bobmowzie.mowziesmobs.server.block.entity;
 
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.block.BlockHandler;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.Set;
 
 public final class BlockEntityHandler {
+    public static final BlockEntityType<GongBlockEntity> GONG_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, MMCommon.resource("gong_entity"), new BlockEntityType<>(GongBlockEntity::new, Set.of(BlockHandler.GONG)));
 
-    public static final DeferredRegister<BlockEntityType<?>> REG = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MMCommon.MODID);
-
-    // PORTING NOTE (1.21.1 -> 26.1.2): BlockEntityType.Builder is gone (confirmed against real 26.1.2
-    // BlockEntityType source - it now only has direct public constructors, e.g.
-    // BlockEntityType(BlockEntitySupplier<? extends T>, Block...), no more Builder.of(...).build(datafixerType)).
-    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<GongBlockEntity>> GONG_BLOCK_ENTITY = REG.register("gong_entity", () -> new BlockEntityType<>(GongBlockEntity::new, java.util.Set.of(BlockHandler.GONG.get())));
+    public static void register() {
+    }
 }

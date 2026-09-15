@@ -44,7 +44,7 @@ public class FrostmawPieces {
         }
 
         public FrostmawPiece(StructureTemplateManager templateManagerIn, Identifier resourceLocationIn, BlockPos pos, Rotation rotationIn) {
-            super(StructureTypeHandler.FROSTMAW_PIECE.get(), 0, templateManagerIn, resourceLocationIn, resourceLocationIn.toString(), makeSettings(rotationIn, resourceLocationIn), makePosition(resourceLocationIn, pos));
+            super(StructureTypeHandler.FROSTMAW_PIECE, 0, templateManagerIn, resourceLocationIn, resourceLocationIn.toString(), makeSettings(rotationIn, resourceLocationIn), makePosition(resourceLocationIn, pos));
         }
 
 
@@ -53,7 +53,7 @@ public class FrostmawPieces {
         // is the direct raw-String replacement, defaulting to Rotation.NONE (as used elsewhere in this codebase,
         // e.g. WroughtnautChamberPieces) since "Rot" is always written by addAdditionalSaveData in practice.
         public FrostmawPiece(StructurePieceSerializationContext context, CompoundTag tag) {
-            super(StructureTypeHandler.FROSTMAW_PIECE.get(), tag, context.structureTemplateManager(), (resourceLocation) -> makeSettings(Rotation.valueOf(tag.getStringOr("Rot", Rotation.NONE.name())), resourceLocation));
+            super(StructureTypeHandler.FROSTMAW_PIECE, tag, context.structureTemplateManager(), (resourceLocation) -> makeSettings(Rotation.valueOf(tag.getStringOr("Rot", Rotation.NONE.name())), resourceLocation));
         }
 
         /**

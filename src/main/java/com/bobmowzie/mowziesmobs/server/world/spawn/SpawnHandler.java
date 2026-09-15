@@ -47,47 +47,47 @@ public class SpawnHandler {
     };
 
     static {
-        SPAWN_CONFIGS.put(EntityHandler.FOLIAATH.get(), ConfigHandler.COMMON.MOBS.FOLIAATH.spawnConfig);
-        SPAWN_CONFIGS.put(EntityHandler.UMVUTHANA_RAPTOR.get(), ConfigHandler.COMMON.MOBS.UMVUTHANA.spawnConfig);
-        SPAWN_CONFIGS.put(EntityHandler.LANTERN.get(), ConfigHandler.COMMON.MOBS.LANTERN.spawnConfig);
-        SPAWN_CONFIGS.put(EntityHandler.NAGA.get(), ConfigHandler.COMMON.MOBS.NAGA.spawnConfig);
-        SPAWN_CONFIGS.put(EntityHandler.GROTTOL.get(), ConfigHandler.COMMON.MOBS.GROTTOL.spawnConfig);
-        SPAWN_CONFIGS.put(EntityHandler.BLUFF.get(), ConfigHandler.COMMON.MOBS.BLUFF.spawnConfig);
-        SPAWN_CONFIGS.put(EntityHandler.ELOKOSA_HOWLER.get(), ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig);
+        SPAWN_CONFIGS.put(EntityHandler.FOLIAATH, ConfigHandler.COMMON.MOBS.FOLIAATH.spawnConfig);
+        SPAWN_CONFIGS.put(EntityHandler.UMVUTHANA_RAPTOR, ConfigHandler.COMMON.MOBS.UMVUTHANA.spawnConfig);
+        SPAWN_CONFIGS.put(EntityHandler.LANTERN, ConfigHandler.COMMON.MOBS.LANTERN.spawnConfig);
+        SPAWN_CONFIGS.put(EntityHandler.NAGA, ConfigHandler.COMMON.MOBS.NAGA.spawnConfig);
+        SPAWN_CONFIGS.put(EntityHandler.GROTTOL, ConfigHandler.COMMON.MOBS.GROTTOL.spawnConfig);
+        SPAWN_CONFIGS.put(EntityHandler.BLUFF, ConfigHandler.COMMON.MOBS.BLUFF.spawnConfig);
+        SPAWN_CONFIGS.put(EntityHandler.ELOKOSA_HOWLER, ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig);
     }
 
     public static void registerSpawnPlacementTypes() {
-        SpawnPlacements.register(EntityHandler.FOLIAATH.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
-        SpawnPlacements.register(EntityHandler.LANTERN.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
-        SpawnPlacements.register(EntityHandler.UMVUTHANA_RAPTOR.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
-        SpawnPlacements.register(EntityHandler.NAGA.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
-        SpawnPlacements.register(EntityHandler.GROTTOL.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
-        SpawnPlacements.register(EntityHandler.UMVUTHANA_CRANE.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
-        SpawnPlacements.register(EntityHandler.BLUFF.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
-        SpawnPlacements.register(EntityHandler.ELOKOSA_HOWLER.get(), MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.FOLIAATH, MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.LANTERN, MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.UMVUTHANA_RAPTOR, MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.NAGA, MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.GROTTOL, MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.UMVUTHANA_CRANE, MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.BLUFF, MM_SPAWN, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MowzieEntity::spawnPredicate);
+        SpawnPlacements.register(EntityHandler.ELOKOSA_HOWLER, MM_SPAWN, Heightmap.Types.MOTION_BLOCKING, MowzieEntity::spawnPredicate);
     }
 
     public static void initBiomeSpawns() {
         if (FOLIAATH_BIOME_CHECKER == null) FOLIAATH_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.FOLIAATH.spawnConfig.biomeConfig);
-        registerEntityWorldSpawn(EntityHandler.FOLIAATH.get(), ConfigHandler.COMMON.MOBS.FOLIAATH.spawnConfig, FOLIAATH_BIOME_CHECKER, MobCategory.MONSTER);
+        registerEntityWorldSpawn(EntityHandler.FOLIAATH, ConfigHandler.COMMON.MOBS.FOLIAATH.spawnConfig, FOLIAATH_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (UMVUTHANA_RAPTOR_BIOME_CHECKER == null) UMVUTHANA_RAPTOR_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.UMVUTHANA.spawnConfig.biomeConfig);
-        registerEntityWorldSpawn(EntityHandler.UMVUTHANA_RAPTOR.get(), ConfigHandler.COMMON.MOBS.UMVUTHANA.spawnConfig, UMVUTHANA_RAPTOR_BIOME_CHECKER, MobCategory.MONSTER);
+        registerEntityWorldSpawn(EntityHandler.UMVUTHANA_RAPTOR, ConfigHandler.COMMON.MOBS.UMVUTHANA.spawnConfig, UMVUTHANA_RAPTOR_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (GROTTOL_BIOME_CHECKER == null) GROTTOL_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.GROTTOL.spawnConfig.biomeConfig);
-        registerEntityWorldSpawn(EntityHandler.GROTTOL.get(), ConfigHandler.COMMON.MOBS.GROTTOL.spawnConfig, GROTTOL_BIOME_CHECKER, MobCategory.MONSTER);
+        registerEntityWorldSpawn(EntityHandler.GROTTOL, ConfigHandler.COMMON.MOBS.GROTTOL.spawnConfig, GROTTOL_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (LANTERN_BIOME_CHECKER == null) LANTERN_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.LANTERN.spawnConfig.biomeConfig);
-        registerEntityWorldSpawn(EntityHandler.LANTERN.get(), ConfigHandler.COMMON.MOBS.LANTERN.spawnConfig, LANTERN_BIOME_CHECKER, MobCategory.AMBIENT);
+        registerEntityWorldSpawn(EntityHandler.LANTERN, ConfigHandler.COMMON.MOBS.LANTERN.spawnConfig, LANTERN_BIOME_CHECKER, MobCategory.AMBIENT);
 
         if (NAGA_BIOME_CHECKER == null) NAGA_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.NAGA.spawnConfig.biomeConfig);
-        registerEntityWorldSpawn(EntityHandler.NAGA.get(), ConfigHandler.COMMON.MOBS.NAGA.spawnConfig, NAGA_BIOME_CHECKER, MobCategory.MONSTER);
+        registerEntityWorldSpawn(EntityHandler.NAGA, ConfigHandler.COMMON.MOBS.NAGA.spawnConfig, NAGA_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (BLUFF_BIOME_CHECKER == null) BLUFF_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.BLUFF.spawnConfig.biomeConfig);
-        registerEntityWorldSpawn(EntityHandler.BLUFF.get(), ConfigHandler.COMMON.MOBS.BLUFF.spawnConfig, BLUFF_BIOME_CHECKER, MobCategory.MONSTER);
+        registerEntityWorldSpawn(EntityHandler.BLUFF, ConfigHandler.COMMON.MOBS.BLUFF.spawnConfig, BLUFF_BIOME_CHECKER, MobCategory.MONSTER);
 
         if (ELOKOSA_HOWLER_BIOME_CHECKER == null) ELOKOSA_HOWLER_BIOME_CHECKER = new BiomeChecker(ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig.biomeConfig);
-        registerEntityWorldSpawn(EntityHandler.ELOKOSA_HOWLER.get(), ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig, ELOKOSA_HOWLER_BIOME_CHECKER, MobCategory.MONSTER);
+        registerEntityWorldSpawn(EntityHandler.ELOKOSA_HOWLER, ConfigHandler.COMMON.MOBS.ELOKOSA.spawnConfig, ELOKOSA_HOWLER_BIOME_CHECKER, MobCategory.MONSTER);
     }
 
     private static void registerEntityWorldSpawn(EntityType<?> entity, ConfigHandler.SpawnConfig spawnConfig, BiomeChecker checker, MobCategory classification) {

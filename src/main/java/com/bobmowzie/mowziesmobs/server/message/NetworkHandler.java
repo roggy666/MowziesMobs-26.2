@@ -9,46 +9,64 @@ import com.mojang.datafixers.util.Function10;
 import com.mojang.datafixers.util.Function11;
 import com.mojang.datafixers.util.Function12;
 import com.mojang.datafixers.util.Function15;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.network.VarInt;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
-@EventBusSubscriber
 public class NetworkHandler {
-    public static final String PROTOCOL_VERSION = "1";
-
-    @SubscribeEvent
-    public static void register(final RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(PROTOCOL_VERSION);
-
+    public static void register() {
         // -> Client
-        registrar.playToClient(MessageUseAbility.TYPE, MessageUseAbility.STREAM_CODEC, MessageUseAbility::handleClient);
-        registrar.playToClient(MessageUpdateBossBar.TYPE, MessageUpdateBossBar.STREAM_CODEC, MessageUpdateBossBar::handleClient);
-        registrar.playToClient(MessageSunblockEffect.TYPE, MessageSunblockEffect.STREAM_CODEC, MessageSunblockEffect::handleClient);
-        registrar.playToClient(MessageLinkEntities.TYPE, MessageLinkEntities.STREAM_CODEC, MessageLinkEntities::handleClient);
-        registrar.playToClient(MessageInterruptAbility.TYPE, MessageInterruptAbility.STREAM_CODEC, MessageInterruptAbility::handleClient);
-        registrar.playToClient(MessageFreezeEffect.TYPE, MessageFreezeEffect.STREAM_CODEC, MessageFreezeEffect::handleClient);
-        registrar.playToClient(MessageBlackPinkInYourArea.TYPE, MessageBlackPinkInYourArea.STREAM_CODEC, MessageBlackPinkInYourArea::handleClient);
-        registrar.playToClient(MessageJumpToAbilitySectionServerToClient.TYPE, MessageJumpToAbilitySectionServerToClient.STREAM_CODEC, MessageJumpToAbilitySectionServerToClient::handleClient);
-        registrar.playToClient(AnimationMessage.TYPE, AnimationMessage.STREAM_CODEC, AnimationMessage::handleClient);
-        registrar.playToClient(MessageAddInProgressCooldown.TYPE, MessageAddInProgressCooldown.STREAM_CODEC, MessageAddInProgressCooldown::handleClient);
+        PayloadTypeRegistry.clientboundPlay().register(MessageUseAbility.TYPE, MessageUseAbility.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MessageUpdateBossBar.TYPE, MessageUpdateBossBar.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MessageSunblockEffect.TYPE, MessageSunblockEffect.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MessageLinkEntities.TYPE, MessageLinkEntities.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MessageInterruptAbility.TYPE, MessageInterruptAbility.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MessageFreezeEffect.TYPE, MessageFreezeEffect.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MessageBlackPinkInYourArea.TYPE, MessageBlackPinkInYourArea.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MessageJumpToAbilitySectionServerToClient.TYPE, MessageJumpToAbilitySectionServerToClient.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(AnimationMessage.TYPE, AnimationMessage.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MessageAddInProgressCooldown.TYPE, MessageAddInProgressCooldown.STREAM_CODEC);
 
         // -> Server
-        registrar.playToServer(MessageUmvuthiTrade.TYPE, MessageUmvuthiTrade.STREAM_CODEC, MessageUmvuthiTrade::handleServer);
-        registrar.playToServer(MessageSculptorTrade.TYPE, MessageSculptorTrade.STREAM_CODEC, MessageSculptorTrade::handleServer);
-        registrar.playToServer(MessagePlayerUseAbility.TYPE, MessagePlayerUseAbility.STREAM_CODEC, MessagePlayerUseAbility::handleServer);
-        registrar.playToServer(MessageRightMouseUp.TYPE, MessageRightMouseUp.STREAM_CODEC, MessageRightMouseUp::handleServer);
-        registrar.playToServer(MessageRightMouseDown.TYPE, MessageRightMouseDown.STREAM_CODEC, MessageRightMouseDown::handleServer);
-        registrar.playToServer(MessageLeftMouseUp.TYPE, MessageLeftMouseUp.STREAM_CODEC, MessageLeftMouseUp::handleServer);
-        registrar.playToServer(MessageLeftMouseDown.TYPE, MessageLeftMouseDown.STREAM_CODEC, MessageLeftMouseDown::handleServer);
+        PayloadTypeRegistry.serverboundPlay().register(MessageUmvuthiTrade.TYPE, MessageUmvuthiTrade.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MessageSculptorTrade.TYPE, MessageSculptorTrade.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MessagePlayerUseAbility.TYPE, MessagePlayerUseAbility.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MessageRightMouseUp.TYPE, MessageRightMouseUp.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MessageRightMouseDown.TYPE, MessageRightMouseDown.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MessageLeftMouseUp.TYPE, MessageLeftMouseUp.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MessageLeftMouseDown.TYPE, MessageLeftMouseDown.STREAM_CODEC);
+
+        ServerPlayNetworking.registerGlobalReceiver(MessageUmvuthiTrade.TYPE, (payload, context) -> MessageUmvuthiTrade.handleServer(payload, context.player()));
+        ServerPlayNetworking.registerGlobalReceiver(MessageSculptorTrade.TYPE, (payload, context) -> MessageSculptorTrade.handleServer(payload, context.player()));
+        ServerPlayNetworking.registerGlobalReceiver(MessagePlayerUseAbility.TYPE, (payload, context) -> MessagePlayerUseAbility.handleServer(payload, context.player()));
+        ServerPlayNetworking.registerGlobalReceiver(MessageRightMouseUp.TYPE, (payload, context) -> MessageRightMouseUp.handleServer(payload, context.player()));
+        ServerPlayNetworking.registerGlobalReceiver(MessageRightMouseDown.TYPE, (payload, context) -> MessageRightMouseDown.handleServer(payload, context.player()));
+        ServerPlayNetworking.registerGlobalReceiver(MessageLeftMouseUp.TYPE, (payload, context) -> MessageLeftMouseUp.handleServer(payload, context.player()));
+        ServerPlayNetworking.registerGlobalReceiver(MessageLeftMouseDown.TYPE, (payload, context) -> MessageLeftMouseDown.handleServer(payload, context.player()));
+    }
+
+    public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        ServerPlayNetworking.send(player, payload);
+    }
+
+    public static void sendToPlayersTrackingEntityAndSelf(Entity entity, CustomPacketPayload payload) {
+        if (entity.level().isClientSide()) return;
+        if (entity instanceof ServerPlayer serverPlayer) {
+            ServerPlayNetworking.send(serverPlayer, payload);
+        }
+        for (ServerPlayer trackingPlayer : PlayerLookup.tracking(entity)) {
+            ServerPlayNetworking.send(trackingPlayer, payload);
+        }
     }
 
     public static StreamCodec<FriendlyByteBuf, Vec3[]> VEC3_ARRAY = new StreamCodec<>() {
@@ -61,9 +79,6 @@ public class NetworkHandler {
         }
     };
 
-    // PORTING NOTE (1.21.1 -> 26.1.2): FriendlyByteBuf#writeVec3/readVec3 no longer exist (confirmed against real
-    // 26.1.2 FriendlyByteBuf source) - Vec3 now has its own Vec3.STREAM_CODEC (a StreamCodec<ByteBuf, Vec3>),
-    // usable directly against a FriendlyByteBuf since FriendlyByteBuf extends ByteBuf.
     private static void writeVec3Array(FriendlyByteBuf buffer, Vec3[] array) {
         VarInt.write(buffer, array.length);
 

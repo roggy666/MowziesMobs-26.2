@@ -85,9 +85,9 @@ public class ItemWroughtAxe extends AxeItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
         if (!ConfigHandler.COMMON.TOOLS_AND_ABILITIES.AXE_OF_A_THOUSAND_METALS.breakable.get()) {
-            tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
+            ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
         }
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.1").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.2").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.1");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.2");
     }
 }

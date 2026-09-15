@@ -8,8 +8,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record MessagePlayerUseAbility(int index) implements CustomPacketPayload {
@@ -20,11 +20,8 @@ public record MessagePlayerUseAbility(int index) implements CustomPacketPayload 
             MessagePlayerUseAbility::new
     );
 
-    public static void handleServer(final MessagePlayerUseAbility packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Player player = context.player();
-            AbilityHandler.INSTANCE.sendAbilityMessage(player, DataHandler.getData(player, DataHandler.ABILITY_DATA).getAbilityTypesOnEntity(player)[packet.index()]);
-        });
+    public static void handleServer(final MessagePlayerUseAbility packet, final ServerPlayer player) {
+        AbilityHandler.INSTANCE.sendAbilityMessage(player, DataHandler.getData(player, DataHandler.ABILITY_DATA).getAbilityTypesOnEntity(player)[packet.index()]);
     }
 
     @Override

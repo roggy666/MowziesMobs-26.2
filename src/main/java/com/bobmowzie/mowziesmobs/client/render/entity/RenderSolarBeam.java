@@ -46,6 +46,11 @@ public class RenderSolarBeam extends EntityRenderer<EntitySolarBeam, RenderSolar
     }
 
     @Override
+    protected boolean affectedByCulling(EntitySolarBeam entity) {
+        return false;
+    }
+
+    @Override
     public SolarBeamRenderState createRenderState() {
         return new SolarBeamRenderState();
     }

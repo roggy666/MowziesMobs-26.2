@@ -15,91 +15,73 @@ import com.bobmowzie.mowziesmobs.server.entity.EntityHandler;
 import com.bobmowzie.mowziesmobs.server.inventory.ContainerHandler;
 import com.bobmowzie.mowziesmobs.server.item.ItemHandler;
 import com.bobmowzie.mowziesmobs.server.loot.LootTableHandler;
+import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 import com.bobmowzie.mowziesmobs.server.potion.EffectHandler;
 import com.bobmowzie.mowziesmobs.server.potion.PotionTypeHandler;
 import com.bobmowzie.mowziesmobs.server.sound.MMSounds;
-import com.bobmowzie.mowziesmobs.server.world.BiomeModifiersHandler;
 import com.bobmowzie.mowziesmobs.server.world.feature.structure.StructureTypeHandler;
 import com.bobmowzie.mowziesmobs.server.world.feature.structure.jigsaw.JigsawHandler;
 import com.bobmowzie.mowziesmobs.server.world.feature.structure.processor.ProcessorHandler;
 import com.bobmowzie.mowziesmobs.server.world.spawn.SpawnHandler;
+import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.stream.Stream;
 
-@Mod(MMCommon.MODID)
-public final class MMCommon {
+public final class MMCommon implements ModInitializer {
     public static final String MODID = "mowziesmobs";
     public static final Logger LOGGER = LogManager.getLogger();
     public static ServerProxy PROXY;
 
-    public MMCommon(IEventBus modBus, ModContainer container) {
-        // PORTING NOTE (1.21.1 -> 26.1.2): GeckoLibUtil.addCustomBakedModelFactory(String, BakedModelFactory) no
-        // longer exists in GeckoLib 5.5.2 - the per-bone custom-model-factory seam it used is gone entirely (see
-        // client/model/tools/MowzieModelFactory.java's class javadoc for the full explanation from the agent that
-        // owns that file). MowzieModelFactory is now a no-op GeckoLibLoader identical to the default
-        // GeckoLibGsonLoader, so registering it via the new GeckoLibUtil.addResourceLoader(predicate, loader) would
-        // be redundant with default behavior - per that file's recommendation, this registration call is simply
-        // removed rather than ported.
+    @Override
+    public void onInitialize() {
+        PROXY = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? new ClientProxy() : new ServerProxy();
 
-        // PORTING NOTE (1.21.1 -> 26.1.2): FMLLoader#getDist() is now a non-static instance method (confirmed via
-        // javap against the real fancymodloader 11.0.15 jar - FMLLoader's constructor is also private, so it can't
-        // be instantiated directly). FMLEnvironment#getDist() is the still-static replacement (own small utility
-        // class in the same package, confirmed present) matching the old call-site shape exactly.
-        PROXY = FMLEnvironment.getDist().isClient() ? new ClientProxy() : new ServerProxy();
-        BlockHandler.REG.register(modBus);
-        EntityHandler.REG.register(modBus);
-        EntityHandler.SERIALIZER_REG.register(modBus);
-        // PORTING NOTE (1.21.1 -> 26.1.2): MaterialHandler.MM_ARMOR_MATERIALS no longer exists - ArmorMaterial is
-        // no longer registry-backed, so MaterialHandler was rewritten to plain static final ArmorMaterial fields
-        // (confirmed by the server/item agent, who owns that file) with nothing left to register here.
-        ItemHandler.REG.register(modBus);
-        MMSounds.REG.register(modBus);
-        BlockEntityHandler.REG.register(modBus);
-        ParticleHandler.REG.register(modBus);
-        JigsawHandler.MM_STRUCTURE_POOLS.register(modBus);
-        ProcessorHandler.MM_STRUCTURE_PROCESSORS.register(modBus);
-        StructureTypeHandler.STRUCTURE_TYPE_REG.register(modBus);
-        StructureTypeHandler.STRUCTURE_PIECE_TYPE_REG.register(modBus);
-        ContainerHandler.REG.register(modBus);
-        EffectHandler.REG.register(modBus);
-        PotionTypeHandler.REG.register(modBus);
-        BiomeModifiersHandler.REG.register(modBus);
-        LootTableHandler.LOOT_CONDITION_TYPE_REG.register(modBus);
-        LootTableHandler.LOOT_FUNCTION_TYPE_REG.register(modBus);
-        AdvancementHandler.MM_TRIGGERS.register(modBus);
-        DataHandler.MM_ATTACHMENT_TYPES.register(modBus);
-        CreativeTabHandler.register(modBus);
+        // Listeners first: the common config is loaded as soon as it is registered
+        ModConfigEvents.loading(MODID).register(MMCommon::onModConfigEvent);
+        ModConfigEvents.reloading(MODID).register(MMCommon::onModConfigEvent);
+        ConfigRegistry.INSTANCE.register(MODID, ModConfig.Type.COMMON, ConfigHandler.COMMON_CONFIG);
+
+        BlockHandler.register();
+        EntityHandler.register();
+        ItemHandler.register();
+        MMSounds.register();
+        BlockEntityHandler.register();
+        ParticleHandler.register();
+        JigsawHandler.register();
+        ProcessorHandler.register();
+        StructureTypeHandler.register();
+        ContainerHandler.register();
+        EffectHandler.register();
+        PotionTypeHandler.register();
+        LootTableHandler.register();
+        AdvancementHandler.register();
+        DataHandler.register();
+        CreativeTabHandler.register();
+        NetworkHandler.register();
 
         PROXY.init();
-        modBus.addListener(this::handleLoadComplete);
-        modBus.addListener(this::onModConfigEvent);
         SpawnHandler.registerSpawnPlacementTypes();
-        modBus.addListener(ItemHandler::modifyComponents);
+        SpawnHandler.initBiomeSpawns();
 
-        NeoForge.EVENT_BUS.register(new ServerEventHandler());
-        NeoForge.EVENT_BUS.register(new AbilityCommonEventHandler());
-        NeoForge.EVENT_BUS.addListener(PotionTypeHandler::addMixes);
+        ServerEventHandler.register();
+        AbilityCommonEventHandler.register();
 
-        container.registerConfig(ModConfig.Type.COMMON, ConfigHandler.COMMON_CONFIG);
+        ItemHandler.initializeDispenserBehaviors();
     }
 
-    public void onModConfigEvent(final ModConfigEvent event) {
-        final ModConfig config = event.getConfig();
+    private static void onModConfigEvent(final ModConfig config) {
         // Rebake the configs when they change
         if (config.getSpec() == ConfigHandler.COMMON_CONFIG) {
         	ConfigHandler.COMMON.TOOLS_AND_ABILITIES.AXE_OF_A_THOUSAND_METALS.toolConfig.attackDamageValue = 
@@ -150,10 +132,6 @@ public final class MMCommon {
         }
     }
 
-    private void handleLoadComplete(FMLLoadCompleteEvent event) {
-        ItemHandler.initializeDispenserBehaviors();
-        BlockHandler.init();
-    }
 
     public static Identifier resource(String path) {
         return Identifier.fromNamespaceAndPath(MODID, path);

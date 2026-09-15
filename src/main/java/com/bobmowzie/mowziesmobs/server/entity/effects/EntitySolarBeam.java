@@ -75,8 +75,6 @@ public class EntitySolarBeam extends Entity {
 
     public EntitySolarBeam(EntityType<? extends EntitySolarBeam> type, Level world) {
         super(type, world);
-        // FIXME 26.1.2 port: Entity#noCulling was removed entirely; render culling is now controlled
-        // client-side via the entity renderer, not a settable field on the entity itself.
         if (world.isClientSide()) {
             attractorPos = new Vec3[] {new Vec3(0, 0, 0)};
         }

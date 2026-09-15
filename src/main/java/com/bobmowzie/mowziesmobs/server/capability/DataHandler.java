@@ -1,36 +1,55 @@
 package com.bobmowzie.mowziesmobs.server.capability;
 
 import com.bobmowzie.mowziesmobs.MMCommon;
-import com.google.common.collect.MapMaker;
+import com.mojang.serialization.Codec;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 public final class DataHandler {
-    private static final Map<Entity, Map<Object, Object>> ATTACHMENT_DATA = new MapMaker().weakKeys().makeMap();
+    public static final AttachmentType<FrozenData> FROZEN_DATA = register("frozen_data", FrozenData::new);
+    public static final AttachmentType<LivingData> LIVING_DATA = register("living_data", LivingData::new);
 
-    public static final DeferredRegister<AttachmentType<?>> MM_ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, MMCommon.MODID);
+    public static final AttachmentType<PlayerData> PLAYER_DATA = register("player_data", PlayerData::new);
+    public static final AttachmentType<AbilityData> ABILITY_DATA = register("ability_data", AbilityData::new);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<FrozenData>> FROZEN_DATA = MM_ATTACHMENT_TYPES.register("frozen_data", () -> AttachmentType.serializable(FrozenData::new).build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<LivingData>> LIVING_DATA = MM_ATTACHMENT_TYPES.register("living_data", () -> AttachmentType.serializable(LivingData::new).build());
+    private static <T extends SerializableData> AttachmentType<T> register(String name, Supplier<T> factory) {
+        return AttachmentRegistry.create(MMCommon.resource(name), builder -> builder
+                .initializer(factory)
+                .persistent(codec(factory)));
+    }
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PlayerData>> PLAYER_DATA = MM_ATTACHMENT_TYPES.register("player_data", () -> AttachmentType.serializable(PlayerData::new).build());
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<AbilityData>> ABILITY_DATA = MM_ATTACHMENT_TYPES.register("ability_data", () -> AttachmentType.serializable(AbilityData::new).build());
+    private static <T extends SerializableData> Codec<T> codec(Supplier<T> factory) {
+        return CompoundTag.CODEC.xmap(tag -> {
+            T data = factory.get();
+            data.deserialize(TagValueInput.create(ProblemReporter.DISCARDING, RegistryAccess.EMPTY, tag));
+            return data;
+        }, data -> {
+            TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, RegistryAccess.EMPTY);
+            data.serialize(output);
+            return output.buildResult();
+        });
+    }
 
-    @SuppressWarnings("unchecked")
-    public static <T> @NotNull T getData(@NotNull Entity entity, @NotNull DeferredHolder<AttachmentType<?>, AttachmentType<T>> type) {
-        if (PLAYER_DATA.equals(type) && !(entity instanceof Player)) {
+    public static void register() {
+    }
+
+    // Single point of usage in case additional checks are needed etc.
+    public static <T> @NotNull T getData(@NotNull Entity entity, @NotNull AttachmentType<T> type) {
+        if (PLAYER_DATA == type && !(entity instanceof Player)) {
+            // It's basically choosing between checking which entity gets passed into here vs. having a null check for every call of this method
             throw new IllegalArgumentException("Cannot fetch player data for non-player entity of type [" + entity.getType() + "]");
         }
 
-        Map<Object, Object> entityMap = ATTACHMENT_DATA.computeIfAbsent(entity, k -> new ConcurrentHashMap<>());
-        return (T) entityMap.computeIfAbsent(type, k -> type.get().create());
+        return entity.getAttachedOrCreate(type);
     }
 }

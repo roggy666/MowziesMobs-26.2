@@ -91,6 +91,6 @@ public class MonasteryStructure extends MowzieStructure {
 
 	@Override
 	public StructureType<?> type() {
-		return StructureTypeHandler.MONASTERY.get();
+		return StructureTypeHandler.MONASTERY;
 	}
 }

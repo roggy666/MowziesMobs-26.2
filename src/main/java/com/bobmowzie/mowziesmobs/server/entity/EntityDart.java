@@ -43,7 +43,7 @@ public class EntityDart extends Arrow {
 
     @Override
     protected ItemStack getPickupItem() {
-        return new ItemStack(ItemHandler.DART.get());
+        return new ItemStack(ItemHandler.DART);
     }
 
     @Override

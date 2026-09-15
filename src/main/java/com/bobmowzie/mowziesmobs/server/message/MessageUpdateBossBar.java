@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.message;
 
+import net.minecraft.world.entity.player.Player;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.client.ClientProxy;
 import io.netty.buffer.ByteBuf;
@@ -10,7 +11,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -35,20 +35,16 @@ public record MessageUpdateBossBar(UUID bossId, boolean remove, Identifier regis
             return new MessageUpdateBossBar(bossId, true, NULL);
         }
 
-        // PORTING NOTE (1.21.1 -> 26.1.2): RegistryAccess#registryOrThrow was renamed to lookupOrThrow (confirmed
-        // against real 26.1.2 RegistryAccess source).
         Identifier registryName = entity.level().registryAccess().lookupOrThrow(Registries.ENTITY_TYPE).getKey(entity.getType());
         return new MessageUpdateBossBar(bossId, false, registryName);
     }
 
-    public static void handleClient(final MessageUpdateBossBar packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            if (packet.remove()) {
-                ClientProxy.bossBarRegistryNames.remove(packet.bossId());
-            } else {
-                ClientProxy.bossBarRegistryNames.put(packet.bossId(), packet.registryName());
-            }
-        });
+    public static void handleClient(final MessageUpdateBossBar packet, final Player player) {
+        if (packet.remove()) {
+            ClientProxy.bossBarRegistryNames.remove(packet.bossId());
+        } else {
+            ClientProxy.bossBarRegistryNames.put(packet.bossId(), packet.registryName());
+        }
     }
 
     @Override

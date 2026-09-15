@@ -190,11 +190,11 @@ public class UmvuthanaGrovePieces {
         }
 
         public Piece(StructureTemplateManager manager, Identifier resourceLocationIn, Rotation rotation, BlockPos pos) {
-            this(StructureTypeHandler.UMVUTHANA_GROVE_PIECE.get(), manager, resourceLocationIn, rotation, pos);
+            this(StructureTypeHandler.UMVUTHANA_GROVE_PIECE, manager, resourceLocationIn, rotation, pos);
         }
 
         public Piece(StructurePieceSerializationContext context, CompoundTag tagCompound) {
-            this(StructureTypeHandler.UMVUTHANA_GROVE_PIECE.get(), context, tagCompound);
+            this(StructureTypeHandler.UMVUTHANA_GROVE_PIECE, context, tagCompound);
         }
 
         private static StructurePlaceSettings makeSettings(Rotation rotation, Identifier resourceLocation) {
@@ -267,7 +267,7 @@ public class UmvuthanaGrovePieces {
             }
             else if (function.equals("umvuthi")) {
                 setBlockState(worldIn, pos, Blocks.AIR.defaultBlockState());
-                EntityUmvuthi barako = new EntityUmvuthi(EntityHandler.UMVUTHI.get(), worldIn.getLevel());
+                EntityUmvuthi barako = new EntityUmvuthi(EntityHandler.UMVUTHI, worldIn.getLevel());
                 barako.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
                 int i = rotation.rotate(3, 4);
                 barako.setDirection(i);
@@ -333,25 +333,25 @@ public class UmvuthanaGrovePieces {
                 ItemFrame itemFrame = new ItemFrame(worldIn.getLevel(), pos, rotation.rotate(direction));
                 int i = rand.nextInt(MaskType.values().length);
                 MaskType type = MaskType.values()[i];
-                ItemUmvuthanaMask mask = ItemHandler.UMVUTHANA_MASK_FURY.get();
+                ItemUmvuthanaMask mask = ItemHandler.UMVUTHANA_MASK_FURY;
                 switch (type) {
                     case BLISS:
-                        mask = ItemHandler.UMVUTHANA_MASK_BLISS.get();
+                        mask = ItemHandler.UMVUTHANA_MASK_BLISS;
                         break;
                     case FEAR:
-                        mask = ItemHandler.UMVUTHANA_MASK_FEAR.get();
+                        mask = ItemHandler.UMVUTHANA_MASK_FEAR;
                         break;
                     case FURY:
-                        mask = ItemHandler.UMVUTHANA_MASK_FURY.get();
+                        mask = ItemHandler.UMVUTHANA_MASK_FURY;
                         break;
                     case MISERY:
-                        mask = ItemHandler.UMVUTHANA_MASK_MISERY.get();
+                        mask = ItemHandler.UMVUTHANA_MASK_MISERY;
                         break;
                     case RAGE:
-                        mask = ItemHandler.UMVUTHANA_MASK_RAGE.get();
+                        mask = ItemHandler.UMVUTHANA_MASK_RAGE;
                         break;
                     case FAITH:
-                        mask = ItemHandler.UMVUTHANA_MASK_FAITH.get();
+                        mask = ItemHandler.UMVUTHANA_MASK_FAITH;
                         break;
                 }
                 ItemStack stack = new ItemStack(mask);
@@ -400,7 +400,7 @@ public class UmvuthanaGrovePieces {
             int k = startPos.getZ();
             while(!Block.canSupportRigidBlock(worldIn, new BlockPos(i, j, k)) && j > 1) {
                 BlockPos pos = new BlockPos(i, j, k);
-                setBlockState(worldIn, pos, rand.nextFloat() < 0.2 ? BlockHandler.CLAWED_LOG.get().defaultBlockState() : Blocks.STRIPPED_JUNGLE_WOOD.defaultBlockState());
+                setBlockState(worldIn, pos, rand.nextFloat() < 0.2 ? BlockHandler.CLAWED_LOG.defaultBlockState() : Blocks.STRIPPED_JUNGLE_WOOD.defaultBlockState());
                 --j;
             }
         }
@@ -458,11 +458,11 @@ public class UmvuthanaGrovePieces {
     public static class FirepitPiece extends Piece {
 
         public FirepitPiece(StructureTemplateManager manager, Rotation rotation, BlockPos pos) {
-            super(StructureTypeHandler.UMVUTHANA_FIREPIT.get(), manager, FIREPIT, rotation, pos);
+            super(StructureTypeHandler.UMVUTHANA_FIREPIT, manager, FIREPIT, rotation, pos);
         }
 
         public FirepitPiece(StructurePieceSerializationContext context, CompoundTag tagCompound) {
-            super(StructureTypeHandler.UMVUTHANA_FIREPIT.get(), context, tagCompound);
+            super(StructureTypeHandler.UMVUTHANA_FIREPIT, context, tagCompound);
         }
 
         public BlockPos findGround(LevelAccessor worldIn, int x, int z) {
@@ -482,7 +482,7 @@ public class UmvuthanaGrovePieces {
             for (int i = 1; i <= numUmvuthana; i++) {
                 int distance;
                 int angle;
-                EntityUmvuthanaMinion umvuthana = new EntityUmvuthanaMinion(EntityHandler.UMVUTHANA_MINION.get(), worldIn.getLevel());
+                EntityUmvuthanaMinion umvuthana = new EntityUmvuthanaMinion(EntityHandler.UMVUTHANA_MINION, worldIn.getLevel());
                 for (int j = 1; j <= 20; j++) {
                     distance = randomIn.nextInt(10) + 2;
                     angle = randomIn.nextInt(360);

@@ -16,7 +16,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 import com.geckolib.animatable.GeoItem;
 import com.geckolib.animatable.SingletonGeoAnimatable;
@@ -90,13 +89,13 @@ public class ItemEarthrendGauntlet extends Item implements GeoItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
         if (ConfigHandler.COMMON.TOOLS_AND_ABILITIES.EARTHREND_GAUNTLET.enableTunneling.get()) {
-            tooltip.accept(Component.translatable(getDescriptionId() + ".text.1").setStyle(ItemHandler.TOOLTIP_STYLE));
+            ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.1");
         }
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.2").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.2");
         if (!ConfigHandler.COMMON.TOOLS_AND_ABILITIES.EARTHREND_GAUNTLET.breakable.get()) {
-            tooltip.accept(Component.translatable(getDescriptionId() + ".text.3").setStyle(ItemHandler.TOOLTIP_STYLE));
+            ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.3");
         }
     }
 
@@ -156,11 +155,5 @@ public class ItemEarthrendGauntlet extends Item implements GeoItem {
                 return itemRenderer;
             }
         });
-    }
-
-    // Kept as an empty implementation solely because MMClient.java (out of this scope) still registers one via
-    // RegisterClientExtensionsEvent#registerItem(new ItemEarthrendGauntlet.ClientExtensions(), ...) - see
-    // ItemUmvuthanaMask.ClientExtensions for the same pattern/reasoning.
-    public static class ClientExtensions implements IClientItemExtensions {
     }
 }

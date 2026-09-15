@@ -85,8 +85,8 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
         @Override
         public void tickUsing() {
             super.tickUsing();
-            if (getTicksInUse() == 1) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_HURT.get(), getUser().getSoundVolume(), getUser().getVoicePitch());
-            if (getTicksInUse() == 15) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_RETRACT.get(), getUser().getSoundVolume(), 1);
+            if (getTicksInUse() == 1) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_HURT, getUser().getSoundVolume(), getUser().getVoicePitch());
+            if (getTicksInUse() == 15) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_RETRACT, getUser().getSoundVolume(), 1);
         }
     });
     public static final AbilityType<EntityUmvuthana, UmvuthanaHurtAbility> HURT_ABILITY = new AbilityType<>("umvuthana_hurt", UmvuthanaHurtAbility::new);
@@ -103,7 +103,7 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
         @Override
         public void tickUsing() {
             super.tickUsing();
-            if (soundFrame == getTicksInUse()) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_ALERT.get(), getUser().getSoundVolume(), getUser().getVoicePitch());
+            if (soundFrame == getTicksInUse()) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_ALERT, getUser().getSoundVolume(), getUser().getVoicePitch());
             if (getUser().getTarget() != null) {
                 getUser().lookAt(getUser().getTarget(), 30F, 30F);
                 getUser().getLookControl().setLookAt(getUser().getTarget(), 30F, 30F);
@@ -120,14 +120,14 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
         @Override
         public void tickUsing() {
             super.tickUsing();
-            if (getTicksInUse() == 2) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_ROAR.get(), getUser().getSoundVolume() + 0.5f, getUser().getVoicePitch());
+            if (getTicksInUse() == 2) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_ROAR, getUser().getSoundVolume() + 0.5f, getUser().getVoicePitch());
         }
     });
     public static final AbilityType<EntityUmvuthana, SimpleAnimationAbility<EntityUmvuthana>> ACTIVATE_ABILITY = new AbilityType<>("umvuthana_activate", (type, entity) -> new SimpleAnimationAbility<>(type, entity,RawAnimation.begin().thenPlay("emerge"), 21) {
         @Override
         public void tickUsing() {
             super.tickUsing();
-            if (getTicksInUse() == 5) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_EMERGE.get(), 1, 1);
+            if (getTicksInUse() == 5) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_EMERGE, 1, 1);
             if (getTicksInUse() == 10) getUser().active = true;
         }
     });
@@ -274,14 +274,10 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
     protected <E extends GeoEntity> PlayState predicateWalkRun(AnimationTest<E> event)
     {
         float threshold = 0.9f;
-        // FIXME 26.1.2 port :: AnimationController#getCurrentAnimation() no longer exists; using the raw animation instead
-        RawAnimation currentAnim = event.controller().getCurrentRawAnimation();
-        if (currentAnim != null && currentAnim.equals(RUN_SWITCH_ANIM)) {
+        if (event.isCurrentAnimation(RUN_SWITCH_ANIM)) {
             threshold = 0.7f;
         }
 
-        // FIXME 26.1.2 port :: AnimationTest has no direct limb-swing-amount accessor anymore (only isMoving()).
-        // Approximated using the underlying LivingEntity's walkAnimation speed (best-effort, verify against old behavior).
         float limbSwingAmount = event.animatable() instanceof LivingEntity livingAnimatable ? livingAnimatable.walkAnimation.speed(event.renderState().getPartialTick()) : 0f;
         if (limbSwingAmount > threshold && !isStrafing()) {
             event.controller().setAnimation(RUN_SWITCH_ANIM);
@@ -356,14 +352,14 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
         }
         int i = Mth.nextInt(random, 0, MMSounds.ENTITY_UMVUTHANA_IDLE.size());
         if (i < MMSounds.ENTITY_UMVUTHANA_IDLE.size()) {
-            return MMSounds.ENTITY_UMVUTHANA_IDLE.get(i).get();
+            return MMSounds.ENTITY_UMVUTHANA_IDLE.get(i);
         }
         return null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return active ? MMSounds.ENTITY_UMVUTHANA_HURT.get() : null;
+        return active ? MMSounds.ENTITY_UMVUTHANA_HURT : null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -481,7 +477,7 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
     public void updateRattleSound(float maskRot) {
         if (!rattling) {
             if (Math.abs(maskRot - prevMaskRot) > 0.06) {
-                level().playLocalSound(getX(), getY(), getZ(), MMSounds.ENTITY_UMVUTHANA_RATTLE.get(), SoundSource.HOSTILE, 0.03f, getVoicePitch(), false);
+                level().playLocalSound(getX(), getY(), getZ(), MMSounds.ENTITY_UMVUTHANA_RATTLE, SoundSource.HOSTILE, 0.03f, getVoicePitch(), false);
             }
         }
         else {
@@ -543,25 +539,25 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
     }
 
     public static ItemUmvuthanaMask getMaskFromType(MaskType maskType) {
-        ItemUmvuthanaMask mask = ItemHandler.UMVUTHANA_MASK_FURY.get();
+        ItemUmvuthanaMask mask = ItemHandler.UMVUTHANA_MASK_FURY;
         switch (maskType) {
             case BLISS:
-                mask = ItemHandler.UMVUTHANA_MASK_BLISS.get();
+                mask = ItemHandler.UMVUTHANA_MASK_BLISS;
                 break;
             case FEAR:
-                mask = ItemHandler.UMVUTHANA_MASK_FEAR.get();
+                mask = ItemHandler.UMVUTHANA_MASK_FEAR;
                 break;
             case FURY:
-                mask = ItemHandler.UMVUTHANA_MASK_FURY.get();
+                mask = ItemHandler.UMVUTHANA_MASK_FURY;
                 break;
             case MISERY:
-                mask = ItemHandler.UMVUTHANA_MASK_MISERY.get();
+                mask = ItemHandler.UMVUTHANA_MASK_MISERY;
                 break;
             case RAGE:
-                mask = ItemHandler.UMVUTHANA_MASK_RAGE.get();
+                mask = ItemHandler.UMVUTHANA_MASK_RAGE;
                 break;
             case FAITH:
-                mask = ItemHandler.UMVUTHANA_MASK_FAITH.get();
+                mask = ItemHandler.UMVUTHANA_MASK_FAITH;
                 break;
         }
         return mask;
@@ -573,7 +569,7 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
 
     @Override
     protected SoundEvent getDeathSound() {
-        this.playSound(MMSounds.ENTITY_UMVUTHANA_DIE.get(), 1f, 0.95f + random.nextFloat() * 0.1f);
+        this.playSound(MMSounds.ENTITY_UMVUTHANA_DIE, 1f, 0.95f + random.nextFloat() * 0.1f);
         return null;
     }
 
@@ -671,7 +667,7 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
         }
         if (angleFlag && getMaskType().canBlock && entity instanceof LivingEntity && (getActiveAbility() == null || getActiveAbilityType() == HURT_ABILITY || getActiveAbilityType() == BLOCK_ABILITY) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             blockingEntity = (LivingEntity) entity;
-            playSound(MMSounds.ENTITY_WROUGHT_UNDAMAGED.get(), 0.4F, 2);
+            playSound(MMSounds.ENTITY_WROUGHT_UNDAMAGED, 0.4F, 2);
             if (blockingEntity == getTarget() && random.nextFloat() < Mth.clamp(blockCount / 5.0, 0.0, 1.0) && distanceTo(blockingEntity) < 4) {
                 AbilityHandler.INSTANCE.sendAbilityMessage(this, BLOCK_COUNTER_ABILITY);
                 blockCount = 0;
@@ -898,7 +894,7 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
             if (getTicksInUse() == 5) getUser().setDeltaMovement(getUser().getDeltaMovement().add(getUser().getForward().normalize().scale(0.5)));
             if (getTicksInUse() == 1) {
                 int i = rand.nextInt(MMSounds.ENTITY_UMVUTHANA_ATTACK.size());
-                getUser().playSound(MMSounds.ENTITY_UMVUTHANA_ATTACK.get(i).get(), 1, rand.nextFloat(0.9f, 1.1f));
+                getUser().playSound(MMSounds.ENTITY_UMVUTHANA_ATTACK.get(i), 1, rand.nextFloat(0.9f, 1.1f));
             }
         }
     }
@@ -930,7 +926,7 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
                 getUser().setDeltaMovement(getUser().getDeltaMovement().add(getUser().getForward().normalize().scale(1.6 * distToTarget)));
             }
             if (getTicksInUse() == 0) {
-                getUser().playSound(MMSounds.ENTITY_UMVUTHANA_ATTACK_BIG.get(), 1, rand.nextFloat(0.9f, 1.1f));
+                getUser().playSound(MMSounds.ENTITY_UMVUTHANA_ATTACK_BIG, 1, rand.nextFloat(0.9f, 1.1f));
             }
         }
 
@@ -1022,8 +1018,8 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
         @Override
         public void tickUsing() {
             super.tickUsing();
-            if (getTicksInUse() == 2) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_TELEPORT.get(rand.nextInt(3)).get(), 3f, 1);
-            if (getTicksInUse() == 16) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_TELEPORT.get(rand.nextInt(3)).get(), 3f, 1.2f);
+            if (getTicksInUse() == 2) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_TELEPORT.get(rand.nextInt(3)), 3f, 1);
+            if (getTicksInUse() == 16) getUser().playSound(MMSounds.ENTITY_UMVUTHANA_TELEPORT.get(rand.nextInt(3)), 3f, 1.2f);
 
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.ACTIVE) {
                 if (teleportStart != null && getUser().teleportDestination != null) {
@@ -1111,7 +1107,7 @@ public abstract class EntityUmvuthana extends MowzieGeckoEntity {
                 getUser().lookAt(getUser().getTarget(), getUser().getMaxHeadYRot(), getUser().getMaxHeadXRot());
             }
             if (getTicksInUse() == 6) {
-                getUser().playSound(MMSounds.ENTITY_UMVUTHANA_HEAL_START.get(rand.nextInt(3)).get(), 4, 1);
+                getUser().playSound(MMSounds.ENTITY_UMVUTHANA_HEAL_START.get(rand.nextInt(3)), 4, 1);
                 MMCommon.PROXY.playSunblockSound(getUser());
             }
 

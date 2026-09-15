@@ -19,7 +19,7 @@ public final class ContainerSculptorTrade extends ContainerTradeBase {
     }
 
     public ContainerSculptorTrade(int id, EntitySculptor sculptor, InventorySculptor inventory, Inventory playerInv) {
-        super(ContainerHandler.CONTAINER_SCULPTOR_TRADE.get(), id, sculptor, inventory, playerInv);
+        super(ContainerHandler.SCULPTOR_TRADE, id, sculptor, inventory, playerInv);
         this.sculptor = sculptor;
         this.inventorySculptor = inventory;
     }

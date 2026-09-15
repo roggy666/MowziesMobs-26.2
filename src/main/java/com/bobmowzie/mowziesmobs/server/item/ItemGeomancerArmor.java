@@ -17,7 +17,6 @@ import com.geckolib.animation.state.AnimationTest;
 import com.geckolib.animation.object.PlayState;
 import com.geckolib.renderer.GeoArmorRenderer;
 import com.geckolib.util.GeckoLibUtil;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.function.Consumer;
 
@@ -80,13 +79,6 @@ public class ItemGeomancerArmor extends Item implements GeoItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
-    }
-
-    // Kept as a trivial no-override implementation solely because MMClient.java (out of this scope) still
-    // registers one via RegisterClientExtensionsEvent#registerItem(new ItemGeomancerArmor.ClientExtensions(), ...).
-    // All the actual GeckoLib armor-rendering wiring now happens through createGeoRenderer() above instead - see
-    // that method's porting note for why IClientItemExtensions#getHumanoidArmorModel is no longer the right hook.
-    public static class ClientExtensions implements IClientItemExtensions {
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
     }
 }

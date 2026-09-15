@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.ability;
 
+import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.ability.abilities.player.*;
 import com.bobmowzie.mowziesmobs.server.ability.abilities.player.geomancy.*;
 import com.bobmowzie.mowziesmobs.server.ability.abilities.player.heliomancy.SolarBeamAbility;
@@ -14,8 +15,7 @@ import com.bobmowzie.mowziesmobs.server.message.MessagePlayerUseAbility;
 import com.bobmowzie.mowziesmobs.server.message.MessageUseAbility;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import net.neoforged.neoforge.network.PacketDistributor;
+import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
@@ -77,7 +77,7 @@ public enum AbilityHandler {
         Ability<?> instance = data.getAbilityMap().get(abilityType);
         if (instance != null && instance.canUse()) {
             data.activateAbility(entity, abilityType);
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new MessageUseAbility(entity.getId(), ArrayUtils.indexOf(data.getAbilityTypesOnEntity(entity), abilityType)));
+            NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new MessageUseAbility(entity.getId(), ArrayUtils.indexOf(data.getAbilityTypesOnEntity(entity), abilityType)));
         }
     }
 
@@ -89,7 +89,7 @@ public enum AbilityHandler {
         Ability<?> instance = data.getAbilityMap().get(abilityType);
         if (instance.isUsing()) {
             instance.interrupt();
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new MessageInterruptAbility(entity.getId(), ArrayUtils.indexOf(data.getAbilityTypesOnEntity(entity), abilityType)));
+            NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new MessageInterruptAbility(entity.getId(), ArrayUtils.indexOf(data.getAbilityTypesOnEntity(entity), abilityType)));
         }
     }
 
@@ -98,10 +98,7 @@ public enum AbilityHandler {
             return;
         }
 
-        // PacketDistributor.sendToServer(...) no longer exists (that class is now server->client-only sends).
-        // Client->server sends moved to the client-only net.neoforged.neoforge.client.network.ClientPacketDistributor
-        // - safe to reference here since this whole branch is already guarded by entity.level().isClientSide().
-        ClientPacketDistributor.sendToServer(new MessagePlayerUseAbility(ArrayUtils.indexOf(DataHandler.getData(entity, DataHandler.ABILITY_DATA).getAbilityTypesOnEntity(entity), ability)));
+        MMCommon.PROXY.sendToServer(new MessagePlayerUseAbility(ArrayUtils.indexOf(DataHandler.getData(entity, DataHandler.ABILITY_DATA).getAbilityTypesOnEntity(entity), ability)));
     }
 
 
@@ -115,7 +112,7 @@ public enum AbilityHandler {
 
         if (instance.isUsing()) {
             instance.jumpToSection(sectionIndex);
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new MessageJumpToAbilitySectionServerToClient(entity.getId(), ArrayUtils.indexOf(data.getAbilityTypesOnEntity(entity), abilityType), sectionIndex));
+            NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new MessageJumpToAbilitySectionServerToClient(entity.getId(), ArrayUtils.indexOf(data.getAbilityTypesOnEntity(entity), abilityType), sectionIndex));
         }
     }
 }

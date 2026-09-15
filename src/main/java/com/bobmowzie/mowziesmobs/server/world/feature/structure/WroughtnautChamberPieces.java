@@ -27,14 +27,14 @@ public class WroughtnautChamberPieces {
     public static class Piece extends TemplateStructurePiece {
 
         public Piece(StructureTemplateManager templateManagerIn, Identifier resourceLocationIn, BlockPos pos, Rotation rotationIn) {
-            super(StructureTypeHandler.WROUGHTNAUT_CHAMBER_PIECE.get(), 0, templateManagerIn, resourceLocationIn, resourceLocationIn.toString(), makeSettings(rotationIn, resourceLocationIn), pos);
+            super(StructureTypeHandler.WROUGHTNAUT_CHAMBER_PIECE, 0, templateManagerIn, resourceLocationIn, resourceLocationIn.toString(), makeSettings(rotationIn, resourceLocationIn), pos);
         }
 
         // PORTING NOTE (1.21.1 -> 26.1.2): CompoundTag#getString now returns Optional<String> instead of a raw
         // String (confirmed against real 26.1.2 CompoundTag source) - getStringOr(key, default) directly replaces
         // the old manual contains()-then-getString()-else-default ternary.
         public Piece(StructurePieceSerializationContext context, CompoundTag tagCompound) {
-            super(StructureTypeHandler.WROUGHTNAUT_CHAMBER_PIECE.get(), tagCompound, context.structureTemplateManager(), (resourceLocation) -> makeSettings(Rotation.valueOf(tagCompound.getStringOr("Rot", Rotation.NONE.name())), resourceLocation));
+            super(StructureTypeHandler.WROUGHTNAUT_CHAMBER_PIECE, tagCompound, context.structureTemplateManager(), (resourceLocation) -> makeSettings(Rotation.valueOf(tagCompound.getStringOr("Rot", Rotation.NONE.name())), resourceLocation));
         }
 
         private static StructurePlaceSettings makeSettings(Rotation rotation, Identifier resourceLocation) {

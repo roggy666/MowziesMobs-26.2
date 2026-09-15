@@ -45,8 +45,8 @@ import java.util.UUID;
 
 public class EntityUmvuthanaMinion extends EntityUmvuthana implements LeaderSunstrikeImmune, Enemy {
     private static final TradeStore DEFAULT = new TradeStore.Builder()
-        .addTrade(Items.GOLD_NUGGET, 4, BlockHandler.CLAWED_LOG.get().asItem(), 1, 9)
-        .addTrade(Items.GOLD_NUGGET, 7, BlockHandler.CLAWED_LOG.get().asItem(), 2, 9)
+        .addTrade(Items.GOLD_NUGGET, 4, BlockHandler.CLAWED_LOG.asItem(), 1, 9)
+        .addTrade(Items.GOLD_NUGGET, 7, BlockHandler.CLAWED_LOG.asItem(), 2, 9)
         .addTrade(Items.GOLD_NUGGET, 5, Items.COOKED_CHICKEN, 2, 2)
         .addTrade(Items.GOLD_NUGGET, 4, Items.COOKED_CHICKEN, 1, 2)
         .addTrade(Items.GOLD_NUGGET, 7, Items.COOKED_PORKCHOP, 2, 2)
@@ -69,9 +69,9 @@ public class EntityUmvuthanaMinion extends EntityUmvuthana implements LeaderSuns
         .addTrade(Items.BONE, 2, Items.GOLD_NUGGET, 2, 1)
         .build();
 
-    private static final EntityDataAccessor<Optional<Trade>> TRADE = SynchedEntityData.defineId(EntityUmvuthanaMinion.class, EntityHandler.OPTIONAL_TRADE.get());
+    private static final EntityDataAccessor<Optional<Trade>> TRADE = SynchedEntityData.defineId(EntityUmvuthanaMinion.class, EntityHandler.OPTIONAL_TRADE);
     //    private static final DataParameter<Integer> NUM_SALES = EntityDataManager.createKey(EntityBarakoaya.class, DataSerializers.VARINT);
-    private static final EntityDataAccessor<Optional<UUID>> MISBEHAVED_PLAYER = SynchedEntityData.defineId(EntityUmvuthanaMinion.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID.get());
+    private static final EntityDataAccessor<Optional<UUID>> MISBEHAVED_PLAYER = SynchedEntityData.defineId(EntityUmvuthanaMinion.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID);
     private static final EntityDataAccessor<Boolean> IS_TRADING = SynchedEntityData.defineId(EntityUmvuthanaMinion.class, EntityDataSerializers.BOOLEAN);
 
     //TODO: Sale limits. After X sales, go out of stock and change trade.

@@ -23,7 +23,7 @@ import java.util.UUID;
 public abstract class EntityUmvuthanaFollower<L extends LivingEntity> extends EntityUmvuthana {
     protected static final Optional<UUID> ABSENT_LEADER = Optional.empty();
 
-    private static final EntityDataAccessor<Optional<UUID>> LEADER = SynchedEntityData.defineId(EntityUmvuthanaFollower.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID.get());
+    private static final EntityDataAccessor<Optional<UUID>> LEADER = SynchedEntityData.defineId(EntityUmvuthanaFollower.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID);
 
     private final Class<L> leaderClass;
 
@@ -66,7 +66,7 @@ public abstract class EntityUmvuthanaFollower<L extends LivingEntity> extends En
 
     @Override
     public ItemStack getPickResult() {
-        return new ItemStack(ItemHandler.UMVUTHANA_SPAWN_EGG.get());
+        return new ItemStack(ItemHandler.UMVUTHANA_SPAWN_EGG);
     }
 
     @Override

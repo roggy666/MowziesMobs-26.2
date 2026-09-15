@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class EntityPillarPiece extends Entity {
-    private static final EntityDataAccessor<Optional<UUID>> PILLAR = SynchedEntityData.defineId(EntityPillarPiece.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID.get());
+    private static final EntityDataAccessor<Optional<UUID>> PILLAR = SynchedEntityData.defineId(EntityPillarPiece.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID);
     private static final EntityDataAccessor<Integer> TIER = SynchedEntityData.defineId(EntityPillarPiece.class, EntityDataSerializers.INT);
 
     private EntityPillar pillar;

@@ -1,16 +1,16 @@
 package com.bobmowzie.mowziesmobs.server.ability;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
 import com.bobmowzie.mowziesmobs.client.model.tools.geckolib.MowzieAnimationController;
 import com.bobmowzie.mowziesmobs.client.render.entity.player.GeckoPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
-import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.client.GeoRenderProvider;
 import com.geckolib.animatable.manager.AnimatableManager;
@@ -52,10 +52,6 @@ public class PlayerAbility extends Ability<Player> {
         this(abilityType, user, sectionTrack, 0);
     }
 
-    // PORTING NOTE (GeckoLib 4 -> 5): see Ability#playAnimation's matching porting note for the full explanation of
-    // why a throwaway GeoRenderState and a freshly-looked-up AnimatableManager are safe on this reset()-driven call
-    // path. Unlike the MowzieGeckoEntity case, GeckoPlayer already exposes everything needed directly
-    // (getModel()/getPlayerRenderer()), so no external renderer lookup is required here.
     public void playAnimation(RawAnimation animation, GeckoPlayer.Perspective perspective) {
         if (getUser() != null && getUser().level().isClientSide()) {
             if (perspective == GeckoPlayer.Perspective.FIRST_PERSON) {
@@ -163,44 +159,46 @@ public class PlayerAbility extends Ability<Player> {
     }
 
     // Events
-    public void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
+    public void onRightClickEmpty(Player player, InteractionHand hand) {
 
     }
 
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+    public void onRightClickBlock(Player player, InteractionHand hand, BlockHitResult hitResult) {
 
     }
 
-    public void onRightClickWithItem(PlayerInteractEvent.RightClickItem event) {
+    public void onRightClickWithItem(Player player, InteractionHand hand) {
 
     }
 
-    public void onRightClickEntity(PlayerInteractEvent.EntityInteract event) {
+    public void onRightClickEntity(Player player, InteractionHand hand, Entity target) {
 
     }
 
-    public void onLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
+    public void onLeftClickEmpty(Player player) {
 
     }
 
-    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+    public void onLeftClickBlock(Player player, BlockPos pos, Direction direction) {
 
     }
 
-    public void onLeftClickEntity(AttackEntityEvent event) {
+    public void onLeftClickEntity(Player player, Entity target) {
 
     }
 
-    public void onTakeDamage(LivingDamageEvent.Post event) {
+    @Override
+    public void onTakeDamage(DamageSource source, float damage) {
+        super.onTakeDamage(source, damage);
+    }
+
+    public void onJump(Player player) {
 
     }
 
-    public void onJump(LivingEvent.LivingJumpEvent event) {
-
-    }
-
-    public void onFall(LivingFallEvent event) {
-
+    /** Returns the (possibly modified) fall damage multiplier. */
+    public float onFall(Player player, double distance, float damageMultiplier) {
+        return damageMultiplier;
     }
 
     public void onRightMouseDown(Player player) {

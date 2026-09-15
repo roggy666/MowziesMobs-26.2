@@ -33,7 +33,7 @@ public class IceBreathAbility extends PlayerAbility {
         super.start();
         LivingEntity user = getUser();
         if (!getUser().level().isClientSide()) {
-            EntityIceBreath iceBreath = new EntityIceBreath(EntityHandler.ICE_BREATH.get(), user.level(), user);
+            EntityIceBreath iceBreath = new EntityIceBreath(EntityHandler.ICE_BREATH, user.level(), user);
             iceBreath.snapTo(user.getX(), user.getY() + user.getEyeHeight() - 0.5f, user.getZ(), user.getYRot(), user.getXRot());
             user.level().addFreshEntity(iceBreath);
             this.iceBreath = iceBreath;
@@ -69,12 +69,12 @@ public class IceBreathAbility extends PlayerAbility {
     private boolean checkIceCrystal() {
         ItemStack stack = getUser().getUseItem();
         if (getTicksInUse() <= 1) return true;
-        if (stack.getItem() != ItemHandler.ICE_CRYSTAL.get()) {
+        if (stack.getItem() != ItemHandler.ICE_CRYSTAL) {
             ItemStack main = getUser().getMainHandItem();
             ItemStack off = getUser().getOffhandItem();
-            if (main.is(ItemHandler.ICE_CRYSTAL.get())) {
+            if (main.is(ItemHandler.ICE_CRYSTAL)) {
                 stack = main;
-            } else if (off.is(ItemHandler.ICE_CRYSTAL.get())) {
+            } else if (off.is(ItemHandler.ICE_CRYSTAL)) {
                 stack = off;
             } else {
                 return false;
@@ -105,6 +105,6 @@ public class IceBreathAbility extends PlayerAbility {
 
     @Override
     public boolean preventsItemUse(ItemStack stack) {
-        return stack.getItem() != ItemHandler.ICE_CRYSTAL.get();
+        return stack.getItem() != ItemHandler.ICE_CRYSTAL;
     }
 }

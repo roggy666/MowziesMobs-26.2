@@ -7911,11 +7911,11 @@
 							"easing": "easeInOutSine"
 						},
 						"0.625": {
-							"vector": [20, "NaN-(math.sin(query.anim_time * 2800) * 3)", -7.5],
+							"vector": [20, "0-(math.sin(query.anim_time * 2800) * 3)", -7.5],
 							"easing": "easeInOutSine"
 						},
 						"1.4583": {
-							"vector": [20, "NaN-(math.sin(query.anim_time * 2800) * 3)", -7.5]
+							"vector": [20, "0-(math.sin(query.anim_time * 2800) * 3)", -7.5]
 						},
 						"1.625": {
 							"vector": ["42.5 + (math.sin(query.anim_time * 3000 + 3000) * 30)", -2.68, -7.5],
@@ -8227,11 +8227,11 @@
 							"easing": "easeInOutSine"
 						},
 						"0.625": {
-							"vector": [20, "-(NaN-(math.sin(query.anim_time * 2800) * 3))", 7.5],
+							"vector": [20, "-(0-(math.sin(query.anim_time * 2800) * 3))", 7.5],
 							"easing": "easeInOutSine"
 						},
 						"1.4583": {
-							"vector": [20, "-(NaN-(math.sin(query.anim_time * 2800) * 3))", 7.5]
+							"vector": [20, "-(0-(math.sin(query.anim_time * 2800) * 3))", 7.5]
 						},
 						"1.625": {
 							"vector": ["42.5 + (math.sin(query.anim_time * 3000 + 3000) * 30)", 2.68, 7.5],

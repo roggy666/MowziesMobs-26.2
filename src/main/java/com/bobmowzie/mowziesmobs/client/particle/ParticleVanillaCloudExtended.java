@@ -144,7 +144,7 @@ public class ParticleVanillaCloudExtended extends SingleQuadParticle {
 
         @Override
         public @NotNull ParticleType<ParticleVanillaCloudExtended.Data> getType() {
-            return ParticleHandler.VANILLA_CLOUD_EXTENDED.get();
+            return ParticleHandler.VANILLA_CLOUD_EXTENDED;
         }
     }
 

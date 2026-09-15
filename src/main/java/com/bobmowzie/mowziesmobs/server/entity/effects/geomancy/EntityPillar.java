@@ -86,7 +86,7 @@ public class EntityPillar extends EntityGeomancyBase implements IGeomancyRumbler
         prevHeight = getHeight();
 
         if (firstTick) {
-            playSound(MMSounds.EFFECT_GEOMANCY_BREAK_LARGE_1.get(), 2, 1);
+            playSound(MMSounds.EFFECT_GEOMANCY_BREAK_LARGE_1, 2, 1);
             if (!isFalling()) startRising();
             if (level().isClientSide())
                 MMCommon.PROXY.playGeomancyRumbleSound(this);
@@ -97,7 +97,7 @@ public class EntityPillar extends EntityGeomancyBase implements IGeomancyRumbler
                 float height = getHeight();
 
                 if (height == 0.0) {
-                    currentPiece = new EntityPillarPiece(EntityHandler.PILLAR_PIECE.get(), this.level(), this, new Vec3(this.getX(), this.getY() - 1.0f, this.getZ()));
+                    currentPiece = new EntityPillarPiece(EntityHandler.PILLAR_PIECE, this.level(), this, new Vec3(this.getX(), this.getY() - 1.0f, this.getZ()));
                     level().addFreshEntity(currentPiece);
                 }
 
@@ -105,7 +105,7 @@ public class EntityPillar extends EntityGeomancyBase implements IGeomancyRumbler
                 setHeight(height);
 
                 if (Math.floor(height) > Math.floor(prevHeight)) {
-                    currentPiece = new EntityPillarPiece(EntityHandler.PILLAR_PIECE.get(), this.level(), this, new Vec3(this.getX(), this.getY() + Math.floor(height) - 1.0f, this.getZ()));
+                    currentPiece = new EntityPillarPiece(EntityHandler.PILLAR_PIECE, this.level(), this, new Vec3(this.getX(), this.getY() + Math.floor(height) - 1.0f, this.getZ()));
                     level().addFreshEntity(currentPiece);
                 }
 
@@ -175,7 +175,7 @@ public class EntityPillar extends EntityGeomancyBase implements IGeomancyRumbler
     public void stopRising() {
         getEntityData().set(RISING, false);
         this.setBoundingBox(this.makeBoundingBox());
-        currentPiece = new EntityPillarPiece(EntityHandler.PILLAR_PIECE.get(), this.level(), this, new Vec3(this.getX(), this.getY() + getHeight() - 1.0f, this.getZ()));
+        currentPiece = new EntityPillarPiece(EntityHandler.PILLAR_PIECE, this.level(), this, new Vec3(this.getX(), this.getY() + getHeight() - 1.0f, this.getZ()));
         level().addFreshEntity(currentPiece);
     }
 
@@ -250,7 +250,7 @@ public class EntityPillar extends EntityGeomancyBase implements IGeomancyRumbler
             Vec3 particlePos = new Vec3(random.nextFloat() * getTier().ordinal() + 0.1, 0, 0);
             particlePos = particlePos.yRot((float) (random.nextFloat() * 2 * Math.PI));
             particlePos = particlePos.add(new Vec3(0, getHeight() * random.nextFloat(), 0));
-            EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK.get(), level(), 70, getBlock());
+            EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK, level(), 70, getBlock());
             fallingBlock.setPos(getX() + particlePos.x, getY() + 0.5 + particlePos.y, getZ() + particlePos.z);
             particlePos = particlePos.normalize();
             fallingBlock.setDeltaMovement((float) particlePos.x, 0.2f + random.nextFloat() * 0.6f, (float) particlePos.z);

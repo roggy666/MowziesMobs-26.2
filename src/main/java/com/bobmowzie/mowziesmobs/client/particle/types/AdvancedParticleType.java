@@ -6,7 +6,6 @@ import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AdvancedParticleType implements ParticleOptions {
     public static final MapCodec<AdvancedParticleType> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            BuiltInRegistries.PARTICLE_TYPE.holderByNameCodec().fieldOf("type").forGetter(AdvancedParticleType::type),
+            BuiltInRegistries.PARTICLE_TYPE.byNameCodec().fieldOf("type").forGetter(AdvancedParticleType::type),
             ParticleRotation.CODEC.fieldOf("rotation").forGetter(AdvancedParticleType::rotation),
             Codec.FLOAT.fieldOf("red").forGetter(AdvancedParticleType::red),
             Codec.FLOAT.fieldOf("green").forGetter(AdvancedParticleType::green),
@@ -32,7 +31,7 @@ public class AdvancedParticleType implements ParticleOptions {
     ).apply(instance, AdvancedParticleType::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AdvancedParticleType> STREAM_CODEC = NetworkHandler.composite(
-            ByteBufCodecs.holderRegistry(Registries.PARTICLE_TYPE), AdvancedParticleType::type,
+            ByteBufCodecs.registry(Registries.PARTICLE_TYPE), AdvancedParticleType::type,
             ByteBufCodecs.fromCodecWithRegistries(ParticleRotation.CODEC), AdvancedParticleType::rotation,
             ByteBufCodecs.FLOAT, AdvancedParticleType::red,
             ByteBufCodecs.FLOAT, AdvancedParticleType::green,
@@ -46,7 +45,7 @@ public class AdvancedParticleType implements ParticleOptions {
             AdvancedParticleType::new
     );
 
-    private final @NotNull Holder<ParticleType<?>> type;
+    private final @NotNull ParticleType<?> type;
     private final @NotNull ParticleRotation rotation;
     private final @NotNull ParticleComponent[] components;
 
@@ -65,11 +64,11 @@ public class AdvancedParticleType implements ParticleOptions {
         this(base.type(), base.rotation(), base.components(), base.red(), base.green(), base.blue(), base.alpha(), base.scale(), base.duration(), base.airDrag(), base.emissive(), base.canCollide());
     }
 
-    public AdvancedParticleType(@NotNull Holder<ParticleType<?>> type, @NotNull ParticleRotation rotation, float red, float green, float blue, float alpha, float scale, float duration, float airDrag, boolean emissive, boolean canCollide) {
+    public AdvancedParticleType(@NotNull ParticleType<?> type, @NotNull ParticleRotation rotation, float red, float green, float blue, float alpha, float scale, float duration, float airDrag, boolean emissive, boolean canCollide) {
         this(type, rotation, new ParticleComponent[]{}, red, green, blue, alpha, scale, duration, airDrag, emissive, canCollide);
     }
 
-    public AdvancedParticleType(@NotNull Holder<ParticleType<?>> type, @NotNull ParticleRotation rotation, @NotNull ParticleComponent[] components, float red, float green, float blue, float alpha, float scale, float duration, float airDrag, boolean emissive, boolean canCollide) {
+    public AdvancedParticleType(@NotNull ParticleType<?> type, @NotNull ParticleRotation rotation, @NotNull ParticleComponent[] components, float red, float green, float blue, float alpha, float scale, float duration, float airDrag, boolean emissive, boolean canCollide) {
         this.type = type;
         this.rotation = rotation;
         this.components = components;
@@ -86,10 +85,10 @@ public class AdvancedParticleType implements ParticleOptions {
 
     @Override
     public @NotNull ParticleType<?> getType() {
-        return type.value();
+        return type;
     }
 
-    public Holder<ParticleType<?>> type() {
+    public ParticleType<?> type() {
         return type;
     }
 

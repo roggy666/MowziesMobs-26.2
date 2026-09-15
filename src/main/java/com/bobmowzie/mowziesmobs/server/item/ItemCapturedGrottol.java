@@ -50,7 +50,7 @@ public class ItemCapturedGrottol extends Item {
             return InteractionResult.FAIL;
         }
         if (!world.isClientSide()) {
-            EntityGrottol grottol = new EntityGrottol(EntityHandler.GROTTOL.get(), world);
+            EntityGrottol grottol = new EntityGrottol(EntityHandler.GROTTOL, world);
             CustomData data = stack.get(DataComponents.CUSTOM_DATA);
             if (data != null) {
                 setData(grottol, data.copyTag().getCompoundOrEmpty("EntityTag"));
@@ -100,14 +100,13 @@ public class ItemCapturedGrottol extends Item {
 
     public ItemStack create(EntityGrottol grottol) {
         ItemStack stack = new ItemStack(this);
-        // FIXME 1.21 :: will need to use item component in the future
         CompoundTag entityData;
         try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(grottol.problemPath(), LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, grottol.registryAccess());
             grottol.saveWithoutId(output);
             entityData = output.buildResult();
         }
-        stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).update(tag -> tag.put("EntityTag", entityData));
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.put("EntityTag", entityData));
         return stack;
     }
 }

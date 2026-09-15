@@ -15,7 +15,6 @@ import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -23,7 +22,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-// FIXME: Terrain particles don't render
 public class AdvancedTerrainParticle extends AdvancedParticleBase {
     private final BlockPos pos;
     private final float uo;
@@ -50,20 +48,20 @@ public class AdvancedTerrainParticle extends AdvancedParticleBase {
         this.quadSize /= 2.0F;
         this.uo = this.random.nextFloat() * 3.0F;
         this.vo = this.random.nextFloat() * 3.0F;
+        this.layer = SingleQuadParticle.Layer.bySprite(this.sprite);
     }
 
-    public Particle updateSprite(BlockState state, BlockPos pos) { //FORGE: we cannot assume that the x y z of the particles match the block pos of the block.
-        if (pos != null) // There are cases where we are not able to obtain the correct source pos, and need to fallback to the non-model data version
-            this.setSprite(Minecraft.getInstance().getModelManager().getBlockStateModelSet().getParticleMaterial(state, level, pos).sprite());
+    public Particle updateSprite(BlockState state, BlockPos pos) {
+        if (state != null) {
+            this.setSprite(Minecraft.getInstance().getModelManager().getBlockStateModelSet().getParticleMaterial(state).sprite());
+            this.layer = SingleQuadParticle.Layer.bySprite(this.sprite);
+        }
         return this;
     }
 
-    // TODO(out of scope): MMRenderType needs to expose a `SingleQuadParticle.Layer TERRAIN_LAYER_NO_CULL`
-    // field (custom RenderPipeline with backface culling disabled) to replace the old TERRAIN_SHEET_NO_CULL.
-    // See final report for details - this will not compile until MMRenderType is updated.
     @Override
     public SingleQuadParticle.Layer getLayer() {
-        return MMRenderType.TERRAIN_LAYER_NO_CULL;
+        return this.layer != null ? this.layer : SingleQuadParticle.Layer.bySprite(this.sprite);
     }
 
     @Override
@@ -114,7 +112,7 @@ public class AdvancedTerrainParticle extends AdvancedParticleBase {
         }
     }
 
-    public static void spawnTerrainParticle(Level world, Holder<ParticleType<?>> particle, double x, double y, double z, double motionX, double motionY, double motionZ, double rotation, double scale, double drag, double duration, BlockState state, ParticleComponent[] components) {
+    public static void spawnTerrainParticle(Level world, ParticleType<?> particle, double x, double y, double z, double motionX, double motionY, double motionZ, double rotation, double scale, double drag, double duration, BlockState state, ParticleComponent[] components) {
         AdvancedParticleType base = new AdvancedParticleType(particle, new ParticleRotation.FaceCamera((float) rotation), components, 0.6f, 0.6f, 0.6f, 1, (float) scale, (float) duration, (float) drag, false, false);
         world.addParticle(new TerrainParticleType(base, state), x, y, z, motionX, motionY, motionZ);
     }

@@ -20,7 +20,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.event.EventHooks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -97,10 +96,8 @@ public class EntityElokosaHowler extends EntityElokosa {
                 return false;
             }
         }
-        // FIXME 26.1.2 port: see EntityElokosa#isDayTime for details on this WorldClock-based approximation of the
-        // old Level#getTimeOfDay(float) celestial-angle fraction.
-        double timeOfDay = world instanceof Level level ? (level.getOverworldClockTime() % 24000L) / 24000.0 : 0.0;
-        return super.checkSpawnRules(world, reason) && world.getDifficulty() != Difficulty.PEACEFUL && (timeOfDay >= 0.7609 || timeOfDay < 0.23918849);
+        boolean isDay = world instanceof Level level && EntityElokosa.isDayTime(level);
+        return super.checkSpawnRules(world, reason) && world.getDifficulty() != Difficulty.PEACEFUL && isDay;
     }
 
     public int getMaxSpawnClusterSize()
@@ -126,7 +123,7 @@ public class EntityElokosaHowler extends EntityElokosa {
         int size = random.nextInt(2) + 2;
         float theta = (2 * (float) Math.PI / size);
         for (int i = 0; i <= size; i++) {
-            EntityElokosaFollowerToHowler packMember = new EntityElokosaFollowerToHowler(EntityHandler.ELOKOSA_FOLLOWER_TO_HOWLER.get(), this.level(), this);
+            EntityElokosaFollowerToHowler packMember = new EntityElokosaFollowerToHowler(EntityHandler.ELOKOSA_FOLLOWER_TO_HOWLER, this.level(), this);
             packMember.setPos(getX() + 0.1 * Mth.cos(theta * i), getY(), getZ() + 0.1 * Mth.sin(theta * i));
             world.addFreshEntity(packMember);
             packMember.finalizeSpawn(world, difficulty, reason, livingData);
@@ -142,12 +139,11 @@ public class EntityElokosaHowler extends EntityElokosa {
 
     @Override
     public ItemStack getPickResult() {
-        return new ItemStack(ItemHandler.ELOKOSA_HOWLER_SPAWN_EGG.get());
+        return new ItemStack(ItemHandler.ELOKOSA_HOWLER_SPAWN_EGG);
     }
 
     @Override
     public void checkDespawn() {
-        if (EventHooks.checkMobDespawn(this)) return;
         if (this.level().getDifficulty() == Difficulty.PEACEFUL && !this.getType().isAllowedInPeaceful()) {
             this.discard();
         } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {

@@ -1,10 +1,8 @@
 package com.ilexiconn.llibrary.server.animation;
 
-import com.ilexiconn.llibrary.server.event.AnimationEvent;
+import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 import com.ilexiconn.llibrary.server.network.AnimationMessage;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
@@ -26,7 +24,7 @@ public enum AnimationHandler {
             return;
         }
         entity.setAnimation(animation);
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new AnimationMessage(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
+        NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new AnimationMessage(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
     }
 
     /**
@@ -41,14 +39,10 @@ public enum AnimationHandler {
         } else {
             if (entity.getAnimation() != IAnimatedEntity.NO_ANIMATION) {
                 if (entity.getAnimationTick() == 0) {
-                    AnimationEvent.Start<?> event = new AnimationEvent.Start<>(entity, entity.getAnimation());
-                    if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
-                        this.sendAnimationMessage(entity, event.getAnimation());
-                    }
+                    this.sendAnimationMessage(entity, entity.getAnimation());
                 }
                 if (entity.getAnimationTick() < entity.getAnimation().getDuration()) {
                     entity.setAnimationTick(entity.getAnimationTick() + 1);
-                    NeoForge.EVENT_BUS.post(new AnimationEvent.Tick<>(entity, entity.getAnimation(), entity.getAnimationTick()));
                 }
                 if (entity.getAnimationTick() == entity.getAnimation().getDuration()) {
                     if( ! entity.getAnimation().doesLoop()) {

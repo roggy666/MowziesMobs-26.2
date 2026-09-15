@@ -19,8 +19,8 @@ public class HitBoulderAbility extends PlayerAbility {
 
     @Override
     public InteractionHand getActiveHand() {
-        if (getUser().getMainHandItem().is(ItemHandler.EARTHREND_GAUNTLET.get())) return InteractionHand.MAIN_HAND;
-        if (getUser().getOffhandItem().is(ItemHandler.EARTHREND_GAUNTLET.get())) return InteractionHand.OFF_HAND;
+        if (getUser().getMainHandItem().is(ItemHandler.EARTHREND_GAUNTLET)) return InteractionHand.MAIN_HAND;
+        if (getUser().getOffhandItem().is(ItemHandler.EARTHREND_GAUNTLET)) return InteractionHand.OFF_HAND;
         return InteractionHand.MAIN_HAND;
     }
 

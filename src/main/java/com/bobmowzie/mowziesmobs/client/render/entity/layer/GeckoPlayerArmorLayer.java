@@ -19,13 +19,17 @@ import net.minecraft.client.resources.model.EquipmentAssetManager;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
+import com.bobmowzie.mowziesmobs.MMCommon;
+import com.bobmowzie.mowziesmobs.server.item.ItemHandler;
+import com.bobmowzie.mowziesmobs.server.item.ItemWroughtHelm;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.equipment.Equippable;
-import net.neoforged.neoforge.client.ClientHooks;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -130,17 +134,15 @@ public class GeckoPlayerArmorLayer {
         List<EquipmentClientInfo.Layer> layers = equipmentAssets.get(equippable.assetId().get()).getLayers(layerType);
         if (layers.isEmpty()) return;
 
-        IClientItemExtensions extensions = IClientItemExtensions.of(stack);
-
         renderPassInfo.model().getBone(boneName).ifPresent(bone -> renderPassInfo.renderPosed(() -> {
-            // Items with a custom armor model (e.g. WroughtHelmModel's horns/tusks) must be resolved through
-            // getGenericArmorModel the same way vanilla's HumanoidArmorLayer does - this layer only exists to
-            // render armor DURING an active ability (see class javadoc), and previously always used the plain
-            // vanilla PlayerModel part regardless of the equipped item, silently reverting custom-modeled armor
-            // (like the Wrought Helm) to its generic vanilla shape for the ability's whole duration.
             PlayerModel vanillaModel = models.get(slot);
-            Model resolvedModel = extensions.getGenericArmorModel(stack, layerType, vanillaModel);
-            HumanoidModel<?> armorModel = resolvedModel instanceof HumanoidModel<?> customModel ? customModel : vanillaModel;
+            HumanoidModel<?> armorModel;
+            if (stack.is(ItemHandler.WROUGHT_HELMET)) {
+                Model customModel = ItemWroughtHelm.ArmorRender.getArmorModel();
+                armorModel = customModel instanceof HumanoidModel<?> humanoid ? humanoid : vanillaModel;
+            } else {
+                armorModel = vanillaModel;
+            }
             ModelPart part = partGetter.apply(armorModel);
             part.xRot = 0;
             part.yRot = 0;
@@ -169,15 +171,16 @@ public class GeckoPlayerArmorLayer {
             bone.translateAwayFromPivotPoint(poseStack);
             poseStack.scale(-1.0F, -1.0F, 1.0F);
 
-            int dyeColor = extensions.getDefaultDyeColor(stack);
+            int dyeColor = DyedItemColor.getOrDefault(stack, 0);
             boolean renderFoil = stack.hasFoil();
             int lightCoords = renderPassInfo.packedLight();
 
-            int idx = 0;
             for (EquipmentClientInfo.Layer layer : layers) {
-                int color = extensions.getArmorLayerTintColor(stack, layer, idx, dyeColor);
+                int color = getColorForLayer(layer, dyeColor);
                 if (color != 0) {
-                    Identifier texture = ClientHooks.getArmorTexture(stack, layerType, layer, layer.getTextureLocation(layerType));
+                    Identifier texture = stack.is(ItemHandler.WROUGHT_HELMET)
+                            ? Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/item/wrought_helmet.png")
+                            : layer.getTextureLocation(layerType);
                     // Rendered via submitCustomGeometry (manually driving ModelPart#render from inside the callback,
                     // mirroring what ModelPartFeatureRenderer#render does internally) rather than the more obvious
                     // SubmitNodeCollector#submitModelPart, and using RenderTypes.entityCutout rather than the more
@@ -203,10 +206,19 @@ public class GeckoPlayerArmorLayer {
                         renderFoil = false;
                     }
                 }
-                idx++;
             }
 
             poseStack.popPose();
         }));
+    }
+
+    private static int getColorForLayer(EquipmentClientInfo.Layer layer, int dyeColor) {
+        Optional<EquipmentClientInfo.Dyeable> dyeable = layer.dyeable();
+        if (dyeable.isPresent()) {
+            int colorWhenUndyed = dyeable.get().colorWhenUndyed().map(ARGB::opaque).orElse(0);
+            return dyeColor != 0 ? dyeColor : colorWhenUndyed;
+        } else {
+            return -1;
+        }
     }
 }

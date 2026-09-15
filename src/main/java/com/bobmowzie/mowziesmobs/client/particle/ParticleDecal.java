@@ -10,7 +10,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -86,7 +85,7 @@ public class ParticleDecal extends AdvancedParticleBase {
         }
     }
 
-    public static void spawnDecal(Level world, Holder<ParticleType<?>> particle, double x, double y, double z, double motionX, double motionY, double motionZ, double angle, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, int spriteSize, int bufferSize, ParticleComponent[] components) {
+    public static void spawnDecal(Level world, ParticleType<?> particle, double x, double y, double z, double motionX, double motionY, double motionZ, double angle, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, int spriteSize, int bufferSize, ParticleComponent[] components) {
         // yaw = angle (matches the ground-projection "decalRot" the original used this value for), pitch = 90
         // degrees to lay the normally-vertical billboard quad flat on the ground - see class-level comment.
         ParticleRotation rotation = new ParticleRotation.EulerAngles((float) angle, (float) (Math.PI / 2.0), 0.0F);

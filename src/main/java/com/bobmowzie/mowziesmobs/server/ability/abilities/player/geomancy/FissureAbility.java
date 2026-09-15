@@ -1,5 +1,7 @@
 package com.bobmowzie.mowziesmobs.server.ability.abilities.player.geomancy;
 
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.InteractionHand;
 import com.bobmowzie.mowziesmobs.client.particle.ParticleDecal;
 import com.bobmowzie.mowziesmobs.client.particle.ParticleHandler;
 import com.bobmowzie.mowziesmobs.client.particle.util.ParticleComponent;
@@ -9,7 +11,6 @@ import com.bobmowzie.mowziesmobs.server.ability.AbilityType;
 import com.bobmowzie.mowziesmobs.server.ability.PlayerAbility;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 public class FissureAbility extends PlayerAbility {
     public FissureAbility(AbilityType<Player, ? extends Ability> abilityType, Player user) {
@@ -21,11 +22,11 @@ public class FissureAbility extends PlayerAbility {
     }
 
     @Override
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        super.onRightClickBlock(event);
-        if (event.getItemStack().isEmpty()) {
+    public void onRightClickBlock(Player player, InteractionHand hand, BlockHitResult hitResult) {
+        super.onRightClickBlock(player, hand, hitResult);
+        if (player.getItemInHand(hand).isEmpty()) {
             float rotation = (float) Math.toRadians(getUser().yHeadRot + 180f);
-            Vec3 pos = event.getHitVec().getLocation();
+            Vec3 pos = hitResult.getLocation();
             ParticleDecal.spawnDecal(getUser().level(), ParticleHandler.GROUND_CRACK, pos.x(), pos.y() + 0.01, pos.z(), 0, 0, 0, rotation, 2, 1F, 1F, 1F, 1F, 0, 200, false, 32, 64, new ParticleComponent[]{
 
             });

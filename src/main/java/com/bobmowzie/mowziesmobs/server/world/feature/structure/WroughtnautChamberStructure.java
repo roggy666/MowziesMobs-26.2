@@ -116,6 +116,6 @@ public class WroughtnautChamberStructure extends MowzieStructure {
 
 	@Override
 	public StructureType<?> type() {
-		return StructureTypeHandler.WROUGHTNAUT_CHAMBER.get();
+		return StructureTypeHandler.WROUGHTNAUT_CHAMBER;
 	}
 }

@@ -16,7 +16,7 @@ public class SunblockSound extends AbstractTickableSoundInstance {
     boolean active = true;
 
     public SunblockSound(LivingEntity entity) {
-        super(MMSounds.ENTITY_UMVUTHANA_HEAL_LOOP.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
+        super(MMSounds.ENTITY_UMVUTHANA_HEAL_LOOP, SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.entity = entity;
         volume = 4F;
         pitch = 1f;

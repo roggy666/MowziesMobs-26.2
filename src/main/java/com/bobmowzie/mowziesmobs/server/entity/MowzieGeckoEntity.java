@@ -8,7 +8,6 @@ import com.bobmowzie.mowziesmobs.server.ability.AbilityType;
 import com.bobmowzie.mowziesmobs.server.ability.abilities.player.SimpleAnimationAbility;
 import com.bobmowzie.mowziesmobs.server.capability.AbilityData;
 import com.bobmowzie.mowziesmobs.server.capability.DataHandler;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -49,11 +48,6 @@ public abstract class MowzieGeckoEntity extends MowzieEntity implements GeoEntit
         Ability<?>deathAbility = getActiveAbility();
         if (deathAbility instanceof SimpleAnimationAbility) return ((SimpleAnimationAbility) deathAbility).getDuration();
         return 20;
-    }
-
-    @Override
-    public void writeSpawnData(@NotNull RegistryFriendlyByteBuf buffer) {
-
     }
 
     public abstract AbilityType getHurtAbility();

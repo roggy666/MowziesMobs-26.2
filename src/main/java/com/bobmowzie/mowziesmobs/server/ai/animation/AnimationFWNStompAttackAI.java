@@ -36,10 +36,10 @@ public class AnimationFWNStompAttackAI extends SimpleAnimationAI<EntityWroughtna
         final int maxDistance = 6;
         ServerLevel world = (ServerLevel) entity.level();
         if (tick == 6) {
-            entity.playSound(MMSounds.ENTITY_WROUGHT_SHOUT_2.get(), 1, 1);
+            entity.playSound(MMSounds.ENTITY_WROUGHT_SHOUT_2, 1, 1);
         } else if (tick > 9 && tick < 17) {
             if (tick == 10) {
-                entity.playSound(MMSounds.ENTITY_WROUGHT_STEP.get(), 1.2F, 0.5F + entity.getRandom().nextFloat() * 0.1F);
+                entity.playSound(MMSounds.ENTITY_WROUGHT_STEP, 1.2F, 0.5F + entity.getRandom().nextFloat() * 0.1F);
             } else if (tick == 12) {
                 entity.playSound(SoundEvents.GENERIC_EXPLODE.value(), 2, 1F + entity.getRandom().nextFloat() * 0.1F);
                 EntityCameraShake.cameraShake(entity.level(), entity.position(), 25, 0.1f, 0, 20);
@@ -88,7 +88,7 @@ public class AnimationFWNStompAttackAI extends SimpleAnimationAI<EntityWroughtna
                         BlockState block = world.getBlockState(pos);
                         BlockState blockAbove = world.getBlockState(abovePos);
                         if (!block.isAir() && block.isRedstoneConductor(world, pos) && !block.hasBlockEntity() && !blockAbove.blocksMotion()) {
-                            EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK.get(), world, block, (float) (0.4 + factor * 0.2));
+                            EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK, world, block, (float) (0.4 + factor * 0.2));
                             fallingBlock.setPos(hitX + 0.5, hitY + 1, hitZ + 0.5);
                             world.addFreshEntity(fallingBlock);
                         }

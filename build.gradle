@@ -50,6 +50,18 @@ dependencies {
 
 loom {
     accessWidenerPath = file("src/main/resources/mowziesmobs.accesswidener")
+    runs {
+        client {
+            // Jumps straight into the test world; remove to get the main menu
+            programArgs "--quickPlaySingleplayer", "New World"
+        }
+    }
+}
+
+fabricApi {
+    configureDataGeneration {
+        client = true
+    }
 }
 
 processResources {

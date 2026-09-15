@@ -73,7 +73,7 @@ public class EntityFissure extends Projectile implements IGeomancyRumbler {
 
         if (!level().isClientSide()) {
             if (isTravelling() && tickCount % TICKS_PER_PIECE == 1f) {
-                EntityFissurePiece piece = new EntityFissurePiece(EntityHandler.FISSURE_PIECE.get(), level());
+                EntityFissurePiece piece = new EntityFissurePiece(EntityHandler.FISSURE_PIECE, level());
                 piece.setPos(position().add(getDeltaMovement().scale(TICKS_PER_PIECE/3f)));
                 piece.setYRot(getYRot());
                 piece.setOwner(this);
@@ -124,7 +124,7 @@ public class EntityFissure extends Projectile implements IGeomancyRumbler {
                 if (!EffectGeomancy.isBlockUseable(state)) {
                     state = Blocks.DIRT.defaultBlockState();
                 }
-                EntityEarthSpike spike = new EntityEarthSpike(EntityHandler.EARTH_SPIKE.get(), level(), (LivingEntity) getOwner(), state);
+                EntityEarthSpike spike = new EntityEarthSpike(EntityHandler.EARTH_SPIKE, level(), (LivingEntity) getOwner(), state);
                 spike.setPos(position());
                 spike.setYRot(getYRot());
                 level().addFreshEntity(spike);

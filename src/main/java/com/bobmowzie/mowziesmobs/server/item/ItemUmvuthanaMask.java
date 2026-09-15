@@ -1,6 +1,5 @@
 package com.bobmowzie.mowziesmobs.server.item;
 
-import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.client.render.item.RenderUmvuthanaMaskArmor;
 import com.bobmowzie.mowziesmobs.client.render.item.RenderUmvuthanaMaskItem;
 import com.bobmowzie.mowziesmobs.server.capability.DataHandler;
@@ -11,11 +10,9 @@ import com.bobmowzie.mowziesmobs.server.entity.umvuthana.EntityUmvuthanaCraneToP
 import com.bobmowzie.mowziesmobs.server.entity.umvuthana.EntityUmvuthanaFollowerToPlayer;
 import com.bobmowzie.mowziesmobs.server.entity.umvuthana.MaskType;
 import com.bobmowzie.mowziesmobs.server.sound.MMSounds;
-import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
@@ -27,7 +24,6 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import com.geckolib.animatable.GeoItem;
 import com.geckolib.animatable.client.GeoRenderProvider;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -40,7 +36,6 @@ import com.geckolib.renderer.GeoArmorRenderer;
 import com.geckolib.renderer.GeoItemRenderer;
 import com.geckolib.util.GeckoLibUtil;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class ItemUmvuthanaMask extends Item implements UmvuthanaMask, GeoItem {
@@ -80,15 +75,15 @@ public class ItemUmvuthanaMask extends Item implements UmvuthanaMask, GeoItem {
 
     private boolean spawnUmvuthana(MaskType mask, ItemStack stack, Player player, float durability) {
         if (DataHandler.getData(player, DataHandler.PLAYER_DATA).getPackSize() < ConfigHandler.COMMON.TOOLS_AND_ABILITIES.SOL_VISAGE.maxFollowers.get()) {
-            player.playSound(MMSounds.ENTITY_UMVUTHI_BELLY.get(), 1.5f, 1);
-            player.playSound(MMSounds.ENTITY_UMVUTHANA_BLOWDART.get(), 1.5f, 0.5f);
+            player.playSound(MMSounds.ENTITY_UMVUTHI_BELLY, 1.5f, 1);
+            player.playSound(MMSounds.ENTITY_UMVUTHANA_BLOWDART, 1.5f, 0.5f);
             double angle = player.getYHeadRot();
             if (angle < 0) {
                 angle = angle + 360;
             }
             EntityUmvuthanaFollowerToPlayer umvuthana;
-            if (mask == MaskType.FAITH) umvuthana = new EntityUmvuthanaCraneToPlayer(EntityHandler.UMVUTHANA_CRANE_TO_PLAYER.get(), player.level(), player);
-            else umvuthana = new EntityUmvuthanaFollowerToPlayer(EntityHandler.UMVUTHANA_FOLLOWER_TO_PLAYER.get(), player.level(), player);
+            if (mask == MaskType.FAITH) umvuthana = new EntityUmvuthanaCraneToPlayer(EntityHandler.UMVUTHANA_CRANE_TO_PLAYER, player.level(), player);
+            else umvuthana = new EntityUmvuthanaFollowerToPlayer(EntityHandler.UMVUTHANA_FOLLOWER_TO_PLAYER, player.level(), player);
 //            property.addPackMember(umvuthana);
             if (!player.level().isClientSide()) {
                 if (mask != MaskType.FAITH) {
@@ -123,19 +118,19 @@ public class ItemUmvuthanaMask extends Item implements UmvuthanaMask, GeoItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.1").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.1");
     }
 
     private static final RawAnimation UMVUTHANA_ANIM = RawAnimation.begin().thenLoop("umvuthana");
     private static final RawAnimation PLAYER_ANIM = RawAnimation.begin().thenLoop("player");
     public <P extends Item & GeoItem> PlayState predicate(AnimationTest<P> event) {
-        // UNRESOLVED: GeckoLib 5.5.2 removed DataTickets.ENTITY (no replacement ticket found in
-        // com.geckolib.constant.DataTickets for "the entity currently wearing/using this item"), so this predicate
-        // can no longer distinguish an EntityUmvuthana wearer from a Player wearer. Falling back to the player
-        // animation unconditionally (previously only the non-Umvuthana branch) until a real replacement is found -
-        // needs follow-up once GeckoLib's per-wearer render-state plumbing for GeoItem controllers is understood.
-        event.controller().setAnimation(PLAYER_ANIM);
+        Boolean isGeckolibWearer = event.getData(GeoArmorRenderer.IS_GECKOLIB_WEARER);
+        if (Boolean.TRUE.equals(isGeckolibWearer)) {
+            event.controller().setAnimation(UMVUTHANA_ANIM);
+        } else {
+            event.controller().setAnimation(PLAYER_ANIM);
+        }
         return PlayState.CONTINUE;
     }
 
@@ -175,17 +170,5 @@ public class ItemUmvuthanaMask extends Item implements UmvuthanaMask, GeoItem {
                 return armorRenderer;
             }
         });
-    }
-
-    // Kept as a near-empty implementation solely because MMClient.java (out of this scope) still registers one via
-    // RegisterClientExtensionsEvent#registerItem(new ItemUmvuthanaMask.ClientExtensions(), ...). getArmorTexture is
-    // likely vestigial now too (GeckoLib resolves its own armor texture via the GeoModel, not this vanilla hook),
-    // but kept since it's a harmless, cheap override in case some fallback path still consults it.
-    public static class ClientExtensions implements IClientItemExtensions {
-        @Override
-        public @Nullable Identifier getArmorTexture(ItemStack stack, EquipmentClientInfo.LayerType type, EquipmentClientInfo.Layer layer, Identifier _default) {
-            MaskType maskType = ((ItemUmvuthanaMask) stack.getItem()).getMaskType();
-            return Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/item/umvuthana_mask_" + maskType.name + ".png");
-        }
     }
 }

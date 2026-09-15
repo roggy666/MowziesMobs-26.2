@@ -31,7 +31,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
+import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -90,7 +90,7 @@ public class EntityBlockSwapper extends Entity {
 
     public static void swapBlock(Level world, BlockPos pos, BlockState newBlock, int duration, boolean breakParticlesStart, boolean breakParticlesEnd) {
         if (!world.isClientSide()) {
-            EntityBlockSwapper swapper = new EntityBlockSwapper(EntityHandler.BLOCK_SWAPPER.get(), world, pos, newBlock, duration, breakParticlesStart, breakParticlesEnd);
+            EntityBlockSwapper swapper = new EntityBlockSwapper(EntityHandler.BLOCK_SWAPPER, world, pos, newBlock, duration, breakParticlesStart, breakParticlesEnd);
             world.addFreshEntity(swapper);
         }
     }
@@ -190,7 +190,7 @@ public class EntityBlockSwapper extends Entity {
 
     public static class EntityBlockSwapperTunneling extends EntityBlockSwapper implements ILinkedEntity {
         private LivingEntity cachedTunneler;
-        private static final EntityDataAccessor<Optional<UUID>> TUNNELER = SynchedEntityData.defineId(EntityBlockSwapper.EntityBlockSwapperTunneling.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID.get());
+        private static final EntityDataAccessor<Optional<UUID>> TUNNELER = SynchedEntityData.defineId(EntityBlockSwapper.EntityBlockSwapperTunneling.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID);
 
         public EntityBlockSwapperTunneling(EntityType<? extends EntityBlockSwapperTunneling> type, Level world) {
             super(type, world);
@@ -230,7 +230,7 @@ public class EntityBlockSwapper extends Entity {
                 Entity entity = ((ServerLevel)this.level()).getEntity(this.getTunnelerID().get());
                 if (entity instanceof LivingEntity) {
                     cachedTunneler = (LivingEntity) entity;
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(this, MessageLinkEntities.fromEntity(this, cachedTunneler));
+                    NetworkHandler.sendToPlayersTrackingEntityAndSelf(this, MessageLinkEntities.fromEntity(this, cachedTunneler));
                 }
                 return this.cachedTunneler;
             } else {

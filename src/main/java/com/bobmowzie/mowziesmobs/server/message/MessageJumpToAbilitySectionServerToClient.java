@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.message;
 
+import net.minecraft.world.entity.player.Player;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.ability.Ability;
 import com.bobmowzie.mowziesmobs.server.ability.AbilityType;
@@ -11,7 +12,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record MessageJumpToAbilitySectionServerToClient(int entityId, int index, int sectionIndex) implements CustomPacketPayload {
@@ -23,18 +23,16 @@ public record MessageJumpToAbilitySectionServerToClient(int entityId, int index,
             MessageJumpToAbilitySectionServerToClient::new
     );
 
-    public static void handleClient(final MessageJumpToAbilitySectionServerToClient packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            if (context.player().level().getEntity(packet.entityId()) instanceof LivingEntity living) {
-                AbilityData data = DataHandler.getData(living, DataHandler.ABILITY_DATA);
-                AbilityType<?, ?> abilityType = data.getAbilityTypesOnEntity(living)[packet.index()];
-                Ability<?> instance = data.getAbilityMap().get(abilityType);
+    public static void handleClient(final MessageJumpToAbilitySectionServerToClient packet, final Player player) {
+        if (player.level().getEntity(packet.entityId()) instanceof LivingEntity living) {
+            AbilityData data = DataHandler.getData(living, DataHandler.ABILITY_DATA);
+            AbilityType<?, ?> abilityType = data.getAbilityTypesOnEntity(living)[packet.index()];
+            Ability<?> instance = data.getAbilityMap().get(abilityType);
 
-                if (instance.isUsing()) {
-                    instance.jumpToSection(packet.sectionIndex());
-                }
+            if (instance.isUsing()) {
+                instance.jumpToSection(packet.sectionIndex());
             }
-        });
+        }
     }
 
     @Override

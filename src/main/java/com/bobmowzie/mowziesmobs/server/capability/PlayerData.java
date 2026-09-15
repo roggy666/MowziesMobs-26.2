@@ -39,17 +39,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.ValueIOSerializable;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerData implements ValueIOSerializable {
+public class PlayerData implements SerializableData {
     public boolean verticalSwing = false;
     public int untilSunstrike = 0;
     public int untilAxeSwing = 0;
@@ -186,14 +181,13 @@ public class PlayerData implements ValueIOSerializable {
 
     public Power[] powers = new Power[]{};
 
-    public void addedToWorld(EntityJoinLevelEvent event) {
+    public void addedToWorld(Player player) {
         // Create the geckoplayer instances when an entity joins the world
         // Normally, the animation controllers and lastModel field are only set when rendered for the first time, but this won't work for player animations
-        if (event.getLevel().isClientSide()) {
-            Player player = (Player) event.getEntity();
+        if (player.level().isClientSide()) {
             geckoPlayer = new GeckoPlayer.GeckoPlayerThirdPerson(player);
             // Only create 1st person instance if the player joining is this client's player
-            if (event.getEntity() == MMCommon.PROXY.getLocalPlayer()) {
+            if (player == MMCommon.PROXY.getLocalPlayer()) {
                 // I'm aware this is bad coding practice but in this constructor the static GeckoFirstPersonRenderer.GECKO_PLAYER_FIRST_PERSON gets set to this instance
                 new GeckoPlayer.GeckoPlayerFirstPerson(player);
             }
@@ -203,7 +197,7 @@ public class PlayerData implements ValueIOSerializable {
     public void pressedAttackKey(Player player) {
         if (!mouseLeftDown) {
             mouseLeftDown = true;
-            ClientPacketDistributor.sendToServer(new MessageLeftMouseDown());
+            MMCommon.PROXY.sendToServer(new MessageLeftMouseDown());
             for (Power power : powers) {
                 power.onLeftMouseDown(player);
             }
@@ -219,7 +213,7 @@ public class PlayerData implements ValueIOSerializable {
     public void pressedUseKey(Player player) {
         if (!mouseRightDown) {
             mouseRightDown = true;
-            ClientPacketDistributor.sendToServer(new MessageRightMouseDown());
+            MMCommon.PROXY.sendToServer(new MessageRightMouseDown());
             for (Power power : powers) {
                 power.onLeftMouseDown(player);
             }
@@ -232,8 +226,7 @@ public class PlayerData implements ValueIOSerializable {
         }
     }
 
-    public void tick(PlayerTickEvent event) {
-        Player player = event.getEntity();
+    public void tick(Player player) {
 
         packCircleTick++;
 
@@ -271,11 +264,6 @@ public class PlayerData implements ValueIOSerializable {
 
         Ability<?> iceBreathAbility = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.ICE_BREATH_ABILITY);
         if (iceBreathAbility != null && !iceBreathAbility.isUsing()) {
-            // PORTING NOTE (1.21.1 -> 26.1.2): Inventory#items is now private and Inventory#offhand no longer
-            // exists at all - equipment (including offhand) moved onto a separate EntityEquipment object
-            // (confirmed against real 26.1.2 Inventory source). getNonEquipmentItems() is the replacement for the
-            // old public `items` field (the 36-slot hotbar+main inventory only), and offhand is now read directly
-            // off the entity via getItemBySlot(EquipmentSlot.OFFHAND).
             for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
                 restoreIceCrystalStack(player, stack);
             }
@@ -287,7 +275,7 @@ public class PlayerData implements ValueIOSerializable {
         if (player.level().isClientSide()) {
             if (!Minecraft.getInstance().options.keyAttack.isDown() && mouseLeftDown) {
                 mouseLeftDown = false;
-                ClientPacketDistributor.sendToServer(new MessageLeftMouseUp());
+                MMCommon.PROXY.sendToServer(new MessageLeftMouseUp());
                 for (int i = 0; i < powers.length; i++) {
                     powers[i].onLeftMouseUp(player);
                 }
@@ -302,7 +290,7 @@ public class PlayerData implements ValueIOSerializable {
             }
             if (!Minecraft.getInstance().options.keyUse.isDown() && mouseRightDown) {
                 mouseRightDown = false;
-                ClientPacketDistributor.sendToServer(new MessageRightMouseUp());
+                MMCommon.PROXY.sendToServer(new MessageRightMouseUp());
                 for (int i = 0; i < powers.length; i++) {
                     powers[i].onRightMouseUp(player);
                 }
@@ -392,14 +380,14 @@ public class PlayerData implements ValueIOSerializable {
         }
 
         if (pawCooldownRemainingToLoad > 0) {
-            loadPawCooldownsFromNBT(event.getEntity());
+            loadPawCooldownsFromNBT(player);
             pawCooldownRemainingToLoad = 0;
         }
-        setPawCooldownsForNBT(event.getEntity());
+        setPawCooldownsForNBT(player);
     }
 
     private void restoreIceCrystalStack(Player entity, ItemStack stack) {
-        if (stack.getItem() == ItemHandler.ICE_CRYSTAL.get()) {
+        if (stack.getItem() == ItemHandler.ICE_CRYSTAL) {
             if (!ConfigHandler.COMMON.TOOLS_AND_ABILITIES.ICE_CRYSTAL.breakable.get()) {
                 stack.setDamageValue(Math.max(stack.getDamageValue() - 1, 0));
             }
@@ -408,7 +396,7 @@ public class PlayerData implements ValueIOSerializable {
 
     private void useIceCrystalStack(Player player) {
         ItemStack stack = player.getUseItem();
-        if (stack.getItem() == ItemHandler.ICE_CRYSTAL.get()) {
+        if (stack.getItem() == ItemHandler.ICE_CRYSTAL) {
             Ability<?> iceBreathAbility = AbilityHandler.INSTANCE.getAbility(player, AbilityHandler.ICE_BREATH_ABILITY);
             if (iceBreathAbility != null && iceBreathAbility.isUsing()) {
                 InteractionHand handIn = player.getUsedItemHand();
@@ -432,8 +420,6 @@ public class PlayerData implements ValueIOSerializable {
         for (int l = 0; l <= 4; ++l) {
             for (int i1 = 0; i1 <= 4; ++i1) {
                 if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && umvuthana.isTeleportFriendlyBlock(x, z, y, l, i1)) {
-                    // PORTING NOTE (1.21.1 -> 26.1.2): Entity#moveTo(x,y,z,yRot,xRot) was renamed to snapTo(...)
-                    // (same rename as Entity#absMoveTo, see onFreeze() in FrozenData.java for the same fix).
                     umvuthana.snapTo((float) (x + l) + 0.5F, y, (float) (z + i1) + 0.5F, umvuthana.getYRot(), umvuthana.getXRot());
                     umvuthana.getNavigation().stop();
                     return;
@@ -475,18 +461,8 @@ public class PlayerData implements ValueIOSerializable {
         testingSculptor = sculptor;
     }
 
-    // PORTING NOTE (1.21.1 -> 26.1.2): ItemCooldowns#cooldowns and its CooldownInstance record are now both
-    // private (confirmed against real 26.1.2 ItemCooldowns source - CooldownInstance is a private record nested
-    // in ItemCooldowns with no accessor exposing the raw map or an instance's startTime/endTime), so the old
-    // direct-map read/write is no longer possible. Rebuilt on the remaining public API:
-    // getCooldownPercent(ItemStack, float) for reading, addCooldown(Identifier, int ticksRemaining) for writing.
-    // KNOWN BEHAVIOR NUANCE: addCooldown always starts a fresh cooldown window (startTime = current tick), so the
-    // client's cooldown *overlay bar* will render as if the cooldown just started (i.e. the swipe animation
-    // restarts) rather than resuming mid-animation from the saved fractional progress, even though the actual
-    // "ticks remaining until usable again" value is preserved exactly. There is no public API left to reconstruct
-    // an arbitrary historical startTime for the overlay animation.
     public void setPawCooldownsForNBT(Player player) {
-        float percent = player.getCooldowns().getCooldownPercent(new ItemStack(ItemHandler.ELOKOSA_PAW_FULL.get()), 0.0F);
+        float percent = player.getCooldowns().getCooldownPercent(new ItemStack(ItemHandler.ELOKOSA_PAW_FULL), 0.0F);
         if (percent > 0.0F) {
             int cooldown = ConfigHandler.COMMON.TOOLS_AND_ABILITIES.ELOKOSA_PAW.cooldown.getAsInt();
             pawCooldownRemainingToSave = Math.round(percent * cooldown);
@@ -495,10 +471,10 @@ public class PlayerData implements ValueIOSerializable {
 
     public void loadPawCooldownsFromNBT(Player player) {
         if (pawCooldownRemainingToLoad > 0) {
-            for (DeferredHolder<Item, ItemElokosaPaw> item : ItemHandler.ELOKOSA_PAWS) {
-                player.getCooldowns().addCooldown(BuiltInRegistries.ITEM.getKey(item.get()), pawCooldownRemainingToLoad);
+            for (ItemElokosaPaw item : ItemHandler.ELOKOSA_PAWS) {
+                player.getCooldowns().addCooldown(BuiltInRegistries.ITEM.getKey(item), pawCooldownRemainingToLoad);
                 if (player instanceof ServerPlayer serverPlayer) {
-                    PacketDistributor.sendToPlayer(serverPlayer, new MessageAddInProgressCooldown(item.get(), 0, pawCooldownRemainingToLoad));
+                    NetworkHandler.sendToPlayer(serverPlayer, new MessageAddInProgressCooldown(item, 0, pawCooldownRemainingToLoad));
                 }
             }
         }

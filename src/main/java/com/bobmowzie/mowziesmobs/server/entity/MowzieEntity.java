@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.entity;
 
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.client.model.tools.IntermittentAnimation;
 import com.bobmowzie.mowziesmobs.client.sound.BossMusic;
@@ -13,7 +14,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -49,9 +49,6 @@ import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -59,7 +56,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public abstract class MowzieEntity extends PathfinderMob implements IEntityWithComplexSpawn, IntermittentAnimatableEntity {
+public abstract class MowzieEntity extends PathfinderMob implements IntermittentAnimatableEntity {
     private static final byte START_IA_HEALTH_UPDATE_ID = 4;
     private static final byte MUSIC_PLAY_ID = 67;
     private static final byte MUSIC_STOP_ID = 68;
@@ -252,7 +249,6 @@ public abstract class MowzieEntity extends PathfinderMob implements IEntityWithC
 
     @Override // Copied from Mob class file
     public void checkDespawn() {
-        if (EventHooks.checkMobDespawn(this)) return;
         if (this.level().getDifficulty() == Difficulty.PEACEFUL && !this.getType().isAllowedInPeaceful()) {
             this.discard();
         } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
@@ -339,12 +335,8 @@ public abstract class MowzieEntity extends PathfinderMob implements IEntityWithC
     }
 
     @Override
-    public void writeSpawnData(@NotNull RegistryFriendlyByteBuf buffer) {
-
-    }
-
-    @Override
-    public void readSpawnData(@NotNull RegistryFriendlyByteBuf buffer) {
+    public void recreateFromPacket(@NotNull ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
         yRotO = getYRot();
         yBodyRotO = yBodyRot = yHeadRotO = yHeadRot;
     }
@@ -634,8 +626,8 @@ public abstract class MowzieEntity extends PathfinderMob implements IEntityWithC
         return null;
     }
 
-    public void playSound(List<DeferredHolder<SoundEvent, SoundEvent>> sounds, float volume, float pitch) {
-        SoundEvent sound = sounds.get(random.nextInt(sounds.size())).get();
+    public void playSound(List<SoundEvent> sounds, float volume, float pitch) {
+        SoundEvent sound = sounds.get(random.nextInt(sounds.size()));
         playSound(sound, volume, pitch);
     }
 }

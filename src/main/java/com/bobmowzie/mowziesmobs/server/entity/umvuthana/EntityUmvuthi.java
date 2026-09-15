@@ -110,9 +110,9 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
         @Override
         public void tickUsing() {
             super.tickUsing();
-            if (getTicksInUse() == 1) getUser().playSound(MMSounds.ENTITY_UMVUTHI_HURT.get(), getUser().getSoundVolume(), getUser().getVoicePitch());
-            if (getTicksInUse() == 14) getUser().playSound(MMSounds.ENTITY_UMVUTHI_DIE.get(), getUser().getSoundVolume(), 1);
-            if (getTicksInUse() == 80) getUser().playSound(MMSounds.MISC_METAL_IMPACT.get(), getUser().getSoundVolume(), 1);
+            if (getTicksInUse() == 1) getUser().playSound(MMSounds.ENTITY_UMVUTHI_HURT, getUser().getSoundVolume(), getUser().getVoicePitch());
+            if (getTicksInUse() == 14) getUser().playSound(MMSounds.ENTITY_UMVUTHI_DIE, getUser().getSoundVolume(), 1);
+            if (getTicksInUse() == 80) getUser().playSound(MMSounds.MISC_METAL_IMPACT, getUser().getSoundVolume(), 1);
         }
     });
     public static final AbilityType<EntityUmvuthi, HurtAbility<EntityUmvuthi>> HURT_ABILITY = new AbilityType<>("umvuthi_hurt", (type, entity) -> new HurtAbility<>(type, entity,RawAnimation.begin().thenPlay("hurt"), 13, 10));
@@ -121,7 +121,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
         public void tickUsing() {
             super.tickUsing();
             if (getTicksInUse() == 9 || getTicksInUse() == 29) {
-                getUser().playSound(MMSounds.ENTITY_UMVUTHI_BELLY.get(), 3f, 1f);
+                getUser().playSound(MMSounds.ENTITY_UMVUTHI_BELLY, 3f, 1f);
             }
         }
     });
@@ -131,7 +131,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
         public void tickUsing() {
             super.tickUsing();
             if (getTicksInUse() == 2) {
-                getUser().playSound(MMSounds.ENTITY_UMVUTHI_ROAR.get(), 3f, 1f);
+                getUser().playSound(MMSounds.ENTITY_UMVUTHI_ROAR, 3f, 1f);
             }
         }
     });
@@ -164,9 +164,9 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
     private static final EntityDataAccessor<Integer> DIALOGUE = SynchedEntityData.defineId(EntityUmvuthi.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> ANGRY = SynchedEntityData.defineId(EntityUmvuthi.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<ItemStack> DESIRES = SynchedEntityData.defineId(EntityUmvuthi.class, EntityDataSerializers.ITEM_STACK);
-    private static final EntityDataAccessor<CompoundTag> TRADED_PLAYERS = SynchedEntityData.defineId(EntityUmvuthi.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.COMPOUND_TAG.get());
+    private static final EntityDataAccessor<CompoundTag> TRADED_PLAYERS = SynchedEntityData.defineId(EntityUmvuthi.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.COMPOUND_TAG);
     private static final EntityDataAccessor<Float> HEALTH_LOST = SynchedEntityData.defineId(EntityUmvuthi.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Optional<UUID>> MISBEHAVED_PLAYER = SynchedEntityData.defineId(EntityUmvuthi.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID.get());
+    private static final EntityDataAccessor<Optional<UUID>> MISBEHAVED_PLAYER = SynchedEntityData.defineId(EntityUmvuthi.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID);
     private static final EntityDataAccessor<Boolean> IS_TRADING = SynchedEntityData.defineId(EntityUmvuthi.class, EntityDataSerializers.BOOLEAN);
     public ControlledAnimation legsUp = new ControlledAnimation(15);
     public ControlledAnimation angryEyebrow = new ControlledAnimation(5);
@@ -303,7 +303,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
     protected SoundEvent getAmbientSound() {
         if (getActiveAbility() == null) {
             sendAbilityMessage(TALK_ABILITY);
-            return MMSounds.ENTITY_UMVUTHI_IDLE.get();
+            return MMSounds.ENTITY_UMVUTHI_IDLE;
         }
         return null;
     }
@@ -311,7 +311,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
     public void updateRattleSound(float maskRot) {
         if (!rattling) {
             if (Math.abs(maskRot - prevMaskRot) > 0.05) {
-                level().playLocalSound(getX(), getY(), getZ(), MMSounds.ENTITY_UMVUTHANA_RATTLE.get(), SoundSource.HOSTILE, 0.04f, getVoicePitch() * 0.75f, false);
+                level().playLocalSound(getX(), getY(), getZ(), MMSounds.ENTITY_UMVUTHANA_RATTLE, SoundSource.HOSTILE, 0.04f, getVoicePitch() * 0.75f, false);
             }
         }
         else {
@@ -324,7 +324,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return MMSounds.ENTITY_UMVUTHI_HURT.get();
+        return MMSounds.ENTITY_UMVUTHI_HURT;
     }
 
     @Override
@@ -467,7 +467,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
                 if (level().isClientSide()) {
                     spawnExplosionParticles(30);
                 }
-                this.playSound(MMSounds.ENTITY_UMVUTHI_ATTACK.get(), 1.7f, 0.9f);
+                this.playSound(MMSounds.ENTITY_UMVUTHI_ATTACK, 1.7f, 0.9f);
             }
             if (getActiveAbility().getTicksInUse() <= 6 && level().isClientSide()) {
                 int particleCount = 8;
@@ -528,7 +528,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
             for (Player player : getPlayersNearby(15, 15, 15, 15)) {
                 ItemStack headArmorStack = player.getItemBySlot(EquipmentSlot.HEAD);
                 if (getTarget() != player && canAttack(player) && GIVE_ACHIEVEMENT_PRED.test(serverLevel, this, player) && headArmorStack.getItem() instanceof UmvuthanaMask) {
-                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.SNEAK_VILLAGE_TRIGGER.get().trigger(serverPlayer);
+                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.SNEAK_VILLAGE_TRIGGER.trigger(serverPlayer);
                 }
             }
         }
@@ -577,7 +577,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
     public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
     	if (source == level.damageSources().hotFloor()) return false;
         if (hasEffect(EffectHandler.SUNBLOCK) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            if (source.getDirectEntity() != null) playSound(MMSounds.ENTITY_WROUGHT_UNDAMAGED.get(), 0.4F, 2);
+            if (source.getDirectEntity() != null) playSound(MMSounds.ENTITY_WROUGHT_UNDAMAGED, 0.4F, 2);
             return false;
         }
         timeUntilHeal = HEAL_PAUSE;
@@ -903,7 +903,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
                 Player closestPlayer = players.get(0);
                 float closestPlayerDist = 6;
                 for (Player player : players) {
-                    if (player.getMainHandItem().getItem() == ItemHandler.UMVUTHI_SPAWN_EGG.get() || player.getMainHandItem().getItem() == ItemHandler.UMVUTHI_SPAWN_EGG.get()) {
+                    if (player.getMainHandItem().getItem() == ItemHandler.UMVUTHI_SPAWN_EGG || player.getMainHandItem().getItem() == ItemHandler.UMVUTHI_SPAWN_EGG) {
                         float thisDist = this.distanceTo(player);
                         if (thisDist < closestPlayerDist) {
                             closestPlayer = player;
@@ -1033,8 +1033,8 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
             super.beginSection(section);
             if (!getUser().level().isClientSide()) {
                 if (section.sectionType == AbilitySection.AbilitySectionType.ACTIVE) {
-                    getUser().playSound(MMSounds.ENTITY_UMVUTHI_ATTACK.get(), 1.4f, 1);
-                    EntitySunstrike sunstrike = new EntitySunstrike(EntityHandler.SUNSTRIKE.get(), getUser().level(), getUser(), newX, y, newZ);
+                    getUser().playSound(MMSounds.ENTITY_UMVUTHI_ATTACK, 1.4f, 1);
+                    EntitySunstrike sunstrike = new EntitySunstrike(EntityHandler.SUNSTRIKE, getUser().level(), getUser(), newX, y, newZ);
                     sunstrike.onSummon();
                     getUser().level().addFreshEntity(sunstrike);
                 }
@@ -1069,7 +1069,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
             float radius1 = 0.8f;
             EntityUmvuthi entity = getUser();
             if (getTicksInUse() == 4 && !entity.level().isClientSide()) {
-                solarBeam = new EntitySolarBeam(EntityHandler.SOLAR_BEAM.get(), getUser().level(), entity, entity.getX() + radius1 * Math.sin(-entity.getYRot() * Math.PI / 180), entity.getY() + 1.4, entity.getZ() + radius1 * Math.cos(-entity.getYRot() * Math.PI / 180), (float) ((entity.yHeadRot + 90) * Math.PI / 180), (float) (-entity.getXRot() * Math.PI / 180), 55);
+                solarBeam = new EntitySolarBeam(EntityHandler.SOLAR_BEAM, getUser().level(), entity, entity.getX() + radius1 * Math.sin(-entity.getYRot() * Math.PI / 180), entity.getY() + 1.4, entity.getZ() + radius1 * Math.cos(-entity.getYRot() * Math.PI / 180), (float) ((entity.yHeadRot + 90) * Math.PI / 180), (float) (-entity.getXRot() * Math.PI / 180), 55);
                 entity.level().addFreshEntity(solarBeam);
             }
             if (getTicksInUse() >= 22) {
@@ -1096,7 +1096,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
         @Override
         public void start() {
             super.start();
-            getUser().playSound(MMSounds.ENTITY_UMVUTHI_BURST.get(), 1.7f, 1.5f);
+            getUser().playSound(MMSounds.ENTITY_UMVUTHI_BURST, 1.7f, 1.5f);
             playAnimation(FLARE_ANIM);
         }
 
@@ -1152,7 +1152,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
         public void start() {
             super.start();
             getUser().umvuthanaSpawnCount++;
-            getUser().playSound(MMSounds.ENTITY_UMVUTHANA_INHALE.get(), 1.2f, 0.5f);
+            getUser().playSound(MMSounds.ENTITY_UMVUTHANA_INHALE, 1.2f, 0.5f);
             playAnimation(SPAWN_STRIX_ANIM);
         }
 
@@ -1161,13 +1161,13 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
             super.beginSection(section);
             EntityUmvuthi entity = getUser();
             if (section.sectionType == AbilitySection.AbilitySectionType.STARTUP) {
-                getUser().playSound(MMSounds.ENTITY_UMVUTHANA_INHALE.get(), 1.2f, 0.5f);
+                getUser().playSound(MMSounds.ENTITY_UMVUTHANA_INHALE, 1.2f, 0.5f);
                 playAnimation(SPAWN_STRIX_ANIM);
             }
             if (section.sectionType == AbilitySection.AbilitySectionType.ACTIVE) {
                 if (!getUser().level().isClientSide()) {
-                    entity.playSound(MMSounds.ENTITY_UMVUTHI_BELLY.get(), 1.5f, 1);
-                    entity.playSound(MMSounds.ENTITY_UMVUTHANA_BLOWDART.get(), 1.5f, 0.5f);
+                    entity.playSound(MMSounds.ENTITY_UMVUTHI_BELLY, 1.5f, 1);
+                    entity.playSound(MMSounds.ENTITY_UMVUTHANA_BLOWDART, 1.5f, 0.5f);
                     double angle = entity.yHeadRot;
                     if (angle < 0) {
                         angle = angle + 360;
@@ -1179,9 +1179,9 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
                     }
                     EntityUmvuthanaMinion umvuthana;
                     if (spawnSunblockers) {
-                        umvuthana = new EntityUmvuthanaCrane(EntityHandler.UMVUTHANA_CRANE.get(), entity.level());
+                        umvuthana = new EntityUmvuthanaCrane(EntityHandler.UMVUTHANA_CRANE, entity.level());
                         ((EntityUmvuthanaCrane) umvuthana).hasTriedOrSucceededTeleport = false;
-                    } else umvuthana = new EntityUmvuthanaMinion(EntityHandler.UMVUTHANA_MINION.get(), entity.level());
+                    } else umvuthana = new EntityUmvuthanaMinion(EntityHandler.UMVUTHANA_MINION, entity.level());
                     umvuthana.snapTo(entity.getX() + 2 * Math.sin(-angle * (Math.PI / 180)), entity.getY() + 2.5, entity.getZ() + 2 * Math.cos(-angle * (Math.PI / 180)), entity.yHeadRot, 0);
                     umvuthana.setActive(false);
                     umvuthana.active = false;
@@ -1230,15 +1230,26 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
         @Override
         public void start() {
             super.start();
-            getUser().playSound(MMSounds.ENTITY_SUPERNOVA_START.get(), 3f, 1f);
+            getUser().playSound(MMSounds.ENTITY_SUPERNOVA_START, 3f, 1f);
             playAnimation(SUPERNOVA_ANIM);
+            if (!getUser().level().isClientSide() && getUser().bossInfo != null) {
+                getUser().bossInfo.setDarkenScreen(true);
+            }
+        }
+
+        @Override
+        public void end() {
+            super.end();
+            if (!getUser().level().isClientSide() && getUser().bossInfo != null) {
+                getUser().bossInfo.setDarkenScreen(false);
+            }
         }
 
         @Override
         public void tickUsing() {
             super.tickUsing();
             if (getTicksInUse() == 30) {
-                getUser().playSound(MMSounds.ENTITY_SUPERNOVA_BLACKHOLE.get(), 2f, 1.2f);
+                getUser().playSound(MMSounds.ENTITY_SUPERNOVA_BLACKHOLE, 2f, 1.2f);
             }
 
             if (getTicksInUse() < 30) {
@@ -1259,7 +1270,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
             }
 
             if (getTicksInUse() == 40) {
-                getUser().playSound(MMSounds.ENTITY_UMVUTHI_ROAR.get(), 3f, 1f);
+                getUser().playSound(MMSounds.ENTITY_UMVUTHI_ROAR, 3f, 1f);
             }
 
             if (getLevel().isClientSide()) {
@@ -1274,7 +1285,7 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
                 if (!getUser().level().isClientSide()) {
                     Vec3 offset = new Vec3(1.1f, 0, 0);
                     offset = offset.yRot((float) Math.toRadians(-getUser().getYRot() - 90));
-                    EntitySuperNova superNova = new EntitySuperNova(EntityHandler.SUPER_NOVA.get(), getUser().level(), getUser(), getUser().getX() + offset.x, getUser().getY() + 0.05, getUser().getZ() + offset.z);
+                    EntitySuperNova superNova = new EntitySuperNova(EntityHandler.SUPER_NOVA, getUser().level(), getUser(), getUser().getX() + offset.x, getUser().getY() + 0.05, getUser().getZ() + offset.z);
                     getUser().level().addFreshEntity(superNova);
                 }
             }
@@ -1287,20 +1298,6 @@ public class EntityUmvuthi extends MowzieGeckoEntity implements LeaderSunstrikeI
         private static final ParticleComponent.KeyTrack superNovaKeyTrack2 = ParticleComponent.KeyTrack.oscillate(0, 7, 24);
 
         public static void superNovaEffects(Ability<?>activeAbility, Vec3[] pinLocation, Level level) {
-            // Darken sky
-            Player clientPlayer = MMCommon.PROXY.getLocalPlayer();
-            if (clientPlayer == null) return;
-            double distToCaster = activeAbility.getUser().position().distanceToSqr(clientPlayer.position());
-            if (distToCaster < 1000) {
-                // FIXME 26.1.2 port :: GameRenderer#darkenWorldAmount was removed with no direct field replacement.
-                // The vanilla "darken screen" vignette during boss fights is now driven declaratively via
-                // BossEvent#setDarkenScreen(boolean) / LerpingBossEvent (see net.minecraft.client.gui.components.BossHealthOverlay
-                // and net.minecraft.client.renderer.fog.FogRenderer#computeFogColor's darkenWorldAmount parameter, which is now
-                // sourced from the boss bar overlay rather than settable directly). This manual per-tick screen-darkening
-                // during the Supernova ability has no drop-in replacement here; needs a proper redesign (e.g. driving it through
-                // MMBossInfoServer/the boss bar's darkenScreen flag, or a custom render-time hook) - not resolved as part of this port.
-            }
-
             // Particle effects
             if (pinLocation == null || pinLocation.length == 0 || pinLocation[0] == null) return;
             int ticksInUse = activeAbility.getTicksInUse();

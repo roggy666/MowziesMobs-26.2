@@ -27,7 +27,7 @@ public class WroughtAxeSwingAbility extends PlayerAbility {
     public void start() {
         super.start();
         if (!getUser().level().isClientSide()) {
-            EntityAxeAttack axeAttack = new EntityAxeAttack(EntityHandler.AXE_ATTACK.get(), getUser().level(), getUser(), false);
+            EntityAxeAttack axeAttack = new EntityAxeAttack(EntityHandler.AXE_ATTACK, getUser().level(), getUser(), false);
             axeAttack.snapTo(getUser().getX(), getUser().getY(), getUser().getZ(), getUser().getYRot(), getUser().getXRot());
             getUser().level().addFreshEntity(axeAttack);
             this.axeAttack = axeAttack;

@@ -112,7 +112,7 @@ public class EntityPoisonBall extends EntityMagicEffect {
     private void explode() {
         this.level().broadcastEntityEvent(this, EXPLOSION_PARTICLES_ID);
 
-        playSound(MMSounds.ENTITY_NAGA_ACID_HIT.get(), 1, 1);
+        playSound(MMSounds.ENTITY_NAGA_ACID_HIT, 1, 1);
 
         List<Entity> entitiesHit = getEntitiesNearby(2);
         if (!entitiesHit.isEmpty()) {

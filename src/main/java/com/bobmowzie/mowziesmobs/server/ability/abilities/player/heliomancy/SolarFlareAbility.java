@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.ability.abilities.player.heliomancy;
 
+import net.minecraft.world.entity.Entity;
 import com.bobmowzie.mowziesmobs.client.model.tools.MathUtils;
 import com.bobmowzie.mowziesmobs.client.particle.ParticleOrb;
 import com.bobmowzie.mowziesmobs.server.ability.AbilityHandler;
@@ -17,8 +18,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import com.geckolib.animation.RawAnimation;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class SolarFlareAbility extends HeliomancyAbilityBase {
     @Override
     public void start() {
         super.start();
-        getUser().playSound(MMSounds.ENTITY_UMVUTHI_BURST.get(), 1.7f, 1.5f);
+        getUser().playSound(MMSounds.ENTITY_UMVUTHI_BURST, 1.7f, 1.5f);
         playAnimation(SOLAR_FLARE_ANIM);
         if (getLevel().isClientSide()) {
             heldItemMainHandVisualOverride = ItemStack.EMPTY;
@@ -114,14 +113,14 @@ public class SolarFlareAbility extends HeliomancyAbilityBase {
     }
 
     @Override
-    public void onLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
-        super.onLeftClickEmpty(event);
-        if (event.getEntity() == getUser() && event.getEntity().isShiftKeyDown()) AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(event.getEntity(), AbilityHandler.SOLAR_FLARE_ABILITY);
+    public void onLeftClickEmpty(Player player) {
+        super.onLeftClickEmpty(player);
+        if (player == getUser() && player.isShiftKeyDown()) AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(player, AbilityHandler.SOLAR_FLARE_ABILITY);
     }
 
     @Override
-    public void onLeftClickEntity(AttackEntityEvent event) {
-        super.onLeftClickEntity(event);
-        if (event.getEntity() == getUser() && event.getEntity().isShiftKeyDown()) AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(event.getEntity(), AbilityHandler.SOLAR_FLARE_ABILITY);
+    public void onLeftClickEntity(Player player, Entity target) {
+        super.onLeftClickEntity(player, target);
+        if (player == getUser() && player.isShiftKeyDown()) AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(player, AbilityHandler.SOLAR_FLARE_ABILITY);
     }
 }

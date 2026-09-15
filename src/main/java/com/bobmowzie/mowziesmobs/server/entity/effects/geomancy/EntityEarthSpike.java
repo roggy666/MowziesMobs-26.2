@@ -54,7 +54,7 @@ public class EntityEarthSpike extends EntityGeomancyBase {
         if (!emerged) {
             emerged = true;
             damageDelay = 2;
-            playSound(MMSounds.ENTITY_BLUFF_SPIKE_EMERGE.get(), 1, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+            playSound(MMSounds.ENTITY_BLUFF_SPIKE_EMERGE, 1, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
             if (level().isClientSide()) {
                 for (int i = 0; i < 30; i++) {
                     Vec3 offset = new Vec3(0.6 + random.nextFloat() * 0.2, 0.1, 0).yRot(random.nextFloat() * (float) Math.PI * 2f);
@@ -125,6 +125,6 @@ public class EntityEarthSpike extends EntityGeomancyBase {
     @Override
     protected void explode() {
         super.explode();
-//        playSound(MMSounds.EFFECT_GEOMANCY_BREAK.get(), 1, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+//        playSound(MMSounds.EFFECT_GEOMANCY_BREAK, 1, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
     }
 }

@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.message;
 
+import net.minecraft.world.entity.player.Player;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.capability.DataHandler;
 import io.netty.buffer.ByteBuf;
@@ -9,7 +10,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,14 +25,12 @@ public record MessageSunblockEffect(int entityId, boolean hasSunBlock) implement
             MessageSunblockEffect::new
     );
 
-    public static void handleClient(final MessageSunblockEffect packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Level level = MMCommon.PROXY.getClientLevel();
+    public static void handleClient(final MessageSunblockEffect packet, final Player player) {
+        Level level = MMCommon.PROXY.getClientLevel();
 
-            if (level != null && level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
-                DataHandler.getData(entity, DataHandler.LIVING_DATA).setHasSunblock(packet.hasSunBlock());
-            }
-        });
+        if (level != null && level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
+            DataHandler.getData(entity, DataHandler.LIVING_DATA).setHasSunblock(packet.hasSunBlock());
+        }
     }
 
     @Override

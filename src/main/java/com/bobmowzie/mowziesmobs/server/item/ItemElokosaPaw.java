@@ -22,7 +22,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -38,12 +37,12 @@ public class ItemElokosaPaw extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand usedHand) {
         ItemStack itemstack = player.getItemInHand(usedHand);
-        player.playSound(MMSounds.ENTITY_ELOKOSA_PAW.get(), 1, 1.15f - 0.06f * pawType.ordinal());
+        player.playSound(MMSounds.ENTITY_ELOKOSA_PAW, 1, 1.15f - 0.06f * pawType.ordinal());
         int cooldown = ConfigHandler.COMMON.TOOLS_AND_ABILITIES.ELOKOSA_PAW.cooldown.getAsInt();
         if (!player.hasInfiniteMaterials()) {
-            for (DeferredHolder<Item, ItemElokosaPaw> item : ItemHandler.ELOKOSA_PAWS) {
+            for (ItemElokosaPaw item : ItemHandler.ELOKOSA_PAWS) {
                 // ItemCooldowns#addCooldown now takes an ItemStack (identifying the cooldown group), not an Item.
-                player.getCooldowns().addCooldown(item.get().getDefaultInstance(), cooldown);
+                player.getCooldowns().addCooldown(item.getDefaultInstance(), cooldown);
             }
         }
         itemstack.hurtAndBreak(1, player, usedHand.asEquipmentSlot());
@@ -147,12 +146,12 @@ public class ItemElokosaPaw extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
         if (pawType == PawType.CRESCENT || pawType == PawType.NEW) {
-            tooltip.accept(Component.translatable(getDescriptionId() + ".text.1").setStyle(ItemHandler.TOOLTIP_STYLE));
+            ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.1");
         }
         if (pawType == PawType.NEW) {
-            tooltip.accept(Component.translatable(getDescriptionId() + ".text.2").setStyle(ItemHandler.TOOLTIP_STYLE));
+            ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.2");
         }
     }
 }

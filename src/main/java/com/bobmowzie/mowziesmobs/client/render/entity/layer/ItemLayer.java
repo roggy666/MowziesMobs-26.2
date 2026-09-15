@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  * LivingEntity>} extracting the live entity from whatever custom render state class they end up defining, since
  * different renderers will have different concrete state types) rather than guessing their exact future field names.
  * Once ported, the call sites become e.g. {@code new ItemLayer<>(state -> state.entity, getModel().iceCrystalHand,
- * ItemHandler.ICE_CRYSTAL.get().getDefaultInstance(), ItemDisplayContext.GROUND)} and {@link #submit} invoked
+ * ItemHandler.ICE_CRYSTAL.getDefaultInstance(), ItemDisplayContext.GROUND)} and {@link #submit} invoked
  * manually from that renderer's own {@code submit(...)} override (there is no {@code addLayer}/layers list on plain
  * {@code EntityRenderer} - only {@code LivingEntityRenderer} has one, and these renderers can no longer be
  * {@code LivingEntityRenderer}s either, per the same architectural fact above).

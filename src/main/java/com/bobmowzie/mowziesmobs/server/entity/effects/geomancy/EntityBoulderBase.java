@@ -148,18 +148,18 @@ public abstract class EntityBoulderBase extends EntityGeomancyBase {
                 level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, storedBlock), getX() + particlePos.x, getY() - 1, getZ() + particlePos.z, particlePos.x, 2, particlePos.z);
             }
             if (boulderSize == GeomancyTier.SMALL) {
-                playSound(MMSounds.EFFECT_GEOMANCY_SMALL_CRASH.get(), 1.5f, 1.3f);
-                playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL.get(), 1.5f, 1f);
+                playSound(MMSounds.EFFECT_GEOMANCY_SMALL_CRASH, 1.5f, 1.3f);
+                playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL, 1.5f, 1f);
             } else if (boulderSize == GeomancyTier.MEDIUM) {
-                playSound(MMSounds.EFFECT_GEOMANCY_HIT_MEDIUM_2.get(), 1.5f, 1.5f);
-                playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL.get(), 1.5f, 0.8f);
+                playSound(MMSounds.EFFECT_GEOMANCY_HIT_MEDIUM_2, 1.5f, 1.5f);
+                playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL, 1.5f, 0.8f);
             } else if (boulderSize == GeomancyTier.LARGE) {
-                playSound(MMSounds.EFFECT_GEOMANCY_HIT_MEDIUM_1.get(), 1.5f, 0.9f);
-                playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG.get(), 1.5f, 1.5f);
+                playSound(MMSounds.EFFECT_GEOMANCY_HIT_MEDIUM_1, 1.5f, 0.9f);
+                playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG, 1.5f, 1.5f);
                 EntityCameraShake.cameraShake(level(), position(), 10, 0.05f, 0, 20);
             } else if (boulderSize == GeomancyTier.HUGE) {
-                playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG.get(), 2f, 0.5f);
-                playSound(MMSounds.EFFECT_GEOMANCY_RUMBLE_1.get(), 2, 0.8f);
+                playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG, 2f, 0.5f);
+                playSound(MMSounds.EFFECT_GEOMANCY_RUMBLE_1, 2, 0.8f);
                 EntityCameraShake.cameraShake(level(), position(), 15, 0.05f, 50, 30);
             }
             if (level().isClientSide()) {
@@ -170,7 +170,7 @@ public abstract class EntityBoulderBase extends EntityGeomancyBase {
             }
         }
         if (risingTick == 30 && boulderSize == GeomancyTier.HUGE) {
-            playSound(MMSounds.EFFECT_GEOMANCY_RUMBLE_2.get(), 2, 0.7f);
+            playSound(MMSounds.EFFECT_GEOMANCY_RUMBLE_2, 2, 0.7f);
         }
 
         int dripTick = risingTick - 2;

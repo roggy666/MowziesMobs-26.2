@@ -17,9 +17,15 @@
     "ferrous_wroughtnaut": {
       "trigger": "minecraft:player_killed_entity",
       "conditions": {
-        "entity": {
-          "type": "mowziesmobs:ferrous_wroughtnaut"
-        }
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:entity_type": "mowziesmobs:ferrous_wroughtnaut"
+            }
+          }
+        ]
       }
     }
   }

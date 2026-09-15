@@ -2,29 +2,27 @@ package com.bobmowzie.mowziesmobs.server.creativetab;
 
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.item.ItemHandler;
-import net.minecraft.core.registries.Registries;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class CreativeTabHandler {
-    public static final DeferredRegister<CreativeModeTab> REG = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MMCommon.MODID);
-
-    public static DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB = REG.register("mowziesmobs_tab", () -> net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab.builder()
-            .icon(() -> ItemHandler.LOGO.get().getDefaultInstance())
+    public static final CreativeModeTab CREATIVE_TAB = Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, MMCommon.resource("mowziesmobs_tab"), FabricCreativeModeTab.builder()
+            .icon(() -> ItemHandler.LOGO.getDefaultInstance())
             .title(Component.translatable("itemGroup.mowziesmobs.creativeTab"))
             .displayItems((displayParams, output) -> {
-                for (DeferredHolder<Item, ? extends Item> item : ItemHandler.REG.getEntries()) {
+                for (Item item : BuiltInRegistries.ITEM) {
                     if (item == ItemHandler.LOGO) continue;
-                    output.accept(item.get());
+                    if (BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(MMCommon.MODID)) {
+                        output.accept(item);
+                    }
                 }
             })
             .build());
 
-    public static void register(IEventBus eventBus) {
-        REG.register(eventBus);
+    public static void register() {
     }
 }

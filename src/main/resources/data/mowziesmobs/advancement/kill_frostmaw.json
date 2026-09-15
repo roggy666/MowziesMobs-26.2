@@ -17,9 +17,15 @@
     "frostmaw": {
       "trigger": "minecraft:player_killed_entity",
       "conditions": {
-        "entity": {
-          "type": "mowziesmobs:frostmaw"
-        }
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:entity_type": "mowziesmobs:frostmaw"
+            }
+          }
+        ]
       }
     }
   }

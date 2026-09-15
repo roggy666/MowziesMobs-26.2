@@ -227,7 +227,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
         if (entity instanceof Player player) {
             if (EnchantmentUtils.getLevel(Enchantments.SILK_TOUCH, player.level(), player.getMainHandItem()) > 0) {
                 if (level() instanceof ServerLevel serverLevel && isAlive()) {
-                    spawnAtLocation(serverLevel, ItemHandler.CAPTURED_GROTTOL.get().create(this), 0.0F);
+                    spawnAtLocation(serverLevel, ItemHandler.CAPTURED_GROTTOL.create(this), 0.0F);
                     BlockState state = Blocks.STONE.defaultBlockState();
                     SoundType sound = state.getSoundType();
                     level().playSound(
@@ -247,7 +247,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
                         );
                     }
                     discard() ;
-                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.GROTTOL_KILL_SILK_TOUCH_TRIGGER.get().trigger(serverPlayer);
+                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.GROTTOL_KILL_SILK_TOUCH_TRIGGER.trigger(serverPlayer);
                 }
                 return true;
             }
@@ -262,7 +262,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
             if (player.getMainHandItem().isCorrectToolForDrops(Blocks.DIAMOND_ORE.defaultBlockState()) || player.getMainHandItem().is(MMItemTags.CAN_HIT_GROTTOL)) {
                 if (EnchantmentUtils.getLevel(Enchantments.FORTUNE, player.level(), player.getMainHandItem()) > 0) {
                     death = EnumDeathType.FORTUNE_PICKAXE;
-                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.GROTTOL_KILL_FORTUNE_TRIGGER.get().trigger(serverPlayer);
+                    if (player instanceof ServerPlayer serverPlayer) AdvancementHandler.GROTTOL_KILL_FORTUNE_TRIGGER.trigger(serverPlayer);
                 } else {
                     death = EnumDeathType.PICKAXE;
                 }
@@ -270,7 +270,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
             } else {
                 if (timeSinceDeflectSound >= 5) {
                     timeSinceDeflectSound = 0;
-                    playSound(MMSounds.ENTITY_GROTTOL_UNDAMAGED.get(), 0.4F, 2.0F);
+                    playSound(MMSounds.ENTITY_GROTTOL_UNDAMAGED, 0.4F, 2.0F);
                 }
                 return false;
             }
@@ -319,7 +319,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
             if (isBlackPinkInYourArea()) {
                 level().addParticle(ParticleTypes.NOTE, x, y, z, random.nextDouble() / 2, 0, 0);
             } else {
-                level().addParticle(ParticleHandler.SPARKLE.get(), x, y, z, 0, 0, 0);
+                level().addParticle(ParticleHandler.SPARKLE, x, y, z, 0, 0, 0);
             }
         }
 
@@ -328,7 +328,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
         float moveZ = (float) (getZ() - zo);
         float speed = Mth.sqrt(moveX * moveX + moveZ * moveZ);
         if (frame % 6 == 0 && speed > 0.05) {
-            playSound(MMSounds.ENTITY_GROTTOL_STEP.get(), 1F, 1.8f);
+            playSound(MMSounds.ENTITY_GROTTOL_STEP, 1F, 1.8f);
         }
 
         if (timeSinceFlee < 50) {
@@ -348,7 +348,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
         }
         if (!level().isClientSide() && getAnimation() == BURROW_ANIMATION) {
             if (getAnimationTick() % 4 == 3) {
-                playSound(MMSounds.ENTITY_GROTTOL_BURROW.get(), 1, 0.8f + random.nextFloat() * 0.4f);
+                playSound(MMSounds.ENTITY_GROTTOL_BURROW, 1, 0.8f + random.nextFloat() * 0.4f);
                 BlockState blockBeneath = level().getBlockState(blockPosition().below());
                 if (isBlockDiggable(blockBeneath)) {
                     Vec3 pos = new Vec3(0.5D, 0.05D, 0.0D).yRot((float) Math.toRadians(-yBodyRot - 90));
@@ -380,7 +380,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
         Entity e = getVehicle();
         /*if (isMinecart(e)) {
             BlockState state = ((AbstractMinecartEntity) e).getDisplayTile();
-            return state.getBlock() == BlockHandler.GROTTOL.get() && state.get(BlockGrottol.VARIANT) == BlockGrottol.Variant.BLACK_PINK;
+            return state.getBlock() == BlockHandler.GROTTOL && state.get(BlockGrottol.VARIANT) == BlockGrottol.Variant.BLACK_PINK;
         }*/
         if (e instanceof AbstractMinecart) {
             return getBlackpink();
@@ -394,7 +394,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
 
     /*public boolean hasMinecartBlockDisplay() {
         Entity entity = getRidingEntity();
-        return isMinecart(entity) && ((AbstractMinecartEntity) entity).getDisplayTile().getBlock() == BlockHandler.GROTTOL.get();
+        return isMinecart(entity) && ((AbstractMinecartEntity) entity).getDisplayTile().getBlock() == BlockHandler.GROTTOL;
     }*/
 
     private static boolean isMinecart(Entity entity) {
@@ -412,8 +412,8 @@ public class EntityGrottol extends MowzieLLibraryEntity {
     public boolean startRiding(Entity entity, boolean force, boolean sendEventAndTriggers) {
         /*if (isMinecart(entity)) {
                 AbstractMinecartEntity minecart = (AbstractMinecartEntity) entity;
-                if (minecart.getDisplayTile().getBlock() != BlockHandler.GROTTOL.get()) {
-                    minecart.setDisplayTile(BlockHandler.GROTTOL.get().getDefaultState());
+                if (minecart.getDisplayTile().getBlock() != BlockHandler.GROTTOL) {
+                    minecart.setDisplayTile(BlockHandler.GROTTOL.getDefaultState());
                     minecart.setDisplayTileOffset(minecart.getDefaultDisplayTileOffset());
                 }
             }*/
@@ -431,7 +431,7 @@ public class EntityGrottol extends MowzieLLibraryEntity {
 
     @Override
     protected SoundEvent getDeathSound() {
-        playSound(MMSounds.ENTITY_GROTTOL_DIE.get(), 1f, 1.3f);
+        playSound(MMSounds.ENTITY_GROTTOL_DIE, 1f, 1.3f);
         return null;
     }
 

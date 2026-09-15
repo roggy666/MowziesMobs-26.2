@@ -7,12 +7,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.common.util.ValueIOSerializable;
 
 import java.util.List;
 import java.util.Map;
 
-public class LivingData implements ValueIOSerializable {
+public class LivingData implements SerializableData {
     float lastDamage = 0;
     boolean hasSunblock;
     private final Map<Holder<MobEffect>, MobEffectInstance> eclipsedEffects = Maps.newHashMap();

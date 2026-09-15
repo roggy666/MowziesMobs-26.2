@@ -15,11 +15,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * PORTING NOTE: see GuiSculptorTrade.java for the full explanation of the GuiGraphics -> GuiGraphicsExtractor /
- * renderBg->extractBackground / renderLabels->extractLabels / render->extractRenderState conversion pattern applied
- * here (same pattern, this file follows it identically).
- */
 public final class GuiUmvuthanaTrade extends AbstractContainerScreen<ContainerUmvuthanaTrade> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/gui/container/umvuthana.png");
 
@@ -44,7 +39,7 @@ public final class GuiUmvuthanaTrade extends AbstractContainerScreen<ContainerUm
     @Override
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int x, int y, float partialTicks) {
         super.extractBackground(guiGraphics, x, y, partialTicks);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, imageWidth, imageHeight);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, 256, 256);
         if (umvuthana != null) {
             umvuthana.renderingInGUI = true;
             // x and y values are chosen as the first and last pixel of the black (entity) box of the gui texture

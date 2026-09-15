@@ -128,7 +128,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
         public void start() {
             super.start();
             getUser().getNavigation().stop();
-            getUser().playSound(MMSounds.ENTITY_ELOKOSA_NIGHT_SCREAM_LONG.get(), 3f, 0.95f + getUser().random.nextFloat() * 0.1f);
+            getUser().playSound(MMSounds.ENTITY_ELOKOSA_NIGHT_SCREAM_LONG, 3f, 0.95f + getUser().random.nextFloat() * 0.1f);
             EntityCameraShake.cameraShake(getUser().level(), getUser().position(), 20, 0.02f, SCREAM_DURATION - 10, 20);
             List<EntityElokosa> entitiesNearby = getUser().getEntitiesNearby(EntityElokosa.class, 45);
             for (EntityElokosa elokosa : entitiesNearby) {
@@ -380,14 +380,10 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
     protected <E extends GeoEntity> PlayState predicateWalkRun(AnimationTest<E> event)
     {
         float threshold = getNightForm() ? 0.9f : 0.7f;
-        // FIXME 26.1.2 port :: AnimationController#getCurrentAnimation() no longer exists; using the raw animation instead
-        RawAnimation currentAnim = event.controller().getCurrentRawAnimation();
-        if (currentAnim != null && currentAnim.equals(RUN_SWITCH_ANIM)) {
+        if (event.isCurrentAnimation(RUN_SWITCH_ANIM)) {
             threshold = threshold * 0.777f;
         }
 
-        // FIXME 26.1.2 port :: AnimationTest has no direct limb-swing-amount accessor anymore (only isMoving()).
-        // Approximated using the underlying LivingEntity's walkAnimation speed (best-effort, verify against old behavior).
         float limbSwingAmount = event.animatable() instanceof LivingEntity livingAnimatable ? livingAnimatable.walkAnimation.speed(event.renderState().getPartialTick()) : 0f;
         if (limbSwingAmount > threshold && !isStrafing()) {
             event.controller().setAnimation(RUN_SWITCH_ANIM);
@@ -461,17 +457,17 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
         if (getNightForm() && (isStalking || getActiveAbilityType() == SCREAM_ABILITY)) {
             return null;
         }
-        return getNightForm() ? MMSounds.ENTITY_ELOKOSA_NIGHT_IDLE.get(random.nextInt(MMSounds.ENTITY_ELOKOSA_NIGHT_IDLE.size())).get() : MMSounds.ENTITY_ELOKOSA_DAY_IDLE.get(random.nextInt(MMSounds.ENTITY_ELOKOSA_DAY_IDLE.size())).get();
+        return getNightForm() ? MMSounds.ENTITY_ELOKOSA_NIGHT_IDLE.get(random.nextInt(MMSounds.ENTITY_ELOKOSA_NIGHT_IDLE.size())) : MMSounds.ENTITY_ELOKOSA_DAY_IDLE.get(random.nextInt(MMSounds.ENTITY_ELOKOSA_DAY_IDLE.size()));
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return getNightForm() ? MMSounds.ENTITY_ELOKOSA_NIGHT_HURT.get(random.nextInt(MMSounds.ENTITY_ELOKOSA_NIGHT_HURT.size())).get() : MMSounds.ENTITY_ELOKOSA_DAY_HURT.get(random.nextInt(MMSounds.ENTITY_ELOKOSA_DAY_HURT.size())).get();
+        return getNightForm() ? MMSounds.ENTITY_ELOKOSA_NIGHT_HURT.get(random.nextInt(MMSounds.ENTITY_ELOKOSA_NIGHT_HURT.size())) : MMSounds.ENTITY_ELOKOSA_DAY_HURT.get(random.nextInt(MMSounds.ENTITY_ELOKOSA_DAY_HURT.size()));
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return getNightForm() ? MMSounds.ENTITY_ELOKOSA_NIGHT_DEATH.get() : MMSounds.ENTITY_ELOKOSA_DAY_DEATH.get();
+        return getNightForm() ? MMSounds.ENTITY_ELOKOSA_NIGHT_DEATH : MMSounds.ENTITY_ELOKOSA_DAY_DEATH;
     }
 
     protected void checkFallDamage(double p_29370_, boolean p_29371_, BlockState p_29372_, BlockPos p_29373_) {
@@ -607,16 +603,8 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
         return false;
     }
 
-    private static boolean isDayTime(Level level) {
-        // FIXME 26.1.2 port: Level#getTimeOfDay(float) and the old sunrise/sunset celestial-angle formula it used
-        // (DimensionType#timeOfDay) were both removed along with the old fixed day/night cycle, replaced by the new
-        // WorldClock/Timeline system (see net.minecraft.world.clock.WorldClock, net.minecraft.world.timeline.Timeline).
-        // This approximates the old [0,1) day-cycle fraction using the raw overworld clock tick count modulo a
-        // 24000-tick day, which is close but NOT identical to the old non-linear celestial-angle curve - the
-        // sunrise/sunset threshold constants below were tuned against that old formula and have not been re-verified
-        // against this approximation.
-        double timeOfDay = (level.getOverworldClockTime() % 24000L) / 24000.0;
-        return timeOfDay >= 0.7609 || timeOfDay < 0.23918849;
+    public static boolean isDayTime(Level level) {
+        return level.isBrightOutside();
     }
 
     @Override
@@ -1002,7 +990,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
                 Player closestPlayer = players.get(0);
                 float closestPlayerDist = 6;
                 for (Player player : players) {
-                    if (player.getMainHandItem().getItem() == ItemHandler.UMVUTHI_SPAWN_EGG.get() || player.getMainHandItem().getItem() == ItemHandler.UMVUTHI_SPAWN_EGG.get()) {
+                    if (player.getMainHandItem().getItem() == ItemHandler.UMVUTHI_SPAWN_EGG || player.getMainHandItem().getItem() == ItemHandler.UMVUTHI_SPAWN_EGG) {
                         float thisDist = this.distanceTo(player);
                         if (thisDist < closestPlayerDist) {
                             closestPlayer = player;
@@ -1246,7 +1234,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
                 getUser().setNightForm(true);
             }
 
-            if (getTicksInUse() == 3) getUser().playSound(MMSounds.ENTITY_ELOKOSA_DAY_TRANSFORM.get(), 1, 1);
+            if (getTicksInUse() == 3) getUser().playSound(MMSounds.ENTITY_ELOKOSA_DAY_TRANSFORM, 1, 1);
             if (getTicksInUse() == 16) getUser().playSound(MMSounds.ENTITY_ELOKOSA_NIGHT_SCREAM, 1.5f, 0.7f + getUser().random.nextFloat() * 0.1f);
 
             if (getLevel().isClientSide() && getTicksInUse() > 6 && getTicksInUse() < 14) {
@@ -1282,7 +1270,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
             if (getTicksInUse() == 10) {
                 getUser().setNightForm(false);
             }
-            if (getTicksInUse() == 1) getUser().playSound(MMSounds.ENTITY_ELOKOSA_NIGHT_TRANSFORM.get(), 1, 1);
+            if (getTicksInUse() == 1) getUser().playSound(MMSounds.ENTITY_ELOKOSA_NIGHT_TRANSFORM, 1, 1);
 
             if (getLevel().isClientSide() && getTicksInUse() > 1 && getTicksInUse() < 9) {
                 for (int i = 0; i < 26; i++) {
@@ -1448,7 +1436,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
                 getUser().setDeltaMovement(getUser().getDeltaMovement().add(getUser().getForward().scale(0.3)));
             }
 
-            if (getTicksInUse() == 3) getUser().playSound(MMSounds.ENTITY_ELOKOSA_NIGHT_ATTACK_BIG.get(), 1, getUser().getVoicePitch());
+            if (getTicksInUse() == 3) getUser().playSound(MMSounds.ENTITY_ELOKOSA_NIGHT_ATTACK_BIG, 1, getUser().getVoicePitch());
         }
     }
 
@@ -1588,7 +1576,7 @@ public abstract class EntityElokosa extends MowzieGeckoEntity implements Enemy {
             super.beginSection(section);
             if (getCurrentSection().sectionType == AbilitySection.AbilitySectionType.RECOVERY) {
                 playAnimation(DEATH_END);
-                getUser().playSound(MMSounds.MISC_GROUNDHIT_1.get(), 1, getUser().getNightForm() ? 1.2f : 1.6f);
+                getUser().playSound(MMSounds.MISC_GROUNDHIT_1, 1, getUser().getNightForm() ? 1.2f : 1.6f);
             }
         }
 

@@ -137,6 +137,6 @@ public class UmvuthanaGroveStructure extends MowzieStructure {
 
 	@Override
 	public StructureType<?> type() {
-		return StructureTypeHandler.UMVUTHANA_GROVE.get();
+		return StructureTypeHandler.UMVUTHANA_GROVE;
 	}
 }

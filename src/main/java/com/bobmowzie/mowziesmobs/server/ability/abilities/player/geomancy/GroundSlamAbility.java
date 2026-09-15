@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.ability.abilities.player.geomancy;
 
+import net.minecraft.world.InteractionHand;
 import com.bobmowzie.mowziesmobs.client.particle.ParticleHandler;
 import com.bobmowzie.mowziesmobs.client.particle.util.AdvancedParticleBase;
 import com.bobmowzie.mowziesmobs.client.particle.util.ParticleComponent;
@@ -12,7 +13,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import com.geckolib.animation.RawAnimation;
 
 public class GroundSlamAbility extends PlayerAbility {
@@ -88,10 +88,10 @@ public class GroundSlamAbility extends PlayerAbility {
     }
 
     @Override
-    public void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
-        super.onRightClickEmpty(event);
+    public void onRightClickEmpty(Player player, InteractionHand hand) {
+        super.onRightClickEmpty(player, hand);
         if (!getUser().onGround() && getUser().isCrouching()){
-            AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(event.getEntity(), AbilityHandler.GROUND_SLAM_ABILITY);
+            AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(player, AbilityHandler.GROUND_SLAM_ABILITY);
         }
     }
 }

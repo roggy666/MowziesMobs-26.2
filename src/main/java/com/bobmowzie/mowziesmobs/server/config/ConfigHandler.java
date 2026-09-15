@@ -1,9 +1,9 @@
 package com.bobmowzie.mowziesmobs.server.config;
 
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.datagen.MMBiomeTags;
 import com.bobmowzie.mowziesmobs.datagen.StructureSetHandler;
-import com.bobmowzie.mowziesmobs.server.item.ItemHandler;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructureSets;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.neoforged.neoforge.common.Tags;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,13 +49,7 @@ public final class ConfigHandler {
         return true;
     });
 
-    // PORTING NOTE (1.21.1 -> 26.1.2): NeoForge's ModConfigSpec now eagerly validates each value's default against
-    // its predicate while building the spec (during mod construction), before this mod's own DeferredRegister items
-    // have fired their RegisterEvent - so a `BuiltInRegistries.ITEM.containsKey(...)` check here would always reject
-    // a modded item used as a default value (confirmed: "trade_which_item" defaulting to mowziesmobs:bluff_rod
-    // failed spec validation at startup). Dropped the registry-presence check, keeping only Identifier-format
-    // validation (matches RESOURCE_LOCATION_PREDICATE) - a config value pointing at a nonexistent item id will just
-    // be ignored at actual use rather than caught at load time.
+    // Only the identifier format is validated: the spec is built before modded items are registered
     private static final Predicate<Object> ITEM_NAME_PREDICATE = RESOURCE_LOCATION_PREDICATE;
 
     static {
@@ -265,7 +258,7 @@ public final class ConfigHandler {
             builder.push("foliaath");
             spawnConfig = new SpawnConfig(builder,
                     70, 1, 4, 1,
-                    new BiomeConfig(builder, Collections.singletonList(string(Tags.Biomes.IS_JUNGLE)), Collections.emptyList(), Collections.emptyList()),
+                    new BiomeConfig(builder, Collections.singletonList(string(ConventionalBiomeTags.IS_JUNGLE)), Collections.emptyList(), Collections.emptyList()),
                     Collections.emptyList(),
                     Arrays.asList(string(BlockTags.ANIMALS_SPAWNABLE_ON), string(BlockTags.LEAVES), string(BlockTags.LOGS)),
                     -65, 60, true, false, false,
@@ -286,7 +279,7 @@ public final class ConfigHandler {
             builder.comment("Controls spawning for Umvuthana hunting groups", "Group size controls how many raptors spawn, not followers", "See Umvuthi config for grove structure controls");
             spawnConfig = new SpawnConfig(builder,
                     5, 1, 1, 1,
-                    new BiomeConfig(builder, Collections.singletonList(string(Tags.Biomes.IS_SAVANNA)), Collections.emptyList(), Collections.emptyList()),
+                    new BiomeConfig(builder, Collections.singletonList(string(ConventionalBiomeTags.IS_SAVANNA)), Collections.emptyList(), Collections.emptyList()),
                     Collections.emptyList(),
                     Arrays.asList(string(BlockTags.ANIMALS_SPAWNABLE_ON), string(BlockTags.SAND)),
                     -65, 60, false, false, false,
@@ -306,7 +299,7 @@ public final class ConfigHandler {
             builder.push("naga");
             spawnConfig = new SpawnConfig(builder,
                     20, 1, 2, 1,
-                    new BiomeConfig(builder, Arrays.asList(string(Tags.Biomes.IS_BEACH) + "," + string(Tags.Biomes.IS_MOUNTAIN), string(Tags.Biomes.IS_BEACH) + "," + string(BiomeTags.IS_HILL)), Collections.singletonList(string(Biomes.STONY_SHORE)), Collections.emptyList()),
+                    new BiomeConfig(builder, Arrays.asList(string(ConventionalBiomeTags.IS_BEACH) + "," + string(ConventionalBiomeTags.IS_MOUNTAIN), string(ConventionalBiomeTags.IS_BEACH) + "," + string(BiomeTags.IS_HILL)), Collections.singletonList(string(Biomes.STONY_SHORE)), Collections.emptyList()),
                     Collections.emptyList(),
                     List.of(string(BlockTags.ANIMALS_SPAWNABLE_ON), string(BlockTags.BASE_STONE_OVERWORLD)),
                     -65, 68, true, true, false,
@@ -326,7 +319,7 @@ public final class ConfigHandler {
             builder.push("lantern");
             spawnConfig = new SpawnConfig(builder,
                     5, 2, 4, 1,
-                    new BiomeConfig(builder, Collections.singletonList(string(Tags.Biomes.IS_FOREST) + "," + string(MMBiomeTags.IS_MAGICAL) + "," + inverted(Tags.Biomes.IS_SNOWY)), Collections.emptyList(), Collections.emptyList()),
+                    new BiomeConfig(builder, Collections.singletonList(string(ConventionalBiomeTags.IS_FOREST) + "," + string(MMBiomeTags.IS_MAGICAL) + "," + inverted(ConventionalBiomeTags.IS_SNOWY)), Collections.emptyList(), Collections.emptyList()),
                     Collections.emptyList(),
                     Arrays.asList(string(BlockTags.ANIMALS_SPAWNABLE_ON), string(BlockTags.LEAVES), string(BlockTags.LOGS)),
                     -65, 60, true, false, false,
@@ -346,7 +339,7 @@ public final class ConfigHandler {
             builder.push("grottol");
             this.spawnConfig = new SpawnConfig(builder,
                     2, 1, 1, 1,
-                    new BiomeConfig(builder, Collections.singletonList(inverted(Tags.Biomes.IS_MUSHROOM)), Collections.emptyList(), Collections.emptyList()),
+                    new BiomeConfig(builder, Collections.singletonList(inverted(ConventionalBiomeTags.IS_MUSHROOM)), Collections.emptyList(), Collections.emptyList()),
                     Collections.emptyList(),
                     Collections.singletonList(string(BlockTags.BASE_STONE_OVERWORLD)),
                     16, -65, true, false, true,
@@ -365,7 +358,7 @@ public final class ConfigHandler {
         FerrousWroughtnaut(final ModConfigSpec.Builder builder) {
             builder.push("ferrous_wroughtnaut");
             generationConfig = new GenerationConfig(builder, 15, 5,
-                    new BiomeConfig(builder, Collections.singletonList(inverted(Tags.Biomes.IS_OCEAN)), Collections.emptyList(), Collections.emptyList()),
+                    new BiomeConfig(builder, Collections.singletonList(inverted(ConventionalBiomeTags.IS_OCEAN)), Collections.emptyList(), Collections.emptyList()),
                     20, 50,
                     Collections.emptyList()
             );
@@ -397,7 +390,7 @@ public final class ConfigHandler {
             builder.push("umvuthi");
             builder.comment("Generation controls for Umvuthana Groves");
             generationConfig = new GenerationConfig(builder, 25, 8,
-                    new BiomeConfig(builder, Collections.singletonList(string(Tags.Biomes.IS_SAVANNA)), Collections.emptyList(), Collections.emptyList()),
+                    new BiomeConfig(builder, Collections.singletonList(string(ConventionalBiomeTags.IS_SAVANNA)), Collections.emptyList(), Collections.emptyList()),
                     50, 100,
                     Arrays.asList(string(BuiltinStructureSets.VILLAGES), string(BuiltinStructureSets.PILLAGER_OUTPOSTS))
             );
@@ -444,7 +437,7 @@ public final class ConfigHandler {
         Frostmaw(final ModConfigSpec.Builder builder) {
             builder.push("frostmaw");
             generationConfig = new GenerationConfig(builder, 25, 8,
-                    new BiomeConfig(builder, Collections.singletonList(string(Tags.Biomes.IS_SNOWY) + "," + inverted(Tags.Biomes.IS_OCEAN) + "," + inverted(Tags.Biomes.IS_RIVER) + "," + inverted(Tags.Biomes.IS_BEACH) + "," + inverted(Tags.Biomes.IS_FOREST) + "," + inverted(Tags.Biomes.IS_TAIGA)), Collections.emptyList(), Collections.emptyList()),
+                    new BiomeConfig(builder, Collections.singletonList(string(ConventionalBiomeTags.IS_SNOWY) + "," + inverted(ConventionalBiomeTags.IS_OCEAN) + "," + inverted(ConventionalBiomeTags.IS_RIVER) + "," + inverted(ConventionalBiomeTags.IS_BEACH) + "," + inverted(ConventionalBiomeTags.IS_FOREST) + "," + inverted(ConventionalBiomeTags.IS_TAIGA)), Collections.emptyList(), Collections.emptyList()),
                     50, 100,
                     Arrays.asList(string(BuiltinStructureSets.VILLAGES), string(BuiltinStructureSets.PILLAGER_OUTPOSTS))
             );
@@ -481,7 +474,7 @@ public final class ConfigHandler {
         Sculptor(final ModConfigSpec.Builder builder) {
             builder.push("sculptor");
             generationConfig = new GenerationConfig(builder, 25, 8,
-                    new BiomeConfig(builder, Collections.singletonList(string(Tags.Biomes.IS_MOUNTAIN_PEAK)), Collections.emptyList(), Collections.emptyList()),
+                    new BiomeConfig(builder, Collections.singletonList(string(ConventionalBiomeTags.IS_MOUNTAIN_PEAK)), Collections.emptyList(), Collections.emptyList()),
                     120, 200,
                     Collections.emptyList()
             );
@@ -500,7 +493,7 @@ public final class ConfigHandler {
                     .define("has_boss_bar", true);
             this.whichItem = builder.comment("Which item the Sculptor desires in exchange for a chance to try his challenge")
                     .translation(LANG_PREFIX + "trade_which_item")
-                    .define("trade_which_item", string(ItemHandler.BLUFF_ROD), ITEM_NAME_PREDICATE);
+                    .define("trade_which_item", MMCommon.MODID + ":bluff_rod", ITEM_NAME_PREDICATE);
             this.howMany = builder.comment("How many of the item the Sculptor desires in exchange for a chance to try his challenge")
                     .translation(LANG_PREFIX + "trade_how_many")
                     .defineInRange("trade_how_many", 1, 0, 64);
@@ -554,7 +547,7 @@ public final class ConfigHandler {
             builder.push("Elokosa");
             spawnConfig = new SpawnConfig(builder,
                     5, 1, 1, 1,
-                    new BiomeConfig(builder, Collections.singletonList(string(Tags.Biomes.IS_JUNGLE)), Collections.emptyList(), Collections.emptyList()),
+                    new BiomeConfig(builder, Collections.singletonList(string(ConventionalBiomeTags.IS_JUNGLE)), Collections.emptyList(), Collections.emptyList()),
                     Collections.emptyList(),
                     Arrays.asList(string(BlockTags.LEAVES), string(BlockTags.LOGS)),
                     -65, 60, false, false, false,

@@ -10,18 +10,7 @@ import net.minecraft.world.item.equipment.EquipmentAssets;
 
 import java.util.EnumMap;
 
-// PORTING NOTE (1.21.1 -> 26.1.2): ArmorMaterial is no longer a registry-backed type - there is NO
-// Registries.ARMOR_MATERIAL / BuiltInRegistries.ARMOR_MATERIAL entry anymore (confirmed by grepping
-// core/registries/Registries.java and BuiltInRegistries.java - neither mentions armor material at all).
-// It's a plain record now (net.minecraft.world.item.equipment.ArmorMaterial), passed directly into
-// Item.Properties#humanoidArmor(ArmorMaterial, ArmorType) - see vanilla Item.java's Properties inner class.
-// This class therefore no longer needs (or can use) a DeferredRegister<ArmorMaterial>/DeferredHolder wrapper;
-// the fields are now plain static final ArmorMaterial instances, and MaterialHandler has nothing to register
-// on the mod bus anymore.
-// CROSS-SCOPE FLAG: MMCommon.java:64 still calls `MaterialHandler.MM_ARMOR_MATERIALS.register(modBus);` -
-// that field no longer exists (see below) and that line needs to be deleted by whoever owns MMCommon.java
-// (out of server/item/** and server/ability/** scope, not touched by this pass).
-public class MaterialHandler { // FIXME 1.21 :: unsure if or where the layer resources are needed
+public class MaterialHandler {
     // Toughness and defense gets set as the base value, the configurable multipliers are applied through the 'ArmorMaterialMixin'
     // NOTE: durability field is the per-piece "unit durability multiplier" (matches the old ArmorItem.Type.getDurability(x) call site in ItemHandler).
     // assetId currently reuses the closest vanilla equipment asset as a placeholder since these items are rendered client-side via a

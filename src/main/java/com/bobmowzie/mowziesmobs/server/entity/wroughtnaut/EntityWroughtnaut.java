@@ -19,7 +19,6 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -129,7 +128,7 @@ public class EntityWroughtnaut extends MowzieLLibraryEntity implements Enemy {
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(1, new AnimationFWNAttackAI(this, 4F, 5F, 100F));
-        goalSelector.addGoal(1, new AnimationFWNVerticalAttackAI(this, VERTICAL_ATTACK_ANIMATION, MMSounds.ENTITY_WROUGHT_WHOOSH.get(), 1F, 5F, 40F));
+        goalSelector.addGoal(1, new AnimationFWNVerticalAttackAI(this, VERTICAL_ATTACK_ANIMATION, MMSounds.ENTITY_WROUGHT_WHOOSH, 1F, 5F, 40F));
         goalSelector.addGoal(1, new AnimationFWNStompAttackAI(this, STOMP_ATTACK_ANIMATION));
         goalSelector.addGoal(1, new AnimationTakeDamage<>(this));
         goalSelector.addGoal(1, new AnimationDieAI<>(this));
@@ -151,18 +150,18 @@ public class EntityWroughtnaut extends MowzieLLibraryEntity implements Enemy {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return MMSounds.ENTITY_WROUGHT_HURT_1.get();
+        return MMSounds.ENTITY_WROUGHT_HURT_1;
     }
 
     @Override
     public SoundEvent getDeathSound() {
-        playSound(MMSounds.ENTITY_WROUGHT_SCREAM.get(), 1f, 1f);
+        playSound(MMSounds.ENTITY_WROUGHT_SCREAM, 1f, 1f);
         return null;
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return getAnimation() == NO_ANIMATION && isActive() ? MMSounds.ENTITY_WROUGHT_AMBIENT.get() : null;
+        return getAnimation() == NO_ANIMATION && isActive() ? MMSounds.ENTITY_WROUGHT_AMBIENT : null;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -190,14 +189,14 @@ public class EntityWroughtnaut extends MowzieLLibraryEntity implements Enemy {
                 }
                 float entityRelativeAngle = entityHitAngle - entityAttackingAngle;
                 if ((entityRelativeAngle <= arc / 2f && entityRelativeAngle >= -arc / 2f) || (entityRelativeAngle >= 360 - arc / 2f || entityRelativeAngle <= -arc + 90f / 2f)) {
-                    playSound(MMSounds.ENTITY_WROUGHT_UNDAMAGED.get(), 0.4F, 2);
+                    playSound(MMSounds.ENTITY_WROUGHT_UNDAMAGED, 0.4F, 2);
                     return false;
                 } else {
                     setAnimation(NO_ANIMATION);
                     return super.hurtServer(level, source, amount);
                 }
             } else {
-                playSound(MMSounds.ENTITY_WROUGHT_UNDAMAGED.get(), 0.4F, 2);
+                playSound(MMSounds.ENTITY_WROUGHT_UNDAMAGED, 0.4F, 2);
             }
         }
         else if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
@@ -279,9 +278,9 @@ public class EntityWroughtnaut extends MowzieLLibraryEntity implements Enemy {
         } else if (getAnimation() == ACTIVATE_ANIMATION) {
             int tick = getAnimationTick();
             if (tick == 1) {
-                playSound(MMSounds.ENTITY_WROUGHT_GRUNT_2.get(), 1, 1);
+                playSound(MMSounds.ENTITY_WROUGHT_GRUNT_2, 1, 1);
             } else if (tick == 27 || tick == 44) {
-                playSound(MMSounds.ENTITY_WROUGHT_STEP.get(), 0.5F, 0.5F);
+                playSound(MMSounds.ENTITY_WROUGHT_STEP, 0.5F, 0.5F);
             }
         } else if (getAnimation() == VERTICAL_ATTACK_ANIMATION && getAnimationTick() == 29) {
             doVerticalAttackHitFX();
@@ -304,7 +303,7 @@ public class EntityWroughtnaut extends MowzieLLibraryEntity implements Enemy {
         }
 
         if (this.level().isClientSide() && frame % 20 == 1 && speed > 0.03 && getAnimation() == NO_ANIMATION && isActive()) {
-            this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), MMSounds.ENTITY_WROUGHT_STEP.get(), this.getSoundSource(), 0.5F, 0.5F, false);
+            this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), MMSounds.ENTITY_WROUGHT_STEP, this.getSoundSource(), 0.5F, 0.5F, false);
         }
 
         repelEntities(1.7F, 4, 1.7F, 1.7F);
@@ -571,11 +570,6 @@ public class EntityWroughtnaut extends MowzieLLibraryEntity implements Enemy {
             this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
             this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         }
-    }
-
-    @Override
-    public void writeSpawnData(@NotNull RegistryFriendlyByteBuf buffer) {
-        super.writeSpawnData(buffer);
     }
 
     @Override

@@ -20,10 +20,13 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.bobmowzie.mowziesmobs.fabric.MowziesMobsFabric"
+      "com.bobmowzie.mowziesmobs.MMCommon"
     ],
     "client": [
-      "com.bobmowzie.mowziesmobs.fabric.MowziesMobsClientFabric"
+      "com.bobmowzie.mowziesmobs.MMClient"
+    ],
+    "fabric-datagen": [
+      "com.bobmowzie.mowziesmobs.datagen.DataGenerators"
     ]
   },
   "mixins": [

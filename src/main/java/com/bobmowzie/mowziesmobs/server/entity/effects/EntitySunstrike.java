@@ -1,5 +1,9 @@
 package com.bobmowzie.mowziesmobs.server.entity.effects;
 
+import net.minecraft.server.level.ServerEntity;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.client.model.tools.MathUtils;
 import com.bobmowzie.mowziesmobs.client.particle.ParticleOrb;
@@ -9,7 +13,6 @@ import com.bobmowzie.mowziesmobs.server.entity.umvuthana.EntityUmvuthi;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -33,12 +36,11 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class EntitySunstrike extends Entity implements IEntityWithComplexSpawn {
+public class EntitySunstrike extends Entity {
     public static final int STRIKE_EXPLOSION = 35;
 
     private static final int STRIKE_LENGTH = 43;
@@ -57,11 +59,6 @@ public class EntitySunstrike extends Entity implements IEntityWithComplexSpawn {
 
     public EntitySunstrike(EntityType<? extends EntitySunstrike> type, Level world) {
         super(type, world);
-        // FIXME 26.1.2 port: Entity#noCulling was removed entirely (only Display entities have their own unrelated
-        // private noCulling field now). Render culling is now controlled client-side via
-        // EntityRenderer#getBoundingBoxForCulling(T)/shouldRenderAtSqrDistance on this entity's renderer, which is
-        // out of server/entity/** scope - the "always render regardless of bounding box" behavior this field used
-        // to provide needs to be re-added there (client/render/entity/RenderSunstrike.java or equivalent).
     }
 
     public EntitySunstrike(EntityType<? extends EntitySunstrike> type, Level world, LivingEntity caster, int x, int y, int z) {
@@ -289,12 +286,13 @@ public class EntitySunstrike extends Entity implements IEntityWithComplexSpawn {
     }
 
     @Override
-    public void writeSpawnData(@NotNull RegistryFriendlyByteBuf buffer) {
-        buffer.writeInt(strikeTime);
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(@NotNull ServerEntity serverEntity) {
+        return new ClientboundAddEntityPacket(this, serverEntity, strikeTime);
     }
 
     @Override
-    public void readSpawnData(@NotNull RegistryFriendlyByteBuf buffer) {
-        setStrikeTime(buffer.readInt());
+    public void recreateFromPacket(@NotNull ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        setStrikeTime(packet.getData());
     }
 }

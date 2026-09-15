@@ -15,7 +15,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
-import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -129,14 +128,14 @@ public class ParticleCloud extends SingleQuadParticle {
                 ByteBufCodecs.FLOAT, Data::blue,
                 ByteBufCodecs.FLOAT, Data::scale,
                 ByteBufCodecs.INT, Data::duration,
-                NeoForgeStreamCodecs.enumCodec(EnumCloudBehavior.class), Data::behavior,
+                ByteBufCodecs.idMapper(i -> EnumCloudBehavior.values()[i], EnumCloudBehavior::ordinal), Data::behavior,
                 ByteBufCodecs.FLOAT, Data::airDrag,
                 Data::new
         );
 
         @Override
         public @NotNull ParticleType<?> getType() {
-            return ParticleHandler.CLOUD.value();
+            return ParticleHandler.CLOUD;
         }
     }
 }

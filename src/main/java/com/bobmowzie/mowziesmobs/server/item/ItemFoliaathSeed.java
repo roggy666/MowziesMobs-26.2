@@ -58,7 +58,7 @@ public class ItemFoliaathSeed extends Item {
         } else if (!player.mayUseItemAt(pos.relative(facing), facing, stack)) {
             return InteractionResult.FAIL;
         }
-        Entity entity = spawnCreature((ServerLevel) world, new EntityBabyFoliaath(EntityHandler.BABY_FOLIAATH.get(), world), pos.getX(), pos.getY() + 1, pos.getZ());
+        Entity entity = spawnCreature((ServerLevel) world, new EntityBabyFoliaath(EntityHandler.BABY_FOLIAATH, world), pos.getX(), pos.getY() + 1, pos.getZ());
         if (entity != null) {
             if (entity instanceof LivingEntity && stack.has(DataComponents.CUSTOM_NAME)) {
                 entity.setCustomName(stack.getHoverName());
@@ -73,9 +73,9 @@ public class ItemFoliaathSeed extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.1").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.2").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.3").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.1");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.2");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.3");
     }
 }

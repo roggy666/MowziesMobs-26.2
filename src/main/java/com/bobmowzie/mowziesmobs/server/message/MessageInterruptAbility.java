@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.message;
 
+import net.minecraft.world.entity.player.Player;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.ability.Ability;
 import com.bobmowzie.mowziesmobs.server.ability.AbilityType;
@@ -12,7 +13,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record MessageInterruptAbility(int entityId, int index) implements CustomPacketPayload {
@@ -25,20 +25,18 @@ public record MessageInterruptAbility(int entityId, int index) implements Custom
             MessageInterruptAbility::new
     );
 
-    public static void handleClient(final MessageInterruptAbility packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Level level = MMCommon.PROXY.getClientLevel();
+    public static void handleClient(final MessageInterruptAbility packet, final Player player) {
+        Level level = MMCommon.PROXY.getClientLevel();
 
-            if (level != null && level.getEntity(packet.entityId()) instanceof LivingEntity living) {
-                AbilityData data = DataHandler.getData(living, DataHandler.ABILITY_DATA);
-                AbilityType<?, ?> abilityType = data.getAbilityTypesOnEntity(living)[packet.index()];
-                Ability<?> instance = data.getAbilityMap().get(abilityType);
+        if (level != null && level.getEntity(packet.entityId()) instanceof LivingEntity living) {
+            AbilityData data = DataHandler.getData(living, DataHandler.ABILITY_DATA);
+            AbilityType<?, ?> abilityType = data.getAbilityTypesOnEntity(living)[packet.index()];
+            Ability<?> instance = data.getAbilityMap().get(abilityType);
 
-                if (instance.isUsing()) {
-                    instance.interrupt();
-                }
+            if (instance.isUsing()) {
+                instance.interrupt();
             }
-        });
+        }
     }
 
     @Override

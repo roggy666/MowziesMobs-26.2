@@ -14,7 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import com.geckolib.animatable.GeoItem;
 import com.geckolib.animatable.SingletonGeoAnimatable;
 import com.geckolib.animatable.client.GeoRenderProvider;
@@ -70,8 +69,8 @@ public class ItemSculptorStaff extends Item implements GeoItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.1").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.1");
     }
 
     @Override
@@ -98,11 +97,5 @@ public class ItemSculptorStaff extends Item implements GeoItem {
                 return itemRenderer;
             }
         });
-    }
-
-    // Kept as an empty implementation solely because MMClient.java (out of this scope) still registers one via
-    // RegisterClientExtensionsEvent#registerItem(new ItemSculptorStaff.ClientExtensions(), ...) - see
-    // ItemUmvuthanaMask.ClientExtensions for the same pattern/reasoning.
-    public static class ClientExtensions implements IClientItemExtensions {
     }
 }

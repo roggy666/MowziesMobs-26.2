@@ -22,7 +22,7 @@ public final class ContainerUmvuthanaTrade extends ContainerTradeBase {
     }
 
     public ContainerUmvuthanaTrade(int id, EntityUmvuthanaMinion umvuthanaMinion, InventoryUmvuthana inventory, Inventory playerInv) {
-        super(ContainerHandler.CONTAINER_UMVUTHANA_TRADE.get(), id, umvuthanaMinion, inventory, playerInv);
+        super(ContainerHandler.UMVUTHANA_TRADE, id, umvuthanaMinion, inventory, playerInv);
         this.inventoryUmvuthana = inventory;
         this.umvuthanaMinion = umvuthanaMinion;
     }

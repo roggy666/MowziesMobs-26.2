@@ -20,11 +20,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.ValueIOSerializable;
 
 import java.util.UUID;
 
-public class FrozenData implements ValueIOSerializable {
+public class FrozenData implements SerializableData {
     public static int MAX_FREEZE_DECAY_DELAY = 10;
 
     public boolean frozen;
@@ -163,10 +162,7 @@ public class FrozenData implements ValueIOSerializable {
     public void onFreeze(LivingEntity entity) {
         if (entity != null) {
             frozen = true;
-            frozenController = new EntityFrozenController(EntityHandler.FROZEN_CONTROLLER.get(), entity.level());
-            // PORTING NOTE (1.21.1 -> 26.1.2): Entity#absMoveTo(double,double,double,float,float) was renamed to
-            // snapTo(...) (confirmed against real 26.1.2 Entity source - same overload shape survives under the
-            // new name).
+            frozenController = new EntityFrozenController(EntityHandler.FROZEN_CONTROLLER, entity.level());
             frozenController.snapTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
             entity.level().addFreshEntity(frozenController);
             frozenController.setYBodyRot(entity.yBodyRot);
@@ -177,8 +173,6 @@ public class FrozenData implements ValueIOSerializable {
             frozenWalkAnimPosition = entity.walkAnimation.position();
             frozenRenderYawOffset = entity.yBodyRot;
             frozenSwingProgress = entity.attackAnim;
-            // PORTING NOTE (1.21.1 -> 26.1.2): Entity#startRiding(Entity, boolean force) 2-arg overload is gone -
-            // see EntityAIGrottolFindMinecart.java for the same fix (3-arg force=true, sendEventAndTriggers=true).
             entity.startRiding(frozenController, true, true);
             entity.stopUsingItem();
 
@@ -199,7 +193,7 @@ public class FrozenData implements ValueIOSerializable {
                     entity.level().addParticle(new ParticleSnowFlake.Data(40, false), snowX, snowY, snowZ, 0.1d * motion.x, 0.1d * motion.y, 0.1d * motion.z);
                 }
             }
-            entity.playSound(MMSounds.ENTITY_FROSTMAW_FROZEN_CRASH.get(), 1, 1);
+            entity.playSound(MMSounds.ENTITY_FROSTMAW_FROZEN_CRASH, 1, 1);
         }
     }
 
@@ -215,7 +209,7 @@ public class FrozenData implements ValueIOSerializable {
                     entity.teleportTo(oldPosition.x(), oldPosition.y(), oldPosition.z());
                     frozenController.discard();
                 }
-                entity.playSound(MMSounds.ENTITY_FROSTMAW_FROZEN_CRASH.get(), 1, 0.5f);
+                entity.playSound(MMSounds.ENTITY_FROSTMAW_FROZEN_CRASH, 1, 0.5f);
                 if (entity.level().isClientSide()) {
                     int particleCount = (int) (10 + 1 * entity.getBbHeight() * entity.getBbWidth() * entity.getBbWidth());
                     for (int i = 0; i < particleCount; i++) {

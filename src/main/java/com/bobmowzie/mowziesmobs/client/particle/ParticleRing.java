@@ -20,7 +20,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 
@@ -189,13 +188,13 @@ public class ParticleRing extends SingleQuadParticle {
                 ByteBufCodecs.FLOAT, ParticleRing.Data::scale,
                 ByteBufCodecs.INT, ParticleRing.Data::duration,
                 ByteBufCodecs.BOOL, ParticleRing.Data::facesCamera,
-                NeoForgeStreamCodecs.enumCodec(EnumRingBehavior.class), ParticleRing.Data::behavior,
+                ByteBufCodecs.idMapper(i -> EnumRingBehavior.values()[i], EnumRingBehavior::ordinal), ParticleRing.Data::behavior,
                 ParticleRing.Data::new
         );
 
         @Override
         public @NotNull ParticleType<ParticleRing.Data> getType() {
-            return ParticleHandler.RING.get();
+            return ParticleHandler.RING;
         }
     }
 }

@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import com.geckolib.animation.RawAnimation;
 
 public class SpawnPillarAbility extends PlayerAbility {
@@ -79,7 +78,7 @@ public class SpawnPillarAbility extends PlayerAbility {
     private void spawnPillar() {
         //playAnimation("spawn_boulder_instant", false);
 
-        pillar = new EntityPillar(EntityHandler.PILLAR.get(), getUser().level(), getUser(), spawnPillarBlock, spawnPillarPos);
+        pillar = new EntityPillar(EntityHandler.PILLAR, getUser().level(), getUser(), spawnPillarBlock, spawnPillarPos);
         pillar.setPos(spawnPillarPos.getX() + 0.5F, spawnPillarPos.getY() + 1, spawnPillarPos.getZ() + 0.5F);
         if (!getUser().level().isClientSide() && pillar.checkCanSpawn()) {
             getUser().level().addFreshEntity(pillar);
@@ -104,10 +103,10 @@ public class SpawnPillarAbility extends PlayerAbility {
     }
 
     @Override
-    public void onJump(LivingEvent.LivingJumpEvent event) {
-        super.onJump(event);
+    public void onJump(Player player) {
+        super.onJump(player);
         if (getUser().isCrouching()) {
-            if (!event.getEntity().level().isClientSide()) AbilityHandler.INSTANCE.sendAbilityMessage(event.getEntity(), AbilityHandler.SPAWN_PILLAR_ABILITY);
+            if (!player.level().isClientSide()) AbilityHandler.INSTANCE.sendAbilityMessage(player, AbilityHandler.SPAWN_PILLAR_ABILITY);
         }
     }
 
@@ -122,13 +121,13 @@ public class SpawnPillarAbility extends PlayerAbility {
 
     public boolean damageGauntlet() {
         ItemStack stack = getUser().getMainHandItem();
-        if (!stack.is(ItemHandler.EARTHREND_GAUNTLET.get())) {
+        if (!stack.is(ItemHandler.EARTHREND_GAUNTLET)) {
             stack = getUser().getOffhandItem();
         }
-        if (!stack.is(ItemHandler.EARTHREND_GAUNTLET.get())) {
+        if (!stack.is(ItemHandler.EARTHREND_GAUNTLET)) {
             return false;
         }
-        if (stack.getItem() == ItemHandler.EARTHREND_GAUNTLET.get()) {
+        if (stack.getItem() == ItemHandler.EARTHREND_GAUNTLET) {
             InteractionHand handIn = getUser().getUsedItemHand();
             if (stack.getDamageValue() + 6 < stack.getMaxDamage()) {
                 stack.hurtAndBreak(6, getUser(), handIn.asEquipmentSlot());

@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.message;
 
+import net.minecraft.world.entity.player.Player;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.capability.AbilityData;
 import com.bobmowzie.mowziesmobs.server.capability.DataHandler;
@@ -10,7 +11,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record MessageUseAbility(int entityId, int index) implements CustomPacketPayload {
@@ -23,15 +23,13 @@ public record MessageUseAbility(int entityId, int index) implements CustomPacket
             MessageUseAbility::new
     );
 
-    public static void handleClient(final MessageUseAbility packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Level level = MMCommon.PROXY.getClientLevel();
+    public static void handleClient(final MessageUseAbility packet, final Player player) {
+        Level level = MMCommon.PROXY.getClientLevel();
 
-            if (level != null && level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
-                AbilityData data = DataHandler.getData(entity, DataHandler.ABILITY_DATA);
-                data.activateAbility(entity, data.getAbilityTypesOnEntity(entity)[packet.index()]);
-            }
-        });
+        if (level != null && level.getEntity(packet.entityId()) instanceof LivingEntity entity) {
+            AbilityData data = DataHandler.getData(entity, DataHandler.ABILITY_DATA);
+            data.activateAbility(entity, data.getAbilityTypesOnEntity(entity)[packet.index()]);
+        }
     }
 
     @Override

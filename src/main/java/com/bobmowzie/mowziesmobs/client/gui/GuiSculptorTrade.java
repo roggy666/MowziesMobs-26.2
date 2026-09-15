@@ -20,35 +20,15 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import com.bobmowzie.mowziesmobs.client.network.ClientNetworkHandler;
 
-/**
- * PORTING NOTE (see PORTING_NOTES.md GuiGraphicsExtractor section and `client/gui/screens/inventory/ContainerScreen.java`
- * / `InventoryScreen.java` in the vanilla tree for the concrete "before/after" patterns this file follows):
- * - `renderBg(GuiGraphics, float, int, int)` -> `extractBackground(GuiGraphicsExtractor, int mouseX, int mouseY, float a)`
- *   (note the parameter ORDER changed too - partial tick moved to last).
- * - `renderLabels(GuiGraphics, int, int)` -> `extractLabels(GuiGraphicsExtractor, int, int)`.
- * - `render(GuiGraphics, int, int, float)` -> `extractRenderState(GuiGraphicsExtractor, int, int, float)`; the old
- *   explicit `this.renderTooltip(guiGraphics, mouseX, mouseY)` call is gone because
- *   `AbstractContainerScreen#extractRenderState` already calls `extractTooltip(...)` internally now.
- * - `GuiGraphics#blit(Identifier, ...)` -> `GuiGraphicsExtractor#blit(RenderPipeline, Identifier, ...)` (u/v are now
- *   floats); `drawString`->`text`; `renderItem`->`item`; `renderItemDecorations`->`itemDecorations`;
- *   `renderTooltip`->`setTooltipForNextFrame`; `renderComponentHoverEffect`->`componentHoverEffect`;
- *   `pose().pushPose()/popPose()`->`pose().pushMatrix()/popMatrix()` (the pose stack is now a 2D `Matrix3x2fStack`,
- *   no Z component - the old `.translate(0, 0, 100)` Z-layering hack has no equivalent and isn't needed any more,
- *   since draw ordering in the new deferred render-state list already determines layering).
- * - `InventoryScreen.renderEntityInInventoryFollowsMouse(...)` -> `InventoryScreen.extractEntityInInventoryFollowsMouse(...)`
- *   (same parameters, just renamed + GuiGraphicsExtractor).
- * - The old `RenderSystem.colorMask`/`setShader`/`setShaderColor` calls before the background blit are no longer
- *   meaningful in the new deferred pipeline (the blit call itself carries the RenderPipeline/texture) - removed.
- */
 public final class GuiSculptorTrade extends AbstractContainerScreen<ContainerSculptorTrade> implements InventorySculptor.ChangeListener {
     private static final Identifier TEXTURE_TRADE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/gui/container/umvuthi_trade.png");
 
     private final EntitySculptor sculptor;
     private final InventorySculptor inventory;
 
-    private final ItemStack output = new ItemStack(ItemHandler.EARTHREND_GAUNTLET.get());
+    private final ItemStack output = new ItemStack(ItemHandler.EARTHREND_GAUNTLET);
 
     private Button beginButton;
     private boolean prevBlocked;
@@ -70,14 +50,14 @@ public final class GuiSculptorTrade extends AbstractContainerScreen<ContainerScu
 
     private void actionPerformed(Button button) {
     	if (button == beginButton) {
-            ClientPacketDistributor.sendToServer(new MessageSculptorTrade(sculptor.getId()));
+            ClientNetworkHandler.sendToServer(new MessageSculptorTrade(sculptor.getId()));
     	}
     }
 
     @Override
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int x, int y, float partialTicks) {
         super.extractBackground(guiGraphics, x, y, partialTicks);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_TRADE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, imageWidth, imageHeight);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE_TRADE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, 256, 256);
         if (sculptor != null) {
             sculptor.renderingInGUI = true;
             // x and y values are chosen as the first and last pixel of the black (entity) box of the gui texture

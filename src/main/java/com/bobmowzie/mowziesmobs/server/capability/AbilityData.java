@@ -16,11 +16,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.common.util.ValueIOSerializable;
 
 import java.util.*;
 
-public class AbilityData implements ValueIOSerializable {
+public class AbilityData implements SerializableData {
     SortedMap<AbilityType<?, ?>, Ability<?>> abilityInstances = new TreeMap<>();
     Ability<?> activeAbility = null;
     Map<String, Tag> nbtMap = new HashMap<>();

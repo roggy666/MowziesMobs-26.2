@@ -19,7 +19,7 @@ public final class ContainerUmvuthiTrade extends ContainerTradeBase {
     }
 
     public ContainerUmvuthiTrade(int id, EntityUmvuthi barako, InventoryUmvuthi inventory, Inventory playerInv) {
-        super(ContainerHandler.CONTAINER_UMVUTHI_TRADE.get(), id, barako, inventory, playerInv);
+        super(ContainerHandler.UMVUTHI_TRADE, id, barako, inventory, playerInv);
         this.barako = barako;
         this.inventoryUmvuthi = inventory;
     }

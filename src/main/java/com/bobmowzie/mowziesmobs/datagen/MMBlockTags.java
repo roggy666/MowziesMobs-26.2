@@ -2,27 +2,27 @@ package com.bobmowzie.mowziesmobs.datagen;
 
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.block.BlockHandler;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class MMBlockTags extends BlockTagsProvider {
+public class MMBlockTags extends FabricTagsProvider.BlockTagsProvider {
     public static final TagKey<Block> GEOMANCY_USEABLE = key("geomancy_useable");
     public static final TagKey<Block> CAN_GROTTOL_DIG = key("can_grottol_dig");
     public static final TagKey<Block> GEOMANCY_TUNNELABLE = key("geomancy_tunnelable");
 
-    public MMBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(output, lookupProvider, MMCommon.MODID);
+    public MMBlockTags(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(output, lookupProvider);
     }
 
     public static class MMTagAppender implements net.minecraft.data.tags.TagAppender<Block> {
@@ -69,9 +69,8 @@ public class MMBlockTags extends BlockTagsProvider {
         }
     }
 
-    @Override
     protected MMTagAppender tag(TagKey<Block> tag) {
-        return new MMTagAppender(super.tag(tag));
+        return new MMTagAppender(builder(tag));
     }
 
     @Override
@@ -110,40 +109,37 @@ public class MMBlockTags extends BlockTagsProvider {
 
     private void addToVanillaTags() {
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(BlockHandler.GONG.value())
-                .add(BlockHandler.GONG_PART.value());
+                .add(BlockHandler.GONG)
+                .add(BlockHandler.GONG_PART);
 
         tag(BlockTags.MINEABLE_WITH_SHOVEL)
-                .add(BlockHandler.RAKED_SAND.value())
-                .add(BlockHandler.RED_RAKED_SAND.value());
+                .add(BlockHandler.RAKED_SAND)
+                .add(BlockHandler.RED_RAKED_SAND);
 
         tag(BlockTags.AZALEA_GROWS_ON)
-                .add(BlockHandler.RAKED_SAND.value())
-                .add(BlockHandler.RED_RAKED_SAND.value());
+                .add(BlockHandler.RAKED_SAND)
+                .add(BlockHandler.RED_RAKED_SAND);
 
         tag(BlockTags.AZALEA_GROWS_ON)
-                .add(BlockHandler.RAKED_SAND.value())
-                .add(BlockHandler.RED_RAKED_SAND.value());
+                .add(BlockHandler.RAKED_SAND)
+                .add(BlockHandler.RED_RAKED_SAND);
 
-        // PORTING NOTE (1.21.1 -> 26.1.2): BlockTags.BAMBOO_PLANTABLE_ON was renamed to SUPPORTS_BAMBOO (confirmed
-        // by both the real 26.1.2 BlockTags source and BambooStalkBlock/BambooSaplingBlock, which now read
-        // BlockTags.SUPPORTS_BAMBOO where they used to read bamboo_plantable_on) - same semantics, new name.
         tag(BlockTags.SUPPORTS_BAMBOO)
-                .add(BlockHandler.RAKED_SAND.value())
-                .add(BlockHandler.RED_RAKED_SAND.value());
+                .add(BlockHandler.RAKED_SAND)
+                .add(BlockHandler.RED_RAKED_SAND);
 
         tag(BlockTags.LUSH_GROUND_REPLACEABLE)
-                .add(BlockHandler.RAKED_SAND.value())
-                .add(BlockHandler.RED_RAKED_SAND.value());
+                .add(BlockHandler.RAKED_SAND)
+                .add(BlockHandler.RED_RAKED_SAND);
 
-        tag(BlockTags.PLANKS).add(BlockHandler.PAINTED_ACACIA.value());
-        tag(BlockTags.JUNGLE_LOGS).add(BlockHandler.CLAWED_LOG.value());
-        tag(BlockTags.WOODEN_SLABS).add(BlockHandler.PAINTED_ACACIA_SLAB.value());
+        tag(BlockTags.PLANKS).add(BlockHandler.PAINTED_ACACIA);
+        tag(BlockTags.JUNGLE_LOGS).add(BlockHandler.CLAWED_LOG);
+        tag(BlockTags.WOODEN_SLABS).add(BlockHandler.PAINTED_ACACIA_SLAB);
     }
 
     private void addToCommonTags() {
-        tag(Tags.Blocks.SANDS_COLORLESS).add(BlockHandler.RAKED_SAND.value());
-        tag(Tags.Blocks.SANDS_RED).add(BlockHandler.RED_RAKED_SAND.value());
+        tag(ConventionalBlockTags.COLORLESS_SANDS).add(BlockHandler.RAKED_SAND);
+        tag(ConventionalBlockTags.RED_SANDS).add(BlockHandler.RED_RAKED_SAND);
     }
 
     private void tagGeomancyUsable() {
@@ -151,17 +147,17 @@ public class MMBlockTags extends BlockTagsProvider {
                 .addTag(BlockTags.DIRT)
                 .addTag(BlockTags.TERRACOTTA)
                 .addTag(BlockTags.NYLIUM)
-                .addTag(Tags.Blocks.GLAZED_TERRACOTTAS)
-                .addTag(Tags.Blocks.COBBLESTONES)
-                .addTag(Tags.Blocks.END_STONES)
-                .addTag(Tags.Blocks.GRAVELS)
-                .addTag(Tags.Blocks.NETHERRACKS)
-                .addTag(Tags.Blocks.OBSIDIANS)
-                .addTag(Tags.Blocks.ORES)
-                .addTag(Tags.Blocks.SANDS)
-                .addTag(Tags.Blocks.SANDSTONE_BLOCKS)
-                .addTag(Tags.Blocks.SANDSTONE_SLABS)
-                .addTag(Tags.Blocks.STONES)
+                .addTag(ConventionalBlockTags.GLAZED_TERRACOTTAS)
+                .addTag(ConventionalBlockTags.COBBLESTONES)
+                .addTag(ConventionalBlockTags.END_STONES)
+                .addTag(ConventionalBlockTags.GRAVELS)
+                .addTag(ConventionalBlockTags.NETHERRACKS)
+                .addTag(ConventionalBlockTags.OBSIDIANS)
+                .addTag(ConventionalBlockTags.ORES)
+                .addTag(ConventionalBlockTags.SANDS)
+                .addTag(ConventionalBlockTags.SANDSTONE_BLOCKS)
+                .addTag(ConventionalBlockTags.SANDSTONE_SLABS)
+                .addTag(ConventionalBlockTags.STONES)
                 .add(Blocks.BLACKSTONE)
                 .add(Blocks.BASALT)
                 .add(Blocks.SMOOTH_BASALT)
@@ -213,7 +209,7 @@ public class MMBlockTags extends BlockTagsProvider {
     }
 
     private void tagConcrete(TagKey<Block> key) {
-        tag(key).addTag(Tags.Blocks.CONCRETES);
+        tag(key).addTag(ConventionalBlockTags.CONCRETES);
     }
 
     private void tagBricks(TagKey<Block> key) {

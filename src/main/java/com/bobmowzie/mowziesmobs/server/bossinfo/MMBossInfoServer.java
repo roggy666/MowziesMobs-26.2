@@ -5,7 +5,7 @@ import com.bobmowzie.mowziesmobs.server.message.MessageUpdateBossBar;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.neoforged.neoforge.network.PacketDistributor;
+import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -40,7 +40,7 @@ public class MMBossInfoServer extends ServerBossEvent {
 
     @Override
     public void addPlayer(@NotNull ServerPlayer player) {
-        PacketDistributor.sendToPlayer(player, MessageUpdateBossBar.fromEntity(getId(), entity));
+        NetworkHandler.sendToPlayer(player, MessageUpdateBossBar.fromEntity(getId(), entity));
 
         if (this.entity.getSensing().hasLineOfSight(player)) {
             super.addPlayer(player);
@@ -51,7 +51,7 @@ public class MMBossInfoServer extends ServerBossEvent {
 
     @Override
     public void removePlayer(ServerPlayer player) {
-        PacketDistributor.sendToPlayer(player, MessageUpdateBossBar.fromEntity(getId(), null));
+        NetworkHandler.sendToPlayer(player, MessageUpdateBossBar.fromEntity(getId(), null));
 
         super.removePlayer(player);
         this.unseen.remove(player);

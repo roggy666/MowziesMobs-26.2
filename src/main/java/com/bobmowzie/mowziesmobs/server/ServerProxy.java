@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server;
 
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.bobmowzie.mowziesmobs.client.sound.BossMusicSound;
 import com.bobmowzie.mowziesmobs.client.sound.IGeomancyRumbler;
 import com.bobmowzie.mowziesmobs.server.entity.effects.EntitySolarBeam;
@@ -68,6 +69,12 @@ public class ServerProxy {
 
     public @Nullable Level getClientLevel() {
         return null;
+    }
+
+    public void sendToServer(CustomPacketPayload payload) {
+    }
+
+    public void onPlayerTick(Player player) {
     }
 
     public void stopMusic() {}

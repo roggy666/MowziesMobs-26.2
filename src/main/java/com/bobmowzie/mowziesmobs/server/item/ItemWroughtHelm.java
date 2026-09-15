@@ -1,23 +1,17 @@
 package com.bobmowzie.mowziesmobs.server.item;
 
-import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.client.model.LayerHandler;
 import com.bobmowzie.mowziesmobs.client.model.armor.WroughtHelmModel;
-import com.bobmowzie.mowziesmobs.server.config.ConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.equipment.ArmorType;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class ItemWroughtHelm extends Item {
@@ -32,11 +26,10 @@ public class ItemWroughtHelm extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
     }
 
-    public static final class ArmorRender implements IClientItemExtensions {
-        public static final ArmorRender INSTANCE = new ArmorRender();
+    public static final class ArmorRender {
         private static HumanoidModel<?> MODEL;
 
         public static Model getArmorModel() {
@@ -46,16 +39,6 @@ public class ItemWroughtHelm extends Item {
                 MODEL = new WroughtHelmModel<>(root);
             }
             return MODEL;
-        }
-
-        @Override
-        public Model getHumanoidArmorModel(ItemStack itemStack, EquipmentClientInfo.LayerType layerType, Model original) {
-            return getArmorModel();
-        }
-
-        @Override
-        public @Nullable Identifier getArmorTexture(ItemStack stack, EquipmentClientInfo.LayerType type, EquipmentClientInfo.Layer layer, Identifier _default) {
-            return Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/item/wrought_helmet.png");
         }
     }
 }

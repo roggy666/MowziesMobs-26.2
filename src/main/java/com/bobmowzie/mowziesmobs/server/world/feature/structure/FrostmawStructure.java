@@ -28,6 +28,6 @@ public class FrostmawStructure extends MowzieStructure {
 
 	@Override
 	public StructureType<?> type() {
-		return StructureTypeHandler.FROSTMAW.get();
+		return StructureTypeHandler.FROSTMAW;
 	}
 }

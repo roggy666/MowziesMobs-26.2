@@ -205,7 +205,7 @@ public class ParticleOrb extends SingleQuadParticle {
 
         @Override
         public @NotNull ParticleType<Data> getType() {
-            return ParticleHandler.ORB.get();
+            return ParticleHandler.ORB;
         }
     }
 }

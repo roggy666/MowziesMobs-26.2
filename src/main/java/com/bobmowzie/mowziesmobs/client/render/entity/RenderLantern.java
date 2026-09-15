@@ -26,7 +26,7 @@ import net.minecraft.resources.Identifier;
  * from this class's {@link #submit}, wrapped in its own {@code submitCustomGeometry} call with the gel's own
  * translucent render type.
  */
-public class RenderLantern extends EntityRenderer<EntityLantern, RenderLantern.LanternRenderState> {
+public class RenderLantern extends MowzieLLibraryRenderer<EntityLantern, RenderLantern.LanternRenderState> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/entity/mmlantern.png");
 
     private final ModelLantern<EntityLantern> model = new ModelLantern<>();
@@ -50,30 +50,27 @@ public class RenderLantern extends EntityRenderer<EntityLantern, RenderLantern.L
     public void extractRenderState(EntityLantern entity, LanternRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
 
-        state.entity = entity;
-        state.yRot = entity.getYRot(partialTicks);
-        state.partialTick = partialTicks;
     }
 
     @Override
     public void submit(LanternRenderState state, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
+        setupRotations(poseStack, state);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0F, -1.501F, 0.0F);
 
         renderTasks.submitCustomGeometry(poseStack, model.renderType(TEXTURE), (pose, vertexConsumer) -> {
             poseStack.pushPose();
             poseStack.last().set(pose);
-            model.setupAnim(state.entity, 0, 0, state.ageInTicks, 0, 0);
-            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, -1);
+            model.setupAnim(state.entity, state.limbSwing, state.limbSwingAmount, state.ageInTicks, state.headYaw, state.headPitch);
+            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, state.overlay, -1);
             poseStack.popPose();
         });
 
         renderTasks.submitCustomGeometry(poseStack, LanternGelLayer.renderType(TEXTURE), (pose, vertexConsumer) -> {
             poseStack.pushPose();
             poseStack.last().set(pose);
-            gelLayer.render(poseStack, vertexConsumer, state.lightCoords, state.entity, 0, 0, state.partialTick, state.ageInTicks, 0, 0);
+            gelLayer.render(poseStack, vertexConsumer, state.lightCoords, state.entity, state.limbSwing, state.limbSwingAmount, state.partialTick, state.ageInTicks, state.headYaw, state.headPitch);
             poseStack.popPose();
         });
 
@@ -82,9 +79,6 @@ public class RenderLantern extends EntityRenderer<EntityLantern, RenderLantern.L
         super.submit(state, poseStack, renderTasks, cameraState);
     }
 
-    public static class LanternRenderState extends EntityRenderState {
-        public EntityLantern entity;
-        public float yRot;
-        public float partialTick;
+    public static class LanternRenderState extends MowzieLLibraryRenderer.State<EntityLantern> {
     }
 }

@@ -1,5 +1,7 @@
 package com.bobmowzie.mowziesmobs.client;
 
+import com.bobmowzie.mowziesmobs.client.network.ClientNetworkHandler;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import com.bobmowzie.mowziesmobs.client.render.block.SculptorBlockMarking;
 import com.bobmowzie.mowziesmobs.client.sound.*;
 import com.bobmowzie.mowziesmobs.server.ServerProxy;
@@ -164,5 +166,15 @@ public class ClientProxy extends ServerProxy {
     @Override
     public void playMusic(final BossMusicSound music) {
         Minecraft.getInstance().getSoundManager().play(music);
+    }
+
+    @Override
+    public void sendToServer(CustomPacketPayload payload) {
+        ClientNetworkHandler.sendToServer(payload);
+    }
+
+    @Override
+    public void onPlayerTick(Player player) {
+        ClientEventHandler.onPlayerTick(player);
     }
 }

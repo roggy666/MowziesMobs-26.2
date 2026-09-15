@@ -64,7 +64,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -181,7 +180,7 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
             @Override
             public void start() {
                 super.start();
-                playSound(MMSounds.ENTITY_NAGA_FLAP_1.get(), 2, (float) (0.85 + random.nextFloat() * 0.2));
+                playSound(MMSounds.ENTITY_NAGA_FLAP_1, 2, (float) (0.85 + random.nextFloat() * 0.2));
             }
 
             @Override
@@ -197,7 +196,7 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
             @Override
             public void start() {
                 super.start();
-                playSound(MMSounds.ENTITY_NAGA_ACID_CHARGE.get(), 2, 1);
+                playSound(MMSounds.ENTITY_NAGA_ACID_CHARGE, 2, 1);
             }
 
             @Override
@@ -213,7 +212,7 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
             @Override
             public void start() {
                 super.start();
-                playSound(MMSounds.ENTITY_NAGA_FLAP_1.get(), 2, 0.7f);
+                playSound(MMSounds.ENTITY_NAGA_FLAP_1, 2, 0.7f);
             }
 
             @Override
@@ -274,8 +273,8 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
 
                 if (getAnimationTick() == 22) MMCommon.PROXY.playNagaSwoopSound(entity);
 
-                if (getAnimationTick() == 7) playSound(MMSounds.ENTITY_NAGA_GRUNT_3.get(), 2, 1f);
-                if (getAnimationTick() == 22) playSound(MMSounds.ENTITY_NAGA_ROAR_1.get(), 3, 1f);
+                if (getAnimationTick() == 7) playSound(MMSounds.ENTITY_NAGA_GRUNT_3, 2, 1f);
+                if (getAnimationTick() == 22) playSound(MMSounds.ENTITY_NAGA_ROAR_1, 3, 1f);
             }
         });
         this.goalSelector.addGoal(2, new SimpleAnimationAI<EntityNaga>(this, HURT_TO_FALL_ANIMATION, true) {
@@ -288,14 +287,14 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
             @Override
             public void start() {
                 super.start();
-                playSound(MMSounds.MISC_GROUNDHIT_2.get(), 1.5f, 1);
+                playSound(MMSounds.MISC_GROUNDHIT_2, 1.5f, 1);
             }
         });
         this.goalSelector.addGoal(1, new SimpleAnimationAI<EntityNaga>(this, GET_UP_ANIMATION, true) {
             @Override
             public void tick() {
                 super.tick();
-                if (getAnimationTick() == 13) playSound(MMSounds.ENTITY_NAGA_FLAP_1.get(), 2f, 1);
+                if (getAnimationTick() == 13) playSound(MMSounds.ENTITY_NAGA_FLAP_1, 2f, 1);
 
                 if (getAnimationTick() == 15) {
                     setDeltaMovement(getDeltaMovement().add(0, 1.6, 0));
@@ -330,13 +329,6 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
         builder.define(PREV_BANKING, 0.0f);
     }
 
-    // FIXME 26.1.2 port: Entity#getBoundingBoxForCulling() was removed - render culling now goes through
-    // EntityRenderer<T>#getBoundingBoxForCulling(T entity) on the CLIENT-side renderer instead (see
-    // net.minecraft.client.renderer.entity.EntityRenderer), which is out of server/entity/** scope. This override
-    // (inflating the culling box by 12 blocks so the naga's long body doesn't pop out of view early) needs to be
-    // re-added as an override of getBoundingBoxForCulling(EntityNaga) on this entity's renderer class
-    // (client/render/entity/RenderNaga.java or equivalent) - NOT resolved as part of this pass, flagged.
-
     public static AttributeSupplier.Builder createAttributes() {
         return MowzieEntity.createAttributes()
                 .add(Attributes.MAX_HEALTH, 30.0D)
@@ -351,11 +343,11 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
         if (getAnimation() != NO_ANIMATION) return null;
         int r = random.nextInt(4);
         if (r == 0) {
-            playSound(MMSounds.ENTITY_NAGA_ROAR.get(random.nextInt(4)).get(), 5, 1);
+            playSound(MMSounds.ENTITY_NAGA_ROAR.get(random.nextInt(4)), 5, 1);
             roarAnimation = 0;
         }
         else if (r <= 2) {
-            playSound(MMSounds.ENTITY_NAGA_GROWL.get(random.nextInt(3)).get(), 4, 1);
+            playSound(MMSounds.ENTITY_NAGA_GROWL.get(random.nextInt(3)), 4, 1);
         }
         return null;
     }
@@ -363,14 +355,14 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-        playSound(MMSounds.ENTITY_NAGA_GRUNT.get(random.nextInt(3)).get(), 2, 1);
+        playSound(MMSounds.ENTITY_NAGA_GRUNT.get(random.nextInt(3)), 2, 1);
         return null;
     }
 
     @Nullable
     @Override
     protected SoundEvent getDeathSound() {
-        playSound(MMSounds.ENTITY_NAGA_ROAR.get(random.nextInt(4)).get(), 3, 1);
+        playSound(MMSounds.ENTITY_NAGA_ROAR.get(random.nextInt(4)), 3, 1);
         return null;
     }
 
@@ -547,7 +539,7 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
             if (shoulderRot > 0.9) hasFlapSoundPlayed = false;
 
             if (shoulderRot <= 0.7 && !hasFlapSoundPlayed) {
-                level().playLocalSound(getX(), getY(), getZ(), MMSounds.ENTITY_NAGA_FLAP_1.get(), SoundSource.HOSTILE, 2, (float) (0.85 + random.nextFloat() * 0.2), false);
+                level().playLocalSound(getX(), getY(), getZ(), MMSounds.ENTITY_NAGA_FLAP_1, SoundSource.HOSTILE, 2, (float) (0.85 + random.nextFloat() * 0.2), false);
                 hasFlapSoundPlayed = true;
             }
         }
@@ -628,7 +620,7 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
         projectilePos = projectilePos.add(position());
         projectilePos = projectilePos.add(new Vec3(0, 0, 1).xRot((float)Math.toRadians(-getXRot())).yRot((float)Math.toRadians(-yHeadRot)));
         projectilePos = projectilePos.add(new Vec3(0, 0, 0));
-        EntityPoisonBall poisonBall = new EntityPoisonBall(EntityHandler.POISON_BALL.get(), this.level(), this);
+        EntityPoisonBall poisonBall = new EntityPoisonBall(EntityHandler.POISON_BALL, this.level(), this);
         poisonBall.setPos(projectilePos.x, projectilePos.y, projectilePos.z);
         Vec3 look = getLookAngle();
         Vec3 dir = new Vec3(look.x, 0, look.z).normalize();
@@ -643,8 +635,8 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
         }
         this.level().addFreshEntity(poisonBall);
 
-        playSound(MMSounds.ENTITY_NAGA_ACID_SPIT.get(), 2, 1);
-        playSound(MMSounds.ENTITY_NAGA_ACID_SPIT_HISS.get(), 2, 1);
+        playSound(MMSounds.ENTITY_NAGA_ACID_SPIT, 2, 1);
+        playSound(MMSounds.ENTITY_NAGA_ACID_SPIT_HISS, 2, 1);
     }
 
     @Override
@@ -708,7 +700,6 @@ public class EntityNaga extends MowzieLLibraryEntity implements RangedAttackMob,
                     waterSpeed = 0.96F;
                 }
 
-                swimSpeed *= (float) this.getAttributeValue(NeoForgeMod.SWIM_SPEED);
                 this.moveRelative(swimSpeed, motion);
                 this.move(MoverType.SELF, this.getDeltaMovement());
                 Vec3 deltaMovement = this.getDeltaMovement();

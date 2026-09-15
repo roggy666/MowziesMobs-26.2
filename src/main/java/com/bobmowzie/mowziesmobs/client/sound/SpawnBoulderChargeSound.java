@@ -16,7 +16,7 @@ public class SpawnBoulderChargeSound extends AbstractTickableSoundInstance {
     private final SpawnBoulderAbility ability;
 
     public SpawnBoulderChargeSound(LivingEntity user) {
-        super(MMSounds.EFFECT_GEOMANCY_BOULDER_CHARGE.get(), SoundSource.PLAYERS, SoundInstance.createUnseededRandom());
+        super(MMSounds.EFFECT_GEOMANCY_BOULDER_CHARGE, SoundSource.PLAYERS, SoundInstance.createUnseededRandom());
         this.user = user;
         volume = 1F;
         pitch = 1f;

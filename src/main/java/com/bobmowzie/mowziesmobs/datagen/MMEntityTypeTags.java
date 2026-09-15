@@ -1,22 +1,22 @@
 package com.bobmowzie.mowziesmobs.datagen;
 
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalEntityTypeTags;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.entity.EntityHandler;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class MMEntityTypeTags extends EntityTypeTagsProvider {
-    public MMEntityTypeTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
+public class MMEntityTypeTags extends FabricTagsProvider.EntityTypeTagsProvider {
+    public MMEntityTypeTags(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
         super(output, provider);
     }
 
@@ -64,9 +64,8 @@ public class MMEntityTypeTags extends EntityTypeTagsProvider {
         }
     }
 
-    @Override
     protected MMTagAppender tag(TagKey<EntityType<?>> tag) {
-        return new MMTagAppender(super.tag(tag));
+        return new MMTagAppender(builder(tag));
     }
 
     @Override
@@ -75,46 +74,45 @@ public class MMEntityTypeTags extends EntityTypeTagsProvider {
         addToCommonTags();
 
         tag(key("umvuthana"))
-                .add(EntityHandler.UMVUTHI.value())
-                .add(EntityHandler.UMVUTHANA_MINION.value())
-                .add(EntityHandler.UMVUTHANA_RAPTOR.value())
-                .add(EntityHandler.UMVUTHANA_CRANE.value())
-                .add(EntityHandler.UMVUTHANA_FOLLOWER_TO_RAPTOR.value())
-                .add(EntityHandler.UMVUTHANA_CRANE_TO_PLAYER.value())
-                .add(EntityHandler.UMVUTHANA_FOLLOWER_TO_PLAYER.value());
+                .add(EntityHandler.UMVUTHI)
+                .add(EntityHandler.UMVUTHANA_MINION)
+                .add(EntityHandler.UMVUTHANA_RAPTOR)
+                .add(EntityHandler.UMVUTHANA_CRANE)
+                .add(EntityHandler.UMVUTHANA_FOLLOWER_TO_RAPTOR)
+                .add(EntityHandler.UMVUTHANA_CRANE_TO_PLAYER)
+                .add(EntityHandler.UMVUTHANA_FOLLOWER_TO_PLAYER);
 
         tag(key("umvuthana_umvuthi_aligned"))
-                .add(EntityHandler.UMVUTHI.value())
-                .add(EntityHandler.UMVUTHANA_MINION.value())
-                .add(EntityHandler.UMVUTHANA_RAPTOR.value())
-                .add(EntityHandler.UMVUTHANA_CRANE.value())
-                .add(EntityHandler.UMVUTHANA_FOLLOWER_TO_RAPTOR.value());
+                .add(EntityHandler.UMVUTHI)
+                .add(EntityHandler.UMVUTHANA_MINION)
+                .add(EntityHandler.UMVUTHANA_RAPTOR)
+                .add(EntityHandler.UMVUTHANA_CRANE)
+                .add(EntityHandler.UMVUTHANA_FOLLOWER_TO_RAPTOR);
     }
 
     private void addToVanillaTags() {
-        tag(EntityTypeTags.CAN_BREATHE_UNDER_WATER).add(EntityHandler.GROTTOL.get());
-        tag(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES).add(EntityHandler.FROSTMAW.get());
-        tag(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES).add(EntityHandler.FROSTMAW.get());
+        tag(EntityTypeTags.CAN_BREATHE_UNDER_WATER).add(EntityHandler.GROTTOL);
+        tag(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES).add(EntityHandler.FROSTMAW);
         tag(EntityTypeTags.IMPACT_PROJECTILES)
-                .add(EntityHandler.DART.get())
-                .add(EntityHandler.BOULDER_PROJECTILE.get())
-                .add(EntityHandler.POISON_BALL.get());
+                .add(EntityHandler.DART)
+                .add(EntityHandler.BOULDER_PROJECTILE)
+                .add(EntityHandler.POISON_BALL);
     }
 
     private void addToCommonTags() {
-        tag(Tags.EntityTypes.BOSSES)
-                .add(EntityHandler.FROSTMAW.get())
-                .add(EntityHandler.WROUGHTNAUT.get())
-                .add(EntityHandler.UMVUTHI.get())
-                .add(EntityHandler.SCULPTOR.get());
-        tag(Tags.EntityTypes.CAPTURING_NOT_SUPPORTED)
-                .add(EntityHandler.FROSTMAW.get())
-                .add(EntityHandler.WROUGHTNAUT.get())
-                .add(EntityHandler.UMVUTHI.get())
-                .add(EntityHandler.SCULPTOR.get());
-        tag(Tags.EntityTypes.TELEPORTING_NOT_SUPPORTED)
-                .add(EntityHandler.UMVUTHI.get())
-                .add(EntityHandler.SCULPTOR.get());
+        tag(ConventionalEntityTypeTags.BOSSES)
+                .add(EntityHandler.FROSTMAW)
+                .add(EntityHandler.WROUGHTNAUT)
+                .add(EntityHandler.UMVUTHI)
+                .add(EntityHandler.SCULPTOR);
+        tag(ConventionalEntityTypeTags.CAPTURING_NOT_SUPPORTED)
+                .add(EntityHandler.FROSTMAW)
+                .add(EntityHandler.WROUGHTNAUT)
+                .add(EntityHandler.UMVUTHI)
+                .add(EntityHandler.SCULPTOR);
+        tag(ConventionalEntityTypeTags.TELEPORTING_NOT_SUPPORTED)
+                .add(EntityHandler.UMVUTHI)
+                .add(EntityHandler.SCULPTOR);
     }
 
     private static TagKey<EntityType<?>> key(String path) {

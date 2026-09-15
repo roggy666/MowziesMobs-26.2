@@ -13,10 +13,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 
-/**
- * PORTING NOTE: same treatment as {@link RenderFoliaath} - see that class's javadoc.
- */
-public class RenderFoliaathBaby extends EntityRenderer<EntityBabyFoliaath, RenderFoliaathBaby.FoliaathBabyRenderState> {
+public class RenderFoliaathBaby extends MowzieLLibraryRenderer<EntityBabyFoliaath, RenderFoliaathBaby.FoliaathBabyRenderState> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/entity/foliaath_baby.png");
 
     private final ModelFoliaathBaby<EntityBabyFoliaath> model = new ModelFoliaathBaby<>();
@@ -34,22 +31,20 @@ public class RenderFoliaathBaby extends EntityRenderer<EntityBabyFoliaath, Rende
     public void extractRenderState(EntityBabyFoliaath entity, FoliaathBabyRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
 
-        state.entity = entity;
-        state.yRot = entity.getYRot(partialTicks);
     }
 
     @Override
     public void submit(FoliaathBabyRenderState state, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
+        setupRotations(poseStack, state);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0F, -1.501F, 0.0F);
 
         renderTasks.submitCustomGeometry(poseStack, model.renderType(TEXTURE), (pose, vertexConsumer) -> {
             poseStack.pushPose();
             poseStack.last().set(pose);
-            model.setupAnim(state.entity, 0, 0, state.ageInTicks, 0, 0);
-            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, -1);
+            model.setupAnim(state.entity, state.limbSwing, state.limbSwingAmount, state.ageInTicks, state.headYaw, state.headPitch);
+            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, state.overlay, -1);
             poseStack.popPose();
         });
 
@@ -58,8 +53,6 @@ public class RenderFoliaathBaby extends EntityRenderer<EntityBabyFoliaath, Rende
         super.submit(state, poseStack, renderTasks, cameraState);
     }
 
-    public static class FoliaathBabyRenderState extends EntityRenderState {
-        public EntityBabyFoliaath entity;
-        public float yRot;
+    public static class FoliaathBabyRenderState extends MowzieLLibraryRenderer.State<EntityBabyFoliaath> {
     }
 }

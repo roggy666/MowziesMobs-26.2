@@ -16,9 +16,15 @@
     "naga": {
       "trigger": "minecraft:player_killed_entity",
       "conditions": {
-        "entity": {
-          "type": "mowziesmobs:naga"
-        }
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:entity_type": "mowziesmobs:naga"
+            }
+          }
+        ]
       }
     }
   }

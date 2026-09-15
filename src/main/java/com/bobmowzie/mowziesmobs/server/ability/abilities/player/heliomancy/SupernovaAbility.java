@@ -44,7 +44,7 @@ public class SupernovaAbility extends HeliomancyAbilityBase {
     @Override
     public void start() {
         super.start();
-        getUser().playSound(MMSounds.ENTITY_SUPERNOVA_START.get(), 3f, 1f);
+        getUser().playSound(MMSounds.ENTITY_SUPERNOVA_START, 3f, 1f);
         playAnimation(SUPERNOVA_ANIM);
 
         if (getLevel().isClientSide()) {
@@ -68,7 +68,7 @@ public class SupernovaAbility extends HeliomancyAbilityBase {
         }
 
         if (getTicksInUse() == 30) {
-            getUser().playSound(MMSounds.ENTITY_SUPERNOVA_BLACKHOLE.get(), 2f, 1.2f);
+            getUser().playSound(MMSounds.ENTITY_SUPERNOVA_BLACKHOLE, 2f, 1.2f);
         }
 
         if (getTicksInUse() < 30) {
@@ -115,7 +115,7 @@ public class SupernovaAbility extends HeliomancyAbilityBase {
         super.beginSection(section);
         if (section.sectionType == AbilitySection.AbilitySectionType.ACTIVE) {
             if (!getUser().level().isClientSide()) {
-                EntitySuperNova superNova = new EntitySuperNova(EntityHandler.SUPER_NOVA.get(), getUser().level(), getUser(), getUser().getX(), getUser().getY() + getUser().getBbHeight()/2f, getUser().getZ());
+                EntitySuperNova superNova = new EntitySuperNova(EntityHandler.SUPER_NOVA, getUser().level(), getUser(), getUser().getX(), getUser().getY() + getUser().getBbHeight()/2f, getUser().getZ());
                 getUser().level().addFreshEntity(superNova);
                 
                 MobEffectInstance sunsBlessingInstance = getUser().getEffect(EffectHandler.SUNS_BLESSING);

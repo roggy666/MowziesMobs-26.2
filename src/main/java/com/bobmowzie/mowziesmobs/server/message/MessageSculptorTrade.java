@@ -8,8 +8,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,34 +23,31 @@ public record MessageSculptorTrade(int entityId) implements CustomPacketPayload 
             MessageSculptorTrade::new
     );
 
-    public static void handleServer(final MessageSculptorTrade packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Player player = context.player();
+    public static void handleServer(final MessageSculptorTrade packet, final ServerPlayer player) {
 
-            if (!(player.level().getEntity(packet.entityId()) instanceof EntitySculptor sculptor)) {
-                return;
-            }
+        if (!(player.level().getEntity(packet.entityId()) instanceof EntitySculptor sculptor)) {
+            return;
+        }
 
-            if (sculptor.getCustomer() != player) {
-                return;
-            }
+        if (sculptor.getCustomer() != player) {
+            return;
+        }
 
-            if (!(player.containerMenu instanceof ContainerSculptorTrade trade)) {
-                return;
-            }
+        if (!(player.containerMenu instanceof ContainerSculptorTrade trade)) {
+            return;
+        }
 
-            if (sculptor.checkTestObstructed()) {
-                return;
-            }
+        if (sculptor.checkTestObstructed()) {
+            return;
+        }
 
-            boolean satisfied = sculptor.fulfillDesire(trade.getSlot(0));
+        boolean satisfied = sculptor.fulfillDesire(trade.getSlot(0));
 
-            if (satisfied) {
-                trade.returnItems();
-                trade.broadcastChanges();
-                sculptor.setTestingPlayer(player);
-            }
-        });
+        if (satisfied) {
+            trade.returnItems();
+            trade.broadcastChanges();
+            sculptor.setTestingPlayer(player);
+        }
     }
 
     @Override

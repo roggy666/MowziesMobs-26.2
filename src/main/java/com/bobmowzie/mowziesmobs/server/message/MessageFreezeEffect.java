@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.message;
 
+import net.minecraft.world.entity.player.Player;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.capability.DataHandler;
 import com.bobmowzie.mowziesmobs.server.capability.FrozenData;
@@ -10,7 +11,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,20 +26,18 @@ public record MessageFreezeEffect(int entityId, boolean isFrozen) implements Cus
             MessageFreezeEffect::new
     );
 
-    public static void handleClient(final MessageFreezeEffect packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Level level = MMCommon.PROXY.getClientLevel();
+    public static void handleClient(final MessageFreezeEffect packet, final Player player) {
+        Level level = MMCommon.PROXY.getClientLevel();
 
-            if (level != null && level.getEntity(packet.entityId()) instanceof LivingEntity living) {
-                FrozenData data = DataHandler.getData(living, DataHandler.FROZEN_DATA);
+        if (level != null && level.getEntity(packet.entityId()) instanceof LivingEntity living) {
+            FrozenData data = DataHandler.getData(living, DataHandler.FROZEN_DATA);
 
-                if (packet.isFrozen()) {
-                    data.onFreeze(living);
-                } else {
-                    data.onUnfreeze(living);
-                }
+            if (packet.isFrozen()) {
+                data.onFreeze(living);
+            } else {
+                data.onUnfreeze(living);
             }
-        });
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.bobmowzie.mowziesmobs.client.particle.util.AdvancedParticleBase;
 import com.bobmowzie.mowziesmobs.client.particle.util.ParticleComponent;
 import com.bobmowzie.mowziesmobs.client.particle.util.ParticleRotation;
 import com.bobmowzie.mowziesmobs.datagen.MMItemTags;
+import com.bobmowzie.mowziesmobs.server.ability.AbilityCommonEventHandler;
 import com.bobmowzie.mowziesmobs.server.ability.AbilityHandler;
 import com.bobmowzie.mowziesmobs.server.advancement.AdvancementHandler;
 import com.bobmowzie.mowziesmobs.server.ai.AvoidEntityIfNotTamedGoal;
@@ -18,7 +19,6 @@ import com.bobmowzie.mowziesmobs.server.config.ConfigHandler;
 import com.bobmowzie.mowziesmobs.server.entity.EntityHandler;
 import com.bobmowzie.mowziesmobs.server.entity.LeaderSunstrikeImmune;
 import com.bobmowzie.mowziesmobs.server.entity.MowzieEntity;
-import com.bobmowzie.mowziesmobs.server.entity.MowzieGeckoEntity;
 import com.bobmowzie.mowziesmobs.server.entity.effects.geomancy.EntityBoulderProjectile;
 import com.bobmowzie.mowziesmobs.server.entity.effects.geomancy.EntityGeomancyBase;
 import com.bobmowzie.mowziesmobs.server.entity.foliaath.EntityFoliaath;
@@ -33,12 +33,23 @@ import com.bobmowzie.mowziesmobs.server.item.ItemSpear;
 import com.bobmowzie.mowziesmobs.server.item.ItemUmvuthanaMask;
 import com.bobmowzie.mowziesmobs.server.message.MessageFreezeEffect;
 import com.bobmowzie.mowziesmobs.server.message.MessageSunblockEffect;
+import com.bobmowzie.mowziesmobs.server.message.NetworkHandler;
 import com.bobmowzie.mowziesmobs.server.potion.EffectGeomancy;
 import com.bobmowzie.mowziesmobs.server.potion.EffectHandler;
 import com.bobmowzie.mowziesmobs.server.power.Power;
 import com.bobmowzie.mowziesmobs.server.sound.MMSounds;
-import com.bobmowzie.mowziesmobs.server.world.feature.structure.StructureTypeHandler;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.registry.FuelValueEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -48,6 +59,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -71,43 +84,58 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.EntityMountEvent;
-import net.neoforged.neoforge.event.entity.living.*;
-import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.furnace.FurnaceFuelBurnTimeEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Common-side game logic hooks. Fabric API callbacks are registered in {@link #register()}; hooks that have no
+ * Fabric API equivalent are invoked from the mixins in {@code com.bobmowzie.mowziesmobs.mixin}.
+ */
 public final class ServerEventHandler {
+    private ServerEventHandler() {}
 
-    @SubscribeEvent
-    public void onJoinWorld(EntityJoinLevelEvent event) {
-        if (event.getEntity() instanceof Player) {
-            DataHandler.getData(event.getEntity(), DataHandler.PLAYER_DATA).addedToWorld(event);
+    public static void register() {
+        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> onJoinWorld(entity));
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamageTaken, damageTaken, blocked) -> onLivingHurtPost(entity, source, damageTaken));
+        ServerLivingEntityEvents.AFTER_DEATH.register(ServerEventHandler::onLivingDeath);
+        ServerEntityEvents.EQUIPMENT_CHANGE.register((entity, slot, previous, next) -> onEquipmentChanged(entity, slot));
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> onPlayerRespawn(newPlayer));
+        PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> !onBreakBlock(player, state));
+
+        UseItemCallback.EVENT.register((player, level, hand) -> onPlayerRightClickItem(player, hand) ? InteractionResult.FAIL : InteractionResult.PASS);
+        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> onPlayerRightClickBlock(player, hand, hitResult) ? InteractionResult.FAIL : InteractionResult.PASS);
+        UseEntityCallback.EVENT.register((player, level, hand, entity, hitResult) -> onPlayerRightClickEntity(player, hand, entity) ? InteractionResult.FAIL : InteractionResult.PASS);
+        AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> onPlayerLeftClickBlock(player, pos, direction) ? InteractionResult.FAIL : InteractionResult.PASS);
+        AttackEntityCallback.EVENT.register((player, level, hand, entity, hitResult) -> onPlayerAttack(player, entity) ? InteractionResult.FAIL : InteractionResult.PASS);
+
+        FuelValueEvents.BUILD.register((builder, context) -> {
+            builder.add(BlockHandler.CLAWED_LOG, 300);
+            builder.add(BlockHandler.PAINTED_ACACIA, 300);
+            builder.add(BlockHandler.PAINTED_ACACIA_SLAB, 150);
+            builder.add(BlockHandler.THATCH, 100);
+        });
+    }
+
+    /** Called for both client and server levels. */
+    public static void onJoinWorld(Entity entity) {
+        if (entity instanceof Player player) {
+            DataHandler.getData(player, DataHandler.PLAYER_DATA).addedToWorld(player);
         }
 
-        if (event.getLevel().isClientSide()) {
+        if (entity.level().isClientSide()) {
             return;
         }
-        Entity entity = event.getEntity();
         if (entity instanceof Zombie && !(entity instanceof ZombifiedPiglin)) {
             ((PathfinderMob) entity).targetSelector.addGoal(2, new NearestAttackableTargetGoal<>((PathfinderMob) entity, EntityFoliaath.class, 0, true, false, null));
             ((PathfinderMob) entity).targetSelector.addGoal(3, new NearestAttackableTargetGoal<>((PathfinderMob) entity, EntityUmvuthana.class, 0, true, false, null));
@@ -135,7 +163,6 @@ public final class ServerEventHandler {
             ((PathfinderMob) entity).goalSelector.addGoal(3, new AvoidEntityGoal<>((PathfinderMob) entity, EntityFrostmaw.class, 10.0F, 1.0D, 1.2D));
         }
 
-
         if (entity instanceof Pillager) {
             ((PathfinderMob) entity).targetSelector.addGoal(3, new NearestAttackableTargetGoal<>((PathfinderMob) entity, EntitySculptor.class, 0, true, false, null));
         }
@@ -146,151 +173,132 @@ public final class ServerEventHandler {
     private static final Identifier GEOMANCY_BELT_KNOCKBACK_RESISTANCE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "geomancy_belt_knockback_resistance_boost");
     private static final AttributeModifier KNOCKBACK_MODIFIER_BELT = new AttributeModifier(GEOMANCY_BELT_KNOCKBACK_RESISTANCE, 1D, AttributeModifier.Operation.ADD_VALUE);
 
-    @SubscribeEvent
-    public void onLivingTick(EntityTickEvent.Post event) {
-        if (event.getEntity() instanceof LivingEntity livingEntity) {
-            if (!livingEntity.level().isClientSide()) {
-                Item headItemStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD).getItem();
-                if (headItemStack instanceof ItemUmvuthanaMask mask) {
-                    EffectHandler.addOrCombineEffect(livingEntity, mask.getPotion(), 50, 0, true, false);
-                }
+    /** Called from {@code LivingEntityMixin} at the end of every living entity tick, both sides. */
+    public static void onLivingTick(LivingEntity livingEntity) {
+        if (!livingEntity.level().isClientSide()) {
+            Item headItemStack = livingEntity.getItemBySlot(EquipmentSlot.HEAD).getItem();
+            if (headItemStack instanceof ItemUmvuthanaMask mask) {
+                EffectHandler.addOrCombineEffect(livingEntity, mask.getPotion(), 50, 0, true, false);
             }
+        }
 
-            if (livingEntity instanceof Mob mob && !(livingEntity instanceof EntityUmvuthanaCrane)) {
-                if (mob.getTarget() instanceof EntityUmvuthi && mob.getTarget().hasEffect(EffectHandler.SUNBLOCK)) {
-                    // PORTING NOTE (1.21.1 -> 26.1.2): Level#getNearestEntity moved to the ServerEntityGetter
-                    // interface (implemented by ServerLevel, not the plain Level a Mob's level() returns) -
-                    // confirmed against real 26.1.2 ServerEntityGetter source, same overload shape survives.
-                    if (mob.level() instanceof ServerLevel serverLevel) {
-                        EntityUmvuthanaCrane sunblocker = serverLevel.getNearestEntity(EntityUmvuthanaCrane.class, TargetingConditions.DEFAULT, mob, mob.getX(), mob.getY() + mob.getEyeHeight(), mob.getZ(), mob.getBoundingBox().inflate(40.0D, 15.0D, 40.0D));
-                        mob.setTarget(sunblocker);
-                    }
-                }
-            }
-
-            DataHandler.getData(livingEntity, DataHandler.FROZEN_DATA).tick(livingEntity);
-            DataHandler.getData(livingEntity, DataHandler.LIVING_DATA).tick(livingEntity);
-            DataHandler.getData(livingEntity, DataHandler.ABILITY_DATA).tick(livingEntity);
-
-            // Geomancer Belt mechanics
-            AttributeInstance attributeInstanceArmor = livingEntity.getAttribute(Attributes.ARMOR);
-            AttributeInstance attributeInstanceKnockbackRes = livingEntity.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
-            if (livingEntity.getItemBySlot(EquipmentSlot.LEGS).is(ItemHandler.GEOMANCER_BELT.get()) && livingEntity.hasEffect(MobEffects.SLOWNESS)) {
-                if (attributeInstanceArmor != null && !attributeInstanceArmor.hasModifier(GEOMANCY_BELT_DEFENSE)) {
-                    attributeInstanceArmor.addTransientModifier(DEFENSE_MODIFIER_BELT);
-                }
-                if (attributeInstanceKnockbackRes != null && !attributeInstanceKnockbackRes.hasModifier(GEOMANCY_BELT_KNOCKBACK_RESISTANCE)) {
-                    attributeInstanceKnockbackRes.addTransientModifier(KNOCKBACK_MODIFIER_BELT);
-                }
-            }
-            else {
-                if (attributeInstanceArmor != null && attributeInstanceArmor.hasModifier(GEOMANCY_BELT_DEFENSE)) {
-                    attributeInstanceArmor.removeModifier(DEFENSE_MODIFIER_BELT);
-                }
-                if (attributeInstanceKnockbackRes != null && attributeInstanceKnockbackRes.hasModifier(GEOMANCY_BELT_KNOCKBACK_RESISTANCE)) {
-                    attributeInstanceKnockbackRes.removeModifier(KNOCKBACK_MODIFIER_BELT);
+        if (livingEntity instanceof Mob mob && !(livingEntity instanceof EntityUmvuthanaCrane)) {
+            if (mob.getTarget() instanceof EntityUmvuthi && mob.getTarget().hasEffect(EffectHandler.SUNBLOCK)) {
+                if (mob.level() instanceof ServerLevel serverLevel) {
+                    EntityUmvuthanaCrane sunblocker = serverLevel.getNearestEntity(EntityUmvuthanaCrane.class, TargetingConditions.DEFAULT, mob, mob.getX(), mob.getY() + mob.getEyeHeight(), mob.getZ(), mob.getBoundingBox().inflate(40.0D, 15.0D, 40.0D));
+                    mob.setTarget(sunblocker);
                 }
             }
         }
-    }
 
-    @SubscribeEvent
-    public void onPotionEffectApplicable(MobEffectEvent.Applicable event) {
-        if (event.getEntity().hasEffect(EffectHandler.ECLIPSED) && !event.getEntity().getEffect(EffectHandler.ECLIPSED).endsWithin(1)) {
-            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
-        }
+        DataHandler.getData(livingEntity, DataHandler.FROZEN_DATA).tick(livingEntity);
+        DataHandler.getData(livingEntity, DataHandler.LIVING_DATA).tick(livingEntity);
+        DataHandler.getData(livingEntity, DataHandler.ABILITY_DATA).tick(livingEntity);
 
-        if (event.getEntity().hasEffect(EffectHandler.POISON_RESIST) && event.getEffectInstance().is(MobEffects.POISON)) {
-            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
-        }
-    }
-
-    @SubscribeEvent
-    public void onAddPotionEffect(MobEffectEvent.Added event) {
-        if (event.getEffectInstance() == null) {
-            return;
-        }
-
-        if (event.getEffectInstance().is(EffectHandler.POISON_RESIST)) {
-            event.getEntity().removeEffect(MobEffects.POISON);
-        }
-
-        if (event.getEffectInstance().is(EffectHandler.ECLIPSED)) {
-            for (MobEffectInstance effectInstance : event.getEntity().getActiveEffects()) {
-                if (!effectInstance.is(EffectHandler.ECLIPSED)) {
-                    LivingData livingData = DataHandler.getData(event.getEntity(), DataHandler.LIVING_DATA);
-                    livingData.eclipseEffect(effectInstance);
-                }
+        // Geomancer Belt mechanics
+        AttributeInstance attributeInstanceArmor = livingEntity.getAttribute(Attributes.ARMOR);
+        AttributeInstance attributeInstanceKnockbackRes = livingEntity.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
+        if (livingEntity.getItemBySlot(EquipmentSlot.LEGS).is(ItemHandler.GEOMANCER_BELT) && livingEntity.hasEffect(MobEffects.SLOWNESS)) {
+            if (attributeInstanceArmor != null && !attributeInstanceArmor.hasModifier(GEOMANCY_BELT_DEFENSE)) {
+                attributeInstanceArmor.addTransientModifier(DEFENSE_MODIFIER_BELT);
             }
-            event.getEntity().removeAllEffects();
-        }
-
-        if (event.getEffectInstance().getEffect() == EffectHandler.SUNBLOCK) {
-            if (!event.getEntity().level().isClientSide()) {
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(event.getEntity(), new MessageSunblockEffect(event.getEntity().getId(), true));
+            if (attributeInstanceKnockbackRes != null && !attributeInstanceKnockbackRes.hasModifier(GEOMANCY_BELT_KNOCKBACK_RESISTANCE)) {
+                attributeInstanceKnockbackRes.addTransientModifier(KNOCKBACK_MODIFIER_BELT);
             }
-
-            MMCommon.PROXY.playSunblockSound(event.getEntity());
+        }
+        else {
+            if (attributeInstanceArmor != null && attributeInstanceArmor.hasModifier(GEOMANCY_BELT_DEFENSE)) {
+                attributeInstanceArmor.removeModifier(DEFENSE_MODIFIER_BELT);
+            }
+            if (attributeInstanceKnockbackRes != null && attributeInstanceKnockbackRes.hasModifier(GEOMANCY_BELT_KNOCKBACK_RESISTANCE)) {
+                attributeInstanceKnockbackRes.removeModifier(KNOCKBACK_MODIFIER_BELT);
+            }
         }
 
-        if (event.getEffectInstance().getEffect() == EffectHandler.FROZEN) {
-            if (!event.getEntity().level().isClientSide()) {
-                DataHandler.getData(event.getEntity(), DataHandler.FROZEN_DATA).onFreeze(event.getEntity());
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(event.getEntity(), new MessageFreezeEffect(event.getEntity().getId(), true));
+        if (livingEntity instanceof Player player) {
+            onPlayerTick(player);
+            if (player.level().isClientSide()) {
+                MMCommon.PROXY.onPlayerTick(player);
             }
         }
     }
 
-    @SubscribeEvent
-    public void onRemovePotionEffect(MobEffectEvent.Remove event) {
-    	if (event.getEffectInstance() == null) {
-            return;
+    /** Returns false if the effect must not be applied. Called from {@code LivingEntityMixin#canBeAffected}. */
+    public static boolean onPotionEffectApplicable(LivingEntity entity, MobEffectInstance effectInstance) {
+        if (entity.hasEffect(EffectHandler.ECLIPSED) && !entity.getEffect(EffectHandler.ECLIPSED).endsWithin(1)) {
+            return false;
         }
 
-        if (event.getEffectInstance().is(EffectHandler.ECLIPSED)) {
-            LivingData livingData = DataHandler.getData(event.getEntity(), DataHandler.LIVING_DATA);
-            livingData.unEclipseEffects(event.getEntity());
+        if (entity.hasEffect(EffectHandler.POISON_RESIST) && effectInstance.is(MobEffects.POISON)) {
+            return false;
         }
-
-        if (!event.getEntity().level().isClientSide() && event.getEffectInstance().getEffect() == EffectHandler.SUNBLOCK) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(event.getEntity(), new MessageSunblockEffect(event.getEntity().getId(), false));
-        }
-
-        if (!event.getEntity().level().isClientSide() && event.getEffectInstance().getEffect() == EffectHandler.FROZEN) {
-            DataHandler.getData(event.getEntity(), DataHandler.FROZEN_DATA).onUnfreeze(event.getEntity());
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(event.getEntity(), new MessageFreezeEffect(event.getEntity().getId(), false));
-        }
+        return true;
     }
 
-    @SubscribeEvent
-    public void onPotionEffectExpire(MobEffectEvent.Expired event) {
-        MobEffectInstance effectInstance = event.getEffectInstance();
+    /** Called from {@code LivingEntityMixin#onEffectAdded}, both sides. */
+    public static void onAddPotionEffect(LivingEntity entity, MobEffectInstance effectInstance) {
         if (effectInstance == null) {
             return;
         }
 
-        if (event.getEffectInstance().is(EffectHandler.ECLIPSED)) {
-            LivingData livingData = DataHandler.getData(event.getEntity(), DataHandler.LIVING_DATA);
-            livingData.unEclipseEffects(event.getEntity());
+        if (effectInstance.is(EffectHandler.POISON_RESIST)) {
+            entity.removeEffect(MobEffects.POISON);
         }
 
-        if (!event.getEntity().level().isClientSide() && effectInstance != null && effectInstance.getEffect() == EffectHandler.SUNBLOCK) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(event.getEntity(), new MessageSunblockEffect(event.getEntity().getId(), false));
+        if (effectInstance.is(EffectHandler.ECLIPSED)) {
+            for (MobEffectInstance other : entity.getActiveEffects()) {
+                if (!other.is(EffectHandler.ECLIPSED)) {
+                    LivingData livingData = DataHandler.getData(entity, DataHandler.LIVING_DATA);
+                    livingData.eclipseEffect(other);
+                }
+            }
+            entity.removeAllEffects();
         }
 
-        if (!event.getEntity().level().isClientSide() && effectInstance != null && effectInstance.getEffect() == EffectHandler.FROZEN) {
-            DataHandler.getData(event.getEntity(), DataHandler.FROZEN_DATA).onUnfreeze(event.getEntity());
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(event.getEntity(), new MessageFreezeEffect(event.getEntity().getId(), false));
+        if (effectInstance.getEffect() == EffectHandler.SUNBLOCK) {
+            if (!entity.level().isClientSide()) {
+                NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new MessageSunblockEffect(entity.getId(), true));
+            }
+
+            MMCommon.PROXY.playSunblockSound(entity);
+        }
+
+        if (effectInstance.getEffect() == EffectHandler.FROZEN) {
+            if (!entity.level().isClientSide()) {
+                DataHandler.getData(entity, DataHandler.FROZEN_DATA).onFreeze(entity);
+                NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new MessageFreezeEffect(entity.getId(), true));
+            }
         }
     }
 
-    @SubscribeEvent
-    public void onLivingHurtPre(LivingDamageEvent.Pre event) {
+    /** Called from {@code LivingEntityMixin#onEffectsRemoved} for both manual removal and expiry, both sides. */
+    public static void onRemovePotionEffect(LivingEntity entity, MobEffectInstance effectInstance) {
+        if (effectInstance == null) {
+            return;
+        }
+
+        if (effectInstance.is(EffectHandler.ECLIPSED)) {
+            LivingData livingData = DataHandler.getData(entity, DataHandler.LIVING_DATA);
+            livingData.unEclipseEffects(entity);
+        }
+
+        if (!entity.level().isClientSide() && effectInstance.getEffect() == EffectHandler.SUNBLOCK) {
+            NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new MessageSunblockEffect(entity.getId(), false));
+        }
+
+        if (!entity.level().isClientSide() && effectInstance.getEffect() == EffectHandler.FROZEN) {
+            DataHandler.getData(entity, DataHandler.FROZEN_DATA).onUnfreeze(entity);
+            NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new MessageFreezeEffect(entity.getId(), false));
+        }
+    }
+
+    /**
+     * Called from {@code LivingEntityMixin#actuallyHurt} after armor/magic reductions but before health is modified.
+     * Returns the modified damage.
+     */
+    public static float onLivingHurtPre(LivingEntity livingEntity, DamageSource source, float damage) {
         // Copied from LivingEntity's applyPotionDamageCalculations
-        DamageSource source = event.getSource();
-        LivingEntity livingEntity = event.getEntity();
         // SUNBLOCK
-        float damage = event.getNewDamage();
         if (!source.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
             if (livingEntity.hasEffect(EffectHandler.SUNBLOCK) && !source.is(DamageTypes.FELL_OUT_OF_WORLD)) {
                 int i = (livingEntity.getEffect(EffectHandler.SUNBLOCK).getAmplifier() + 2) * 5;
@@ -298,7 +306,6 @@ public final class ServerEventHandler {
                 float f = damage * (float)j;
                 float f1 = damage;
                 damage = Math.max(f / 25.0F, 0.0F);
-                event.setNewDamage(damage);
                 float f2 = f1 - damage;
                 if (f2 > 0.0F && f2 < 3.4028235E37F) {
                     if (livingEntity instanceof ServerPlayer) {
@@ -311,94 +318,81 @@ public final class ServerEventHandler {
         }
 
         // FRAGILITY
-        damage = event.getNewDamage();
         if (livingEntity.hasEffect(EffectHandler.FRAGILITY) && !source.is(DamageTypes.FELL_OUT_OF_WORLD)) {
             int i = (livingEntity.getEffect(EffectHandler.FRAGILITY).getAmplifier() + 1) * 5;
             int j = 25 + i;
             float f = damage * (float)j;
             damage = Math.max(f / 25.0F, 0.0F);
-            event.setNewDamage(damage);
         }
+        return damage;
     }
 
-    // PORTING NOTE (1.21.1 -> 26.1.2): LivingDamageEvent.Post#getNewDamage() no longer exists - confirmed via javap
-    // against the real 26.1.2.95 neoforge jar: DamageContainer#captureInflictedDamage() locks the final computed
-    // damage into a new `inflictedDamage` field once the Pre-event damage pipeline finishes, and Post now exposes
-    // that via getInflictedDamage() instead of getNewDamage() (which only survives on LivingDamageEvent.Pre, where
-    // the damage amount is still mutable).
-    @SubscribeEvent
-    public void onLivingHurtPost(LivingDamageEvent.Post event) {
-        if (event.getSource().is(DamageTypeTags.IS_FIRE)) {
-            event.getEntity().removeEffectNoUpdate(EffectHandler.FROZEN);
-            DataHandler.getData(event.getEntity(), DataHandler.FROZEN_DATA).onUnfreeze(event.getEntity());
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(event.getEntity(), new MessageFreezeEffect(event.getEntity().getId(), false));
+    /** Server side, after damage has been applied. {@code damage} is the amount that actually landed on health. */
+    public static void onLivingHurtPost(LivingEntity entity, DamageSource source, float damage) {
+        if (source.is(DamageTypeTags.IS_FIRE)) {
+            entity.removeEffectNoUpdate(EffectHandler.FROZEN);
+            DataHandler.getData(entity, DataHandler.FROZEN_DATA).onUnfreeze(entity);
+            NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new MessageFreezeEffect(entity.getId(), false));
         }
-        if (event.getEntity() instanceof Player player) {
+        if (entity instanceof Player player) {
             Power[] powers = DataHandler.getData(player, DataHandler.PLAYER_DATA).getPowers();
             for (Power power : powers) {
-                power.onTakeDamage(event);
+                power.onTakeDamage(player, source, damage);
             }
 
-            if (player.getItemBySlot(EquipmentSlot.CHEST).is(ItemHandler.GEOMANCER_ROBE.get())) {
+            if (player.getItemBySlot(EquipmentSlot.CHEST).is(ItemHandler.GEOMANCER_ROBE)) {
                 spawnBoulderNearPlayer(player);
             }
         }
 
-        DataHandler.getData(event.getEntity(), DataHandler.LIVING_DATA).setLastDamage(event.getInflictedDamage());
+        DataHandler.getData(entity, DataHandler.LIVING_DATA).setLastDamage(damage);
+
+        onLivingDamage(entity, source, damage);
+        AbilityCommonEventHandler.onTakeDamage(entity, source, damage);
     }
 
-    @SubscribeEvent
-    public void onPlayerTick(PlayerTickEvent.Post event) {
-        Player player = event.getEntity();
+    private static void onPlayerTick(Player player) {
         PlayerData data = DataHandler.getData(player, DataHandler.PLAYER_DATA);
-        data.tick(event);
+        data.tick(player);
         Power[] powers = data.getPowers();
         for (Power power : powers) {
-            power.tick(event);
+            power.tick(player);
         }
     }
 
-    @SubscribeEvent
-    public void onLivingFall(LivingFallEvent event) {
-        if (event.getEntity().getItemBySlot(EquipmentSlot.FEET).is(ItemHandler.GEOMANCER_SANDALS.get())) {
-            if (event.getDistance() > 4) {
-                EffectHandler.addOrCombineEffect(event.getEntity(), MobEffects.SPEED, 60, 0, false, false);
+    /** Called from {@code LivingEntityMixin#causeFallDamage}. Returns the modified damage multiplier. */
+    public static float onLivingFall(LivingEntity entity, double distance, float damageMultiplier) {
+        if (entity.getItemBySlot(EquipmentSlot.FEET).is(ItemHandler.GEOMANCER_SANDALS)) {
+            if (distance > 4) {
+                EffectHandler.addOrCombineEffect(entity, MobEffects.SPEED, 60, 0, false, false);
             }
         }
+        return AbilityCommonEventHandler.onFall(entity, distance, damageMultiplier);
     }
 
-    @SubscribeEvent
-    public void onUseItem(LivingEntityUseItemEvent.Start event) {
-        LivingEntity living = event.getEntity();
+    /** Returns true if the item use must be cancelled. Called from {@code LivingEntityMixin#startUsingItem}. */
+    public static boolean onUseItem(LivingEntity living, ItemStack stack) {
         if (living.hasEffect(EffectHandler.FROZEN)) {
-            event.setCanceled(true);
-            return;
+            return true;
         }
 
-        if (DataHandler.getData(living, DataHandler.ABILITY_DATA).itemUsePrevented(event.getItem())) {
-            event.setCanceled(true);
-            return;
-        }
+        return DataHandler.getData(living, DataHandler.ABILITY_DATA).itemUsePrevented(stack);
     }
 
-    @SubscribeEvent
-    public void onPlaceBlock(BlockEvent.EntityPlaceEvent event) {
-        Entity entity = event.getEntity();
+    /** Returns true if the block placement must be cancelled. Called from {@code BlockItemMixin}. */
+    public static boolean onPlaceBlock(Entity entity, BlockState block) {
         if (entity instanceof LivingEntity living) {
             if (living.hasEffect(EffectHandler.FROZEN)) {
-                event.setCanceled(true);
-                return;
+                return true;
             }
 
             if (DataHandler.getData(living, DataHandler.ABILITY_DATA).blockBreakingBuildingPrevented()) {
-                event.setCanceled(true);
-                return;
+                return true;
             }
 
             if (entity instanceof Player) {
                 cheatSculptor((Player) entity);
 
-                BlockState block = event.getPlacedBlock();
                 if (
                         block.getBlock() == Blocks.FIRE ||
                         block.getBlock() == Blocks.TNT ||
@@ -410,50 +404,34 @@ public final class ServerEventHandler {
                 }
             }
         }
+        return false;
     }
 
-    @SubscribeEvent
-    public void onLivingDeath(LivingDeathEvent event) {
-        if (event.getEntity() instanceof Player player) {
+    private static void onLivingDeath(LivingEntity entity, DamageSource source) {
+        if (entity instanceof Player player) {
             PlayerData data = DataHandler.getData(player, DataHandler.PLAYER_DATA);
             EntitySculptor sculptor = data.getTestingSculptor();
 
-            if (sculptor != null && sculptor.getTestingPlayer() == player && event.getSource() == player.damageSources().fall()) {
+            if (sculptor != null && sculptor.getTestingPlayer() == player && source == player.damageSources().fall()) {
                 if (player instanceof ServerPlayer serverPlayer) {
-                    AdvancementHandler.SCULPTOR_FAILURE_TRIGGER.get().trigger(serverPlayer);
+                    AdvancementHandler.SCULPTOR_FAILURE_TRIGGER.trigger(serverPlayer);
                 }
             }
         }
     }
 
-    @SubscribeEvent
-    public void onFillBucket(PlayerInteractEvent.RightClickItem event) {
-        Item item = event.getItemStack().getItem();
-
-        if (item == Items.LAVA_BUCKET) {
-            aggroUmvuthana(event.getEntity());
+    /** Returns true if the block break must be cancelled. */
+    private static boolean onBreakBlock(Player player, BlockState block) {
+        if (player.hasEffect(EffectHandler.FROZEN)) {
+            return true;
         }
 
-        if (item == Items.WATER_BUCKET) {
-            cheatSculptor(event.getEntity());
-        }
-    }
-
-    @SubscribeEvent
-    public void onBreakBlock(BreakBlockEvent event) {
-        if (event.getPlayer().hasEffect(EffectHandler.FROZEN)) {
-            event.setCanceled(true);
-            return;
+        if (DataHandler.getData(player, DataHandler.ABILITY_DATA).blockBreakingBuildingPrevented()) {
+            return true;
         }
 
-        if (DataHandler.getData(event.getPlayer(), DataHandler.ABILITY_DATA).blockBreakingBuildingPrevented()) {
-            event.setCanceled(true);
-            return;
-        }
+        cheatSculptor(player);
 
-        cheatSculptor(event.getPlayer());
-
-        BlockState block = event.getState();
         if (block.getBlock() == Blocks.GOLD_BLOCK ||
             block.is(BlockTags.PLANKS) ||
             block.is(BlockTags.LOGS) ||
@@ -469,257 +447,274 @@ public final class ServerEventHandler {
             block.getBlock() == Blocks.TORCH ||
             block.getBlock() == Blocks.CHEST
         ) {
-            aggroUmvuthana(event.getPlayer());
+            aggroUmvuthana(player);
         }
+        return false;
     }
 
-    public <T extends Entity> List<T> getEntitiesNearby(Entity startEntity, Class<T> entityClass, double r) {
+    public static <T extends Entity> List<T> getEntitiesNearby(Entity startEntity, Class<T> entityClass, double r) {
         return startEntity.level().getEntitiesOfClass(entityClass, startEntity.getBoundingBox().inflate(r, r, r), e -> e != startEntity && startEntity.distanceTo(e) <= r);
     }
 
-    private List<LivingEntity> getEntityBaseNearby(LivingEntity user, double distanceX, double distanceY, double distanceZ, double radius) {
+    private static List<LivingEntity> getEntityBaseNearby(LivingEntity user, double distanceX, double distanceY, double distanceZ, double radius) {
         List<Entity> list = user.level().getEntities(user, user.getBoundingBox().inflate(distanceX, distanceY, distanceZ));
         return list.stream().filter(entityNeighbor -> entityNeighbor instanceof LivingEntity && user.distanceTo(entityNeighbor) <= radius).map(entityNeighbor -> (LivingEntity) entityNeighbor).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent.RightClickEmpty event) {
-        if (event.getEntity().hasEffect(EffectHandler.FROZEN)) {
+    /** Client side only, right click with an empty hand into the air. Called from {@code MinecraftMixin}. */
+    public static void onPlayerRightClickEmpty(Player player, InteractionHand hand) {
+        if (player.hasEffect(EffectHandler.FROZEN)) {
             return;
         }
 
-        if (DataHandler.getData(event.getEntity(), DataHandler.ABILITY_DATA).interactingPrevented()) {
+        if (DataHandler.getData(player, DataHandler.ABILITY_DATA).interactingPrevented()) {
             return;
         }
 
-        Player player = event.getEntity();
-        if (event.getLevel().isClientSide() && player.getInventory().getSelectedItem().isEmpty() && player.hasEffect(EffectHandler.SUNS_BLESSING)) {
+        if (player.level().isClientSide() && player.getInventory().getSelectedItem().isEmpty() && player.hasEffect(EffectHandler.SUNS_BLESSING)) {
             if (player.isShiftKeyDown()) {
-                AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(event.getEntity(), AbilityHandler.SOLAR_BEAM_ABILITY);
+                AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(player, AbilityHandler.SOLAR_BEAM_ABILITY);
             } else {
-                AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(event.getEntity(), AbilityHandler.SUNSTRIKE_ABILITY);
+                AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(player, AbilityHandler.SUNSTRIKE_ABILITY);
             }
         }
 
         Power[] powers = DataHandler.getData(player, DataHandler.PLAYER_DATA).getPowers();
         for (Power power : powers) {
-            power.onRightClickEmpty(event);
+            power.onRightClickEmpty(player, hand);
         }
+
+        AbilityCommonEventHandler.onPlayerRightClickEmpty(player, hand);
     }
 
-    @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent.EntityInteract event) {
-        if (event.getEntity().hasEffect(EffectHandler.FROZEN)) {
-            event.setCanceled(true);
-            return;
+    /** Returns true if the interaction must be cancelled. */
+    private static boolean onPlayerRightClickEntity(Player player, InteractionHand hand, Entity target) {
+        if (player.hasEffect(EffectHandler.FROZEN)) {
+            return true;
         }
 
-        if (DataHandler.getData(event.getEntity(), DataHandler.ABILITY_DATA).interactingPrevented()) {
-            event.setCanceled(true);
-            return;
+        if (DataHandler.getData(player, DataHandler.ABILITY_DATA).interactingPrevented()) {
+            return true;
         }
 
-        Power[] powers = DataHandler.getData(event.getEntity(), DataHandler.PLAYER_DATA).getPowers();
+        Power[] powers = DataHandler.getData(player, DataHandler.PLAYER_DATA).getPowers();
         for (Power power : powers) {
-            power.onRightClickEntity(event);
+            power.onRightClickEntity(player, hand, target);
         }
+
+        AbilityCommonEventHandler.onPlayerRightClickEntity(player, hand, target);
+        return false;
     }
 
-    @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getEntity().hasEffect(EffectHandler.FROZEN)) {
-            event.setCanceled(true);
-            return;
+    /** Returns true if the interaction must be cancelled. */
+    private static boolean onPlayerRightClickBlock(Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (player.hasEffect(EffectHandler.FROZEN)) {
+            return true;
         }
 
-        if (DataHandler.getData(event.getEntity(), DataHandler.ABILITY_DATA).interactingPrevented()) {
-            event.setCanceled(true);
-            return;
+        if (DataHandler.getData(player, DataHandler.ABILITY_DATA).interactingPrevented()) {
+            return true;
         }
 
-        Player player = event.getEntity();
-        if (player.level().getBlockState(event.getPos()).getBlock() instanceof ChestBlock) {
+        BlockPos pos = hitResult.getBlockPos();
+        if (player.level().getBlockState(pos).getBlock() instanceof ChestBlock) {
             aggroUmvuthana(player);
         }
 
-        ItemStack item = event.getItemStack();
+        ItemStack item = player.getItemInHand(hand);
 
         if (item.getItem() == Items.FLINT_AND_STEEL || item.getItem() == Items.TNT_MINECART) {
             aggroUmvuthana(player);
         }
 
-        if (player.level().isClientSide() && player.getInventory().getSelectedItem().isEmpty() && player.hasEffect(EffectHandler.SUNS_BLESSING) && player.level().getBlockState(event.getPos()).getMenuProvider(player.level(), event.getPos()) == null) {
+        if (player.level().isClientSide() && player.getInventory().getSelectedItem().isEmpty() && player.hasEffect(EffectHandler.SUNS_BLESSING) && player.level().getBlockState(pos).getMenuProvider(player.level(), pos) == null) {
             if (player.isShiftKeyDown()) {
-                AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(event.getEntity(), AbilityHandler.SOLAR_BEAM_ABILITY);
+                AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(player, AbilityHandler.SOLAR_BEAM_ABILITY);
             } else {
-                AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(event.getEntity(), AbilityHandler.SUNSTRIKE_ABILITY);
+                AbilityHandler.INSTANCE.sendPlayerTryAbilityMessage(player, AbilityHandler.SUNSTRIKE_ABILITY);
             }
         }
-        if (player.getMainHandItem().is(ItemHandler.WROUGHT_AXE.get()) && player.level().getBlockState(event.getPos()).getMenuProvider(player.level(), event.getPos()) != null) {
+        if (player.getMainHandItem().is(ItemHandler.WROUGHT_AXE) && player.level().getBlockState(pos).getMenuProvider(player.level(), pos) != null) {
             player.resetAttackStrengthTicker();
-            return;
+            return false;
         }
 
         Power[] powers = DataHandler.getData(player, DataHandler.PLAYER_DATA).getPowers();
         for (Power power : powers) {
-            power.onRightClickBlock(event);
+            power.onRightClickBlock(player, hand, hitResult);
         }
+
+        AbilityCommonEventHandler.onPlayerRightClickBlock(player, hand, hitResult);
+        return false;
     }
 
-    @SubscribeEvent
-    public void onPlayerLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player player = event.getEntity();
+    /** Client side only, left click into the air. Called from {@code MinecraftMixin}. */
+    public static void onPlayerLeftClickEmpty(Player player) {
         Power[] powers = DataHandler.getData(player, DataHandler.PLAYER_DATA).getPowers();
         for (Power power : powers) {
-            power.onLeftClickEmpty(event);
+            power.onLeftClickEmpty(player);
         }
+
+        AbilityCommonEventHandler.onPlayerLeftClickEmpty(player);
     }
 
-    @SubscribeEvent
-    public void onLivingDamage(LivingDamageEvent.Post event) {
-        LivingEntity entity = event.getEntity();
-        if (entity.getHealth() <= event.getInflictedDamage() && entity.hasEffect(EffectHandler.FROZEN)) {
+    private static void onLivingDamage(LivingEntity entity, DamageSource source, float damage) {
+        if (entity.getHealth() <= damage && entity.hasEffect(EffectHandler.FROZEN)) {
             entity.removeEffectNoUpdate(EffectHandler.FROZEN);
             DataHandler.getData(entity, DataHandler.FROZEN_DATA).onUnfreeze(entity);
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(event.getEntity(), new MessageFreezeEffect(event.getEntity().getId(), false));
+            NetworkHandler.sendToPlayersTrackingEntityAndSelf(entity, new MessageFreezeEffect(entity.getId(), false));
         }
 
-        if (event.getInflictedDamage() > 0 && event.getSource().getEntity() instanceof Player player) {
-            if (player.getItemBySlot(EquipmentSlot.CHEST).is(ItemHandler.GEOMANCER_ROBE.get())) {
+        if (damage > 0 && source.getEntity() instanceof Player player) {
+            if (player.getItemBySlot(EquipmentSlot.CHEST).is(ItemHandler.GEOMANCER_ROBE)) {
                 spawnBoulderNearPlayer(player);
             }
         }
 
-        if (entity instanceof Player player && event.getSource() == player.damageSources().fall() && player.getHealth() <= event.getInflictedDamage()) {
+        if (entity instanceof Player player && source == player.damageSources().fall() && player.getHealth() <= damage) {
             PlayerData data = DataHandler.getData(player, DataHandler.PLAYER_DATA);
             if (data.getTestingSculptor() != null) {
                 EntitySculptor sculptor = data.getTestingSculptor();
                 if (sculptor.getTestingPlayer() == player) {
                     if (player instanceof ServerPlayer) {
-                        AdvancementHandler.SCULPTOR_FAILURE_TRIGGER.get().trigger((ServerPlayer) player);
+                        AdvancementHandler.SCULPTOR_FAILURE_TRIGGER.trigger((ServerPlayer) player);
                     }
                 }
             }
         }
     }
 
-    @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent.RightClickItem event) {
-        if (event.getEntity().hasEffect(EffectHandler.FROZEN)) {
-            event.setCanceled(true);
-            return;
+    /** Returns true if the item use must be cancelled. */
+    private static boolean onPlayerRightClickItem(Player player, InteractionHand hand) {
+        Item item = player.getItemInHand(hand).getItem();
+
+        if (item == Items.LAVA_BUCKET) {
+            aggroUmvuthana(player);
         }
 
-        if (DataHandler.getData(event.getEntity(), DataHandler.ABILITY_DATA).itemUsePrevented(event.getItemStack())) {
-            event.setCanceled(true);
-            return;
+        if (item == Items.WATER_BUCKET) {
+            cheatSculptor(player);
         }
 
-        Power[] powers = DataHandler.getData(event.getEntity(), DataHandler.PLAYER_DATA).getPowers();
-        for (Power power : powers) {
-            power.onRightClickWithItem(event);
-        }
-    }
-
-    @SubscribeEvent
-    public void onPlayerLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player player = event.getEntity();
         if (player.hasEffect(EffectHandler.FROZEN)) {
-            event.setCanceled(true);
-            return;
+            return true;
         }
 
-        if (DataHandler.getData(event.getEntity(), DataHandler.ABILITY_DATA).blockBreakingBuildingPrevented()) {
-            event.setCanceled(true);
-            return;
+        if (DataHandler.getData(player, DataHandler.ABILITY_DATA).itemUsePrevented(player.getItemInHand(hand))) {
+            return true;
         }
 
         Power[] powers = DataHandler.getData(player, DataHandler.PLAYER_DATA).getPowers();
         for (Power power : powers) {
-            power.onLeftClickBlock(event);
+            power.onRightClickWithItem(player, hand);
         }
+
+        AbilityCommonEventHandler.onPlayerRightClickItem(player, hand);
+        return false;
     }
 
-    @SubscribeEvent
-    public void onLivingJump(LivingEvent.LivingJumpEvent event) {
-        LivingEntity entity = event.getEntity();
+    /** Returns true if the block attack must be cancelled. */
+    private static boolean onPlayerLeftClickBlock(Player player, BlockPos pos, Direction direction) {
+        if (player.hasEffect(EffectHandler.FROZEN)) {
+            return true;
+        }
 
+        if (DataHandler.getData(player, DataHandler.ABILITY_DATA).blockBreakingBuildingPrevented()) {
+            return true;
+        }
+
+        Power[] powers = DataHandler.getData(player, DataHandler.PLAYER_DATA).getPowers();
+        for (Power power : powers) {
+            power.onLeftClickBlock(player, pos, direction);
+        }
+
+        AbilityCommonEventHandler.onPlayerLeftClickBlock(player, pos, direction);
+        return false;
+    }
+
+    /** Called from {@code LivingEntityMixin#jumpFromGround}, both sides. */
+    public static void onLivingJump(LivingEntity entity) {
         if (entity.hasEffect(EffectHandler.FROZEN) && entity.onGround()) {
             entity.setDeltaMovement(entity.getDeltaMovement().multiply(1, 0, 1));
         }
 
-        if (event.getEntity() instanceof Player) {
-            Power[] powers = DataHandler.getData(event.getEntity(), DataHandler.PLAYER_DATA).getPowers();
+        if (entity instanceof Player player) {
+            Power[] powers = DataHandler.getData(player, DataHandler.PLAYER_DATA).getPowers();
 
             for (Power power : powers) {
-                power.onJump(event);
+                power.onJump(player);
             }
         }
+
+        AbilityCommonEventHandler.onJump(entity);
     }
 
-    @SubscribeEvent
-    public void onPlayerAttack(AttackEntityEvent event) {
-        if (event.getEntity().hasEffect(EffectHandler.FROZEN)) {
-            event.setCanceled(true);
-            return;
+    /** Returns true if the attack must be cancelled. */
+    private static boolean onPlayerAttack(Player player, Entity target) {
+        if (player.hasEffect(EffectHandler.FROZEN)) {
+            return true;
         }
 
-        if (DataHandler.getData(event.getEntity(), DataHandler.ABILITY_DATA).attackingPrevented()) {
-            event.setCanceled(true);
-            return;
+        if (DataHandler.getData(player, DataHandler.ABILITY_DATA).attackingPrevented()) {
+            return true;
         }
 
-        PlayerData data = DataHandler.getData(event.getEntity(), DataHandler.PLAYER_DATA);
-        data.setPrevCooledAttackStrength(event.getEntity().getAttackStrengthScale(0.5f));
+        PlayerData data = DataHandler.getData(player, DataHandler.PLAYER_DATA);
+        data.setPrevCooledAttackStrength(player.getAttackStrengthScale(0.5f));
 
         Power[] powers = data.getPowers();
         for (Power power : powers) {
-            power.onLeftClickEntity(event);
+            power.onLeftClickEntity(player, target);
         }
 
-        if (event.getTarget() instanceof ItemFrame itemFrame) {
+        AbilityCommonEventHandler.onLeftClickEntity(player, target);
+
+        if (target instanceof ItemFrame itemFrame) {
             if (itemFrame.getItem().getItem() instanceof ItemUmvuthanaMask) {
-                aggroUmvuthana(event.getEntity());
+                aggroUmvuthana(player);
             }
         }
-        if (event.getTarget() instanceof LeaderSunstrikeImmune) {
-            aggroUmvuthana(event.getEntity());
+        if (target instanceof LeaderSunstrikeImmune) {
+            aggroUmvuthana(player);
         }
 
-        if (!(event.getTarget() instanceof LivingEntity)) return;
-        if (event.getTarget() instanceof EntityUmvuthanaFollowerToPlayer) return;
-        if (!event.getEntity().level().isClientSide()) {
+        if (!(target instanceof LivingEntity)) return false;
+        if (target instanceof EntityUmvuthanaFollowerToPlayer) return false;
+        if (!player.level().isClientSide()) {
             for (int i = 0; i < data.getPackSize(); i++) {
                 EntityUmvuthanaFollowerToPlayer umvuthana = data.getUmvuthanaPack().get(i);
-                LivingEntity living = (LivingEntity) event.getTarget();
+                LivingEntity living = (LivingEntity) target;
                 if (umvuthana.getMaskType() != MaskType.FAITH) {
                     if (!living.isInvulnerable()) umvuthana.setTarget(living);
                 }
             }
         }
+        return false;
     }
 
-    @SubscribeEvent
-    public void checkCritEvent(CriticalHitEvent event) {
-        ItemStack weapon = event.getEntity().getMainHandItem();
-        Player attacker = event.getEntity();
+    /** Result of {@link #onCriticalHit}: whether the hit is critical and the damage multiplier to apply. */
+    public record CriticalHit(boolean critical, float damageMultiplier) {}
 
-        if (DataHandler.getData(attacker, DataHandler.PLAYER_DATA).getPrevCooledAttackStrength() == 1 && !weapon.isEmpty() && event.getTarget() instanceof LivingEntity target) {
+    /** Called from {@code PlayerMixin#attack} once vanilla has decided whether the hit is critical. */
+    public static CriticalHit onCriticalHit(Player attacker, Entity target, float damageMultiplier, boolean isCriticalHit) {
+        ItemStack weapon = attacker.getMainHandItem();
+
+        if (DataHandler.getData(attacker, DataHandler.PLAYER_DATA).getPrevCooledAttackStrength() == 1 && !weapon.isEmpty() && target instanceof LivingEntity livingTarget) {
             if (weapon.getItem() instanceof ItemNagaFangDagger) {
-                Vec3 lookDir = new Vec3(target.getLookAngle().x, 0, target.getLookAngle().z).normalize();
-                Vec3 vecBetween = new Vec3(target.getX() - event.getEntity().getX(), 0, target.getZ() - event.getEntity().getZ()).normalize();
+                Vec3 lookDir = new Vec3(livingTarget.getLookAngle().x, 0, livingTarget.getLookAngle().z).normalize();
+                Vec3 vecBetween = new Vec3(livingTarget.getX() - attacker.getX(), 0, livingTarget.getZ() - attacker.getZ()).normalize();
                 double dot = lookDir.dot(vecBetween);
                 if (dot > 0.7) {
-                    event.setCriticalHit(true);
-                    event.setDamageMultiplier(event.getDamageMultiplier() + ConfigHandler.COMMON.TOOLS_AND_ABILITIES.NAGA_FANG_DAGGER.backstabDamageMultiplier.get().floatValue());
-                    target.playSound(MMSounds.ENTITY_NAGA_ACID_HIT.get(), 1f, 1.2f);
+                    isCriticalHit = true;
+                    damageMultiplier = damageMultiplier + ConfigHandler.COMMON.TOOLS_AND_ABILITIES.NAGA_FANG_DAGGER.backstabDamageMultiplier.get().floatValue();
+                    livingTarget.playSound(MMSounds.ENTITY_NAGA_ACID_HIT, 1f, 1.2f);
                     AbilityHandler.INSTANCE.sendAbilityMessage(attacker, AbilityHandler.BACKSTAB_ABILITY);
 
-                    if (target.level().isClientSide()) {
-                        Vec3 ringOffset = attacker.getLookAngle().scale(-target.getBbWidth() / 2.f);
+                    if (livingTarget.level().isClientSide()) {
+                        Vec3 ringOffset = attacker.getLookAngle().scale(-livingTarget.getBbWidth() / 2.f);
                         ParticleRotation.OrientVector rotation = new ParticleRotation.OrientVector(ringOffset);
-                        Vec3 pos = target.position().add(0, target.getBbHeight() / 2f, 0).add(ringOffset);
-                        AdvancedParticleBase.spawnParticle(target.level(), ParticleHandler.RING_SPARKS, pos.x(), pos.y(), pos.z(), 0, 0, 0, rotation, 3.5F, 0.83f, 1, 0.39f, 1, 1, 6, false, true, new ParticleComponent[]{
+                        Vec3 pos = livingTarget.position().add(0, livingTarget.getBbHeight() / 2f, 0).add(ringOffset);
+                        AdvancedParticleBase.spawnParticle(livingTarget.level(), ParticleHandler.RING_SPARKS, pos.x(), pos.y(), pos.z(), 0, 0, 0, rotation, 3.5F, 0.83f, 1, 0.39f, 1, 1, 6, false, true, new ParticleComponent[]{
                                 new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, new ParticleComponent.KeyTrack(new float[]{1f, 1f, 0f}, new float[]{0f, 0.5f, 1f}), false),
                                 new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.SCALE, ParticleComponent.KeyTrack.startAndEnd(0f, 15f), false)
                         });
@@ -731,7 +726,7 @@ public final class ServerEventHandler {
                             particlePos = particlePos.xRot((float) (rand.nextFloat() * 2 * Math.PI));
                             double value = rand.nextFloat() * 0.1f;
                             double life = rand.nextFloat() * 8f + 15f;
-                            ParticleVanillaCloudExtended.spawnVanillaCloud(target.level(), pos.x(), pos.y(), pos.z(), particlePos.x * explodeSpeed, particlePos.y * explodeSpeed, particlePos.z * explodeSpeed, 1, 0.25d + value, 0.75d + value, 0.25d + value, 0.6, life);
+                            ParticleVanillaCloudExtended.spawnVanillaCloud(livingTarget.level(), pos.x(), pos.y(), pos.z(), particlePos.x * explodeSpeed, particlePos.y * explodeSpeed, particlePos.z * explodeSpeed, 1, 0.25d + value, 0.75d + value, 0.25d + value, 0.6, life);
                         }
                         for (int i = 0; i < 10; i++) {
                             Vec3 particlePos = new Vec3(rand.nextFloat() * 0.25, 0, 0);
@@ -739,7 +734,7 @@ public final class ServerEventHandler {
                             particlePos = particlePos.xRot((float) (rand.nextFloat() * 2 * Math.PI));
                             double value = rand.nextFloat() * 0.1f;
                             double life = rand.nextFloat() * 2.5f + 5f;
-                            AdvancedParticleBase.spawnParticle(target.level(), ParticleHandler.PIXEL, pos.x(), pos.y(), pos.z(), particlePos.x * explodeSpeed, particlePos.y * explodeSpeed, particlePos.z * explodeSpeed, true, 0, 0, 0, 0, 3f, 0.07d + value, 0.25d + value, 0.07d + value, 1d, 0.6, life * 0.95, false, true);
+                            AdvancedParticleBase.spawnParticle(livingTarget.level(), ParticleHandler.PIXEL, pos.x(), pos.y(), pos.z(), particlePos.x * explodeSpeed, particlePos.y * explodeSpeed, particlePos.z * explodeSpeed, true, 0, 0, 0, 0, 3f, 0.07d + value, 0.25d + value, 0.07d + value, 1d, 0.6, life * 0.95, false, true);
                         }
                         for (int i = 0; i < 6; i++) {
                             Vec3 particlePos = new Vec3(rand.nextFloat() * 0.25, 0, 0);
@@ -747,47 +742,33 @@ public final class ServerEventHandler {
                             particlePos = particlePos.xRot((float) (rand.nextFloat() * 2 * Math.PI));
                             double value = rand.nextFloat() * 0.1f;
                             double life = rand.nextFloat() * 5f + 10f;
-                            AdvancedParticleBase.spawnParticle(target.level(), ParticleHandler.BUBBLE, pos.x(), pos.y(), pos.z(), particlePos.x * explodeSpeed, particlePos.y * explodeSpeed, particlePos.z * explodeSpeed, true, 0, 0, 0, 0, 3f, 0.25d + value, 0.75d + value, 0.25d + value, 1d, 0.6, life * 0.95, false, true);
+                            AdvancedParticleBase.spawnParticle(livingTarget.level(), ParticleHandler.BUBBLE, pos.x(), pos.y(), pos.z(), particlePos.x * explodeSpeed, particlePos.y * explodeSpeed, particlePos.z * explodeSpeed, true, 0, 0, 0, 0, 3f, 0.25d + value, 0.75d + value, 0.25d + value, 1d, 0.6, life * 0.95, false, true);
                         }
                     }
                 }
             }
             else if (weapon.getItem() instanceof ItemSpear) {
-                if (target instanceof Animal && target.getMaxHealth() <= 30 && attacker.level().getRandom().nextFloat() <= 0.334) {
-                    event.setCriticalHit(true);
-                    event.setDamageMultiplier(400);
+                if (livingTarget instanceof Animal && livingTarget.getMaxHealth() <= 30 && attacker.level().getRandom().nextFloat() <= 0.334) {
+                    isCriticalHit = true;
+                    damageMultiplier = 400;
                 }
             }
         }
+        return new CriticalHit(isCriticalHit, damageMultiplier);
     }
-
-//    @SubscribeEvent
-//    public void onLivingAttack(LivingAttackEvent event) {
-//        Entity attacker = event.getSource().getDirectEntity();
-//        if (!event.getSource().isIndirect() && attacker instanceof LivingEntity livingAttacker) {
-//            ItemStack weapon = livingAttacker.getMainHandItem();
-//            if (livingAttacker.getItemBySlot(EquipmentSlot.HEAD).is(ItemHandler.GEOMANCER_BEADS.get())) {
-//                if (weapon.isEmpty() || weapon.is(MMItemTags.HAND_WEAPONS)) {
-//                    event.getSource().;
-//                }
-//            }
-//        }
-//    }
 
     private static final AttributeModifier ATTACK_MODIFIER_BEADS = new AttributeModifier(Identifier.fromNamespaceAndPath(MMCommon.MODID, "geomancy_beads_attack_boost"), 3D, AttributeModifier.Operation.ADD_VALUE);
 
-    @SubscribeEvent
-    public void onEquipmentChanged(LivingEquipmentChangeEvent event) {
-        LivingEntity equipper = event.getEntity();
+    private static void onEquipmentChanged(LivingEntity equipper, EquipmentSlot slot) {
         ItemStack weapon = equipper.getItemBySlot(EquipmentSlot.MAINHAND);
         AttributeInstance attributeinstance = equipper.getAttribute(Attributes.ATTACK_DAMAGE);
         if (attributeinstance != null) {
             // If the head or hand slot was modified
-            if ((event.getSlot() == EquipmentSlot.HEAD || event.getSlot() == EquipmentSlot.MAINHAND)) {
+            if ((slot == EquipmentSlot.HEAD || slot == EquipmentSlot.MAINHAND)) {
                 // Start by clearing attack boost
                 attributeinstance.removeModifier(ATTACK_MODIFIER_BEADS);
                 // If wearing beads and unarmed
-                if (equipper.getItemBySlot(EquipmentSlot.HEAD).is(ItemHandler.GEOMANCER_BEADS.get()) && (weapon.is(MMItemTags.HAND_WEAPONS) || weapon.isEmpty())) {
+                if (equipper.getItemBySlot(EquipmentSlot.HEAD).is(ItemHandler.GEOMANCER_BEADS) && (weapon.is(MMItemTags.HAND_WEAPONS) || weapon.isEmpty())) {
                     // Apply or reapply attack boost
                     attributeinstance.addTransientModifier(ATTACK_MODIFIER_BEADS);
                 }
@@ -795,21 +776,16 @@ public final class ServerEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public void onRideEntity(EntityMountEvent event) {
-        if (
-                event.getEntityMounting() instanceof EntityUmvuthi ||
-                event.getEntityMounting() instanceof EntityFrostmaw ||
-                event.getEntityMounting() instanceof EntityWroughtnaut ||
-                event.getEntityMounting() instanceof EntitySculptor
-        ) {
-            event.setCanceled(true);
-        }
+    /** Returns true if mounting must be cancelled. Called from {@code EntityMixin#startRiding}. */
+    public static boolean onRideEntity(Entity entityMounting, Entity entityBeingMounted) {
+        return entityMounting instanceof EntityUmvuthi ||
+                entityMounting instanceof EntityFrostmaw ||
+                entityMounting instanceof EntityWroughtnaut ||
+                entityMounting instanceof EntitySculptor;
     }
 
-    @SubscribeEvent
-    public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        List<MowzieEntity> mobs = getEntitiesNearby(event.getEntity(), MowzieEntity.class, 40);
+    private static void onPlayerRespawn(ServerPlayer player) {
+        List<MowzieEntity> mobs = getEntitiesNearby(player, MowzieEntity.class, 40);
         for (MowzieEntity mob : mobs) {
             if (mob.resetHealthOnPlayerRespawn()) {
                 mob.setHealth(mob.getMaxHealth());
@@ -817,41 +793,25 @@ public final class ServerEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public void onSpawnPlacementCheck(MobSpawnEvent.SpawnPlacementCheck event) {
-        // PORTING NOTE (1.21.1 -> 26.1.2): RegistryAccess#registryOrThrow -> lookupOrThrow (see other files for the
-        // same rename), and Registry#get(Identifier) now returns Optional<Holder.Reference<T>> instead of a raw
-        // nullable T (confirmed against real 26.1.2 Registry source) - getValue(Identifier) is the direct
-        // nullable-T replacement this null-checked usage needs.
-        StructureManager structureManager = event.getLevel().getLevel().structureManager();
-        Structure structure = structureManager.registryAccess().lookupOrThrow(Registries.STRUCTURE).getValue(StructureTypeHandler.MONASTERY.getId());
-        if (event.getEntityType().getCategory() == MobCategory.MONSTER && structure != null && structureManager.getStructureAt(event.getPos(), structure).isValid()) {
-            BlockState ground = event.getLevel().getBlockState(event.getPos().below());
+    /** Returns false if the spawn must be denied. Called from {@code SpawnPlacementsMixin}. */
+    public static boolean onSpawnPlacementCheck(EntityType<?> entityType, ServerLevelAccessor level, BlockPos pos) {
+        StructureManager structureManager = level.getLevel().structureManager();
+        Structure structure = structureManager.registryAccess().lookupOrThrow(Registries.STRUCTURE).getValue(MMCommon.resource("monastery"));
+        if (entityType.getCategory() == MobCategory.MONSTER && structure != null && structureManager.getStructureAt(pos, structure).isValid()) {
+            BlockState ground = level.getBlockState(pos.below());
             if (
-                    event.getLevel().canSeeSky(event.getPos()) &&
+                    level.canSeeSky(pos) &&
                     (ground.is(Blocks.DARK_OAK_PLANKS) ||
                     ground.is(Blocks.DARK_OAK_SLAB) ||
                     ground.is(Blocks.DARK_OAK_STAIRS))
             ) {
-                event.setResult(MobSpawnEvent.SpawnPlacementCheck.Result.FAIL);
+                return false;
             }
         }
+        return true;
     }
 
-    @SubscribeEvent
-    public void onFurnaceFuelBurnTimeEvent(FurnaceFuelBurnTimeEvent event) {
-        if (event.getItemStack().is(BlockHandler.CLAWED_LOG.get().asItem()) || event.getItemStack().is(BlockHandler.PAINTED_ACACIA.get().asItem())) {
-            event.setBurnTime(300);
-        }
-        else if (event.getItemStack().is(BlockHandler.PAINTED_ACACIA_SLAB.get().asItem())) {
-            event.setBurnTime(150);
-        }
-        else if (event.getItemStack().is(BlockHandler.THATCH.get().asItem())) {
-            event.setBurnTime(100);
-        }
-    }
-
-    private void aggroUmvuthana(Player player) {
+    private static void aggroUmvuthana(Player player) {
         List<EntityUmvuthi> barakos = getEntitiesNearby(player, EntityUmvuthi.class, 50);
         for (EntityUmvuthi barako : barakos) {
             if (barako.getTarget() == null || !(barako.getTarget() instanceof Player)) {
@@ -870,14 +830,14 @@ public final class ServerEventHandler {
         }
     }
 
-    private void cheatSculptor(Player player) {
+    private static void cheatSculptor(Player player) {
         List<EntitySculptor> sculptors = player.level().getEntitiesOfClass(EntitySculptor.class, player.getBoundingBox().inflate(EntitySculptor.TEST_RADIUS + 3, EntitySculptor.TEST_HEIGHT, EntitySculptor.TEST_RADIUS + 3), s -> s.isTesting() && s.getActiveAbilityType() != EntitySculptor.PASS_TEST && s.getActiveAbilityType() != EntitySculptor.FAIL_TEST);
         for (EntitySculptor sculptor : sculptors) {
             sculptor.playerCheated();
         }
     }
 
-    private void spawnBoulderNearPlayer(Player player) {
+    private static void spawnBoulderNearPlayer(Player player) {
         if (player.getRandom().nextFloat() > 0.5) return;
         int i = Mth.floor(player.getX());
         int j = Mth.floor(player.getY());
@@ -909,7 +869,7 @@ public final class ServerEventHandler {
             state = player.level().getBlockState(spawnBoulderPos);
 
             if (EffectGeomancy.isBlockUseable(state)) {
-                EntityBoulderProjectile boulder = new EntityBoulderProjectile(EntityHandler.BOULDER_PROJECTILE.get(), player.level(), player, state, spawnBoulderPos, EntityGeomancyBase.GeomancyTier.SMALL);
+                EntityBoulderProjectile boulder = new EntityBoulderProjectile(EntityHandler.BOULDER_PROJECTILE, player.level(), player, state, spawnBoulderPos, EntityGeomancyBase.GeomancyTier.SMALL);
                 boulder.setPos(spawnBoulderPos.getX() + 0.5F, spawnBoulderPos.getY() + 2, spawnBoulderPos.getZ() + 0.5F);
                 if (!player.level().isClientSide() && boulder.checkCanSpawn()) {
                     player.level().addFreshEntity(boulder);

@@ -30,7 +30,7 @@ public class SolarBeamAbility extends HeliomancyAbilityBase {
     public void start() {
         super.start();
         LivingEntity user = getUser();
-        EntitySolarBeam solarBeam = new EntitySolarBeam(EntityHandler.SOLAR_BEAM.get(), user.level(), user, user.getX(), user.getY() + 1.2f, user.getZ(), (float) ((user.yHeadRot + 90) * Math.PI / 180), (float) (-user.getXRot() * Math.PI / 180), 55);
+        EntitySolarBeam solarBeam = new EntitySolarBeam(EntityHandler.SOLAR_BEAM, user.level(), user, user.getX(), user.getY() + 1.2f, user.getZ(), (float) ((user.yHeadRot + 90) * Math.PI / 180), (float) (-user.getXRot() * Math.PI / 180), 55);
         this.solarBeam = solarBeam;
         if (!getUser().level().isClientSide()) {
             solarBeam.setHasPlayer(true);

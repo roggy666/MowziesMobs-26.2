@@ -19,7 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.neoforged.neoforge.event.EventHooks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -160,7 +159,7 @@ public class EntityUmvuthanaRaptor extends EntityUmvuthana implements LeaderSuns
         int size = random.nextInt(2) + 3;
         float theta = (2 * (float) Math.PI / size);
         for (int i = 0; i <= size; i++) {
-            EntityUmvuthanaFollowerToRaptor packMember = new EntityUmvuthanaFollowerToRaptor(EntityHandler.UMVUTHANA_FOLLOWER_TO_RAPTOR.get(), this.level(), this);
+            EntityUmvuthanaFollowerToRaptor packMember = new EntityUmvuthanaFollowerToRaptor(EntityHandler.UMVUTHANA_FOLLOWER_TO_RAPTOR, this.level(), this);
             packMember.setPos(getX() + 0.1 * Mth.cos(theta * i), getY(), getZ() + 0.1 * Mth.sin(theta * i));
             int weapon = random.nextInt(3) == 0 ? 1 : 0;
             packMember.setWeapon(weapon);
@@ -198,7 +197,6 @@ public class EntityUmvuthanaRaptor extends EntityUmvuthana implements LeaderSuns
 
     @Override
     public void checkDespawn() {
-        if (EventHooks.checkMobDespawn(this)) return;
         if (this.level().getDifficulty() == Difficulty.PEACEFUL && !this.getType().isAllowedInPeaceful()) {
             this.discard();
         } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {

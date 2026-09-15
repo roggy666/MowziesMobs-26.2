@@ -11,7 +11,7 @@ public class SolarBeamSound extends AbstractTickableSoundInstance {
     boolean endLocation = false;
 
     public SolarBeamSound(EntitySolarBeam solarBeam, boolean endLocation) {
-        super(MMSounds.LASER.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
+        super(MMSounds.LASER, SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.solarBeam = solarBeam;
         volume = 2F;
         pitch = 1.0F;

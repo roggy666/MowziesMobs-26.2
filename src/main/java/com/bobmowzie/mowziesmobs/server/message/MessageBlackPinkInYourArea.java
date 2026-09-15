@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.message;
 
+import net.minecraft.world.entity.player.Player;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.block.BlockGrottol;
 import io.netty.buffer.ByteBuf;
@@ -16,7 +17,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record MessageBlackPinkInYourArea(int entityId) implements CustomPacketPayload {
@@ -31,32 +31,30 @@ public record MessageBlackPinkInYourArea(int entityId) implements CustomPacketPa
         return new MessageBlackPinkInYourArea(minecart.getId());
     }
 
-    public static void handleClient(final MessageBlackPinkInYourArea packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Level world = MMCommon.PROXY.getClientLevel();
-            assert world != null;
-            Entity entity = world.getEntity(packet.entityId);
-            if (entity instanceof AbstractMinecart minecart) {
-                MMCommon.PROXY.playBlackPinkSound(minecart);
-                BlockPos pos = minecart.blockPosition();
-                BlockState state = Blocks.STONE.defaultBlockState();
-                SoundType sound = state.getSoundType();
-                final float scale = 0.75F;
-                double x = minecart.getX(),
-                        y = minecart.getY() + 0.375F + 0.5F + (minecart.getDefaultDisplayOffset() - 8) / 16.0F * scale,
-                        z = minecart.getZ();
-                world.playLocalSound(
-                        x, y, z,
-                        sound.getBreakSound(),
-                        minecart.getSoundSource(),
-                        (sound.getVolume() + 1.0F) / 2.0F,
-                        sound.getPitch() * 0.8F,
-                        false
-                );
+    public static void handleClient(final MessageBlackPinkInYourArea packet, final Player player) {
+        Level world = MMCommon.PROXY.getClientLevel();
+        assert world != null;
+        Entity entity = world.getEntity(packet.entityId);
+        if (entity instanceof AbstractMinecart minecart) {
+            MMCommon.PROXY.playBlackPinkSound(minecart);
+            BlockPos pos = minecart.blockPosition();
+            BlockState state = Blocks.STONE.defaultBlockState();
+            SoundType sound = state.getSoundType();
+            final float scale = 0.75F;
+            double x = minecart.getX(),
+                    y = minecart.getY() + 0.375F + 0.5F + (minecart.getDefaultDisplayOffset() - 8) / 16.0F * scale,
+                    z = minecart.getZ();
+            world.playLocalSound(
+                    x, y, z,
+                    sound.getBreakSound(),
+                    minecart.getSoundSource(),
+                    (sound.getVolume() + 1.0F) / 2.0F,
+                    sound.getPitch() * 0.8F,
+                    false
+            );
 
-                MMCommon.PROXY.minecartParticles(world, minecart, scale, x, y, z, state, pos);
-            }
-        });
+            MMCommon.PROXY.minecartParticles(world, minecart, scale, x, y, z, state, pos);
+        }
     }
 
     @Override

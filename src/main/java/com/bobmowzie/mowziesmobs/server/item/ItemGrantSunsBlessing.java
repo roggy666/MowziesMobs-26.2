@@ -41,10 +41,10 @@ public class ItemGrantSunsBlessing extends Item {
                 .append(" " + effectDuration + " ")
                 .append(Component.translatable(getDescriptionId() + ".text.1")).setStyle(ItemHandler.TOOLTIP_STYLE)
         );
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.2").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.2");
 
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.3").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.4").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.3");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.4");
         tooltip.accept(
                 Component.translatable(getDescriptionId() + ".text.5")
                 .append(" " + solarBeamCost + " ")

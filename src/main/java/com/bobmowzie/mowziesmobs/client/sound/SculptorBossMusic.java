@@ -11,17 +11,17 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class SculptorBossMusic extends BossMusic<EntitySculptor> {
-    protected static SoundEvent soundEventIntro = MMSounds.MUSIC_SCULPTOR_THEME_INTRO.get();
-    protected static SoundEvent soundEventLevel1_1 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL1_1.get();
-    protected static SoundEvent soundEventLevel1_2 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL1_2.get();
-    protected static SoundEvent soundEventLevel2_1 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL2_1.get();
-    protected static SoundEvent soundEventLevel2_2 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL2_2.get();
-    protected static SoundEvent soundEventTransition = MMSounds.MUSIC_SCULPTOR_THEME_TRANSITION.get();
-    protected static SoundEvent soundEventLevel3_1 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL3_1.get();
-    protected static SoundEvent soundEventLevel3_2 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL3_2.get();
-    protected static SoundEvent soundEventEnding = MMSounds.MUSIC_SCULPTOR_THEME_ENDING.get();
-    protected static SoundEvent soundEventOutro = MMSounds.MUSIC_SCULPTOR_THEME_OUTRO.get();
-    protected static SoundEvent soundEventCombat = MMSounds.MUSIC_SCULPTOR_THEME_COMBAT.get();
+    protected static SoundEvent soundEventIntro = MMSounds.MUSIC_SCULPTOR_THEME_INTRO;
+    protected static SoundEvent soundEventLevel1_1 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL1_1;
+    protected static SoundEvent soundEventLevel1_2 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL1_2;
+    protected static SoundEvent soundEventLevel2_1 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL2_1;
+    protected static SoundEvent soundEventLevel2_2 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL2_2;
+    protected static SoundEvent soundEventTransition = MMSounds.MUSIC_SCULPTOR_THEME_TRANSITION;
+    protected static SoundEvent soundEventLevel3_1 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL3_1;
+    protected static SoundEvent soundEventLevel3_2 = MMSounds.MUSIC_SCULPTOR_THEME_LEVEL3_2;
+    protected static SoundEvent soundEventEnding = MMSounds.MUSIC_SCULPTOR_THEME_ENDING;
+    protected static SoundEvent soundEventOutro = MMSounds.MUSIC_SCULPTOR_THEME_OUTRO;
+    protected static SoundEvent soundEventCombat = MMSounds.MUSIC_SCULPTOR_THEME_COMBAT;
 
     protected BossMusicSound soundIntro;
     protected BossMusicSound soundTransition;

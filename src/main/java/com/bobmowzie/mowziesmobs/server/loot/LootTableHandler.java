@@ -2,14 +2,12 @@ package com.bobmowzie.mowziesmobs.server.loot;
 
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class LootTableHandler {
     // Mob drops
@@ -33,19 +31,13 @@ public class LootTableHandler {
     public static final ResourceKey<LootTable> BLUFF = register("entities/bluff");
     public static final ResourceKey<LootTable> ELOKOSA = register("entities/elokosa");
 
-    // PORTING NOTE (1.21.1 -> 26.1.2): LootItemFunctionType / LootItemConditionType wrapper classes no longer exist
-    // (confirmed against the real vanilla source) - the loot_function_type / loot_condition_type registries are now
-    // directly `Registry<MapCodec<? extends LootItemFunction>>` / `Registry<MapCodec<? extends LootItemCondition>>`,
-    // so each condition/function registers its own MapCodec directly instead of wrapping it in a Type object, and
-    // LootItemCondition/LootItemFunction#getType() was renamed to #codec() (see the loot condition/function classes
-    // themselves for that half of the change).
-    public static final DeferredRegister<MapCodec<? extends LootItemFunction>> LOOT_FUNCTION_TYPE_REG = DeferredRegister.create(Registries.LOOT_FUNCTION_TYPE, MMCommon.MODID);
-    public static final DeferredRegister<MapCodec<? extends LootItemCondition>> LOOT_CONDITION_TYPE_REG = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, MMCommon.MODID);
+    public static final MapCodec<LootFunctionGrottolDeathType> GROTTOL_DEATH_TYPE = Registry.register(BuiltInRegistries.LOOT_FUNCTION_TYPE, MMCommon.resource("grottol_death_type"), LootFunctionGrottolDeathType.CODEC);
+    public static final MapCodec<LootConditionFrostmawHasCrystal> FROSTMAW_HAS_CRYSTAL = Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, MMCommon.resource("has_crystal"), LootConditionFrostmawHasCrystal.CODEC);
+    public static final MapCodec<LootConditionElokosaNightForm> ELOKOSA_NIGHT_FORM = Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, MMCommon.resource("night_form"), LootConditionElokosaNightForm.CODEC);
+    public static final MapCodec<LootConditionMoonPhase> MOON_PHASE = Registry.register(BuiltInRegistries.LOOT_CONDITION_TYPE, MMCommon.resource("moon_phase"), LootConditionMoonPhase.CODEC);
 
-    public static DeferredHolder<MapCodec<? extends LootItemFunction>, MapCodec<LootFunctionGrottolDeathType>> GROTTOL_DEATH_TYPE = LOOT_FUNCTION_TYPE_REG.register("grottol_death_type", () -> LootFunctionGrottolDeathType.CODEC);
-    public static DeferredHolder<MapCodec<? extends LootItemCondition>, MapCodec<LootConditionFrostmawHasCrystal>> FROSTMAW_HAS_CRYSTAL = LOOT_CONDITION_TYPE_REG.register("has_crystal", () -> LootConditionFrostmawHasCrystal.CODEC);
-    public static DeferredHolder<MapCodec<? extends LootItemCondition>, MapCodec<LootConditionElokosaNightForm>> ELOKOSA_NIGHT_FORM = LOOT_CONDITION_TYPE_REG.register("night_form", () -> LootConditionElokosaNightForm.CODEC);
-    public static DeferredHolder<MapCodec<? extends LootItemCondition>, MapCodec<LootConditionMoonPhase>> MOON_PHASE = LOOT_CONDITION_TYPE_REG.register("moon_phase", () -> LootConditionMoonPhase.CODEC);
+    public static void register() {
+    }
 
     private static ResourceKey<LootTable> register(String id) {
         return ResourceKey.create(Registries.LOOT_TABLE, Identifier.fromNamespaceAndPath(MMCommon.MODID, id));

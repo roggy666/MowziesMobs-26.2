@@ -10,7 +10,7 @@ public class SunstrikeSound extends AbstractTickableSoundInstance {
     private final EntitySunstrike sunstrike;
 
     public SunstrikeSound(EntitySunstrike sunstrike) {
-        super(MMSounds.SUNSTRIKE.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
+        super(MMSounds.SUNSTRIKE, SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.sunstrike = sunstrike;
         volume = 1.5F;
         pitch = 1.1F;

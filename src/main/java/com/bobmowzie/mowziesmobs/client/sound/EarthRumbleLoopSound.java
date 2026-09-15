@@ -13,7 +13,7 @@ public class EarthRumbleLoopSound extends AbstractTickableSoundInstance {
     boolean active = false;
 
     public EarthRumbleLoopSound(IGeomancyRumbler rumbler) {
-        super(MMSounds.EFFECT_GEOMANCY_RUMBLE_LOOP.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
+        super(MMSounds.EFFECT_GEOMANCY_RUMBLE_LOOP, SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.rumbler = rumbler;
         volume = 0F;
         pitch = 1f;

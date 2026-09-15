@@ -114,7 +114,7 @@ public class EntityLantern extends MowzieLLibraryEntity {
                     }
                 }
             }
-            playSound(MMSounds.ENTITY_LANTERN_PUFF.get(), 0.6f, 1f + random.nextFloat() * 0.2f);
+            playSound(MMSounds.ENTITY_LANTERN_PUFF, 0.6f, 1f + random.nextFloat() * 0.2f);
         }
 
         if (!level().isClientSide() && getAnimation() == NO_ANIMATION) {
@@ -161,7 +161,7 @@ public class EntityLantern extends MowzieLLibraryEntity {
                 level().addParticle(ParticleOrb.Data.create(163f / 256f, 247f / 256f, 74f / 256f, 1.5f, 25), getX(), getY() + 0.3, getZ(), 0.2f * (random.nextFloat() - 0.5f), 0.2f * (random.nextFloat() - 0.5f), 0.2f * (random.nextFloat() - 0.5f));
             }
         }
-        if (getAnimationTick() == 2) playSound(MMSounds.ENTITY_LANTERN_POP.get(), 1f, 0.8f + random.nextFloat() * 0.4f);
+        if (getAnimationTick() == 2) playSound(MMSounds.ENTITY_LANTERN_POP, 1f, 0.8f + random.nextFloat() * 0.4f);
     }
 
     @Override

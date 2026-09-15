@@ -26,12 +26,12 @@ public class ItemDart extends ArrowItem {
 
     @Override
     public @NotNull AbstractArrow createArrow(@NotNull Level level, @NotNull ItemStack ammo, @NotNull LivingEntity shooter, @Nullable ItemStack weapon) {
-        return new EntityDart(EntityHandler.DART.get(), level, shooter);
+        return new EntityDart(EntityHandler.DART, level, shooter);
     }
 
     @Override
     public @NotNull Projectile asProjectile(@NotNull Level level, @NotNull Position pos, @NotNull ItemStack stack, @NotNull Direction direction) {
-        EntityDart dart = new EntityDart(EntityHandler.DART.get(), level, pos);
+        EntityDart dart = new EntityDart(EntityHandler.DART, level, pos);
         dart.pickup = AbstractArrow.Pickup.ALLOWED;
         return dart;
     }

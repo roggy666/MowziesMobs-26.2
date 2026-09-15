@@ -237,21 +237,21 @@ public class EntityBoulderProjectile extends EntityBoulderBase {
         setBoundingBox(getType().getSpawnAABB(getX(), getY(), getZ()));
 
         if (boulderSize == GeomancyTier.SMALL) {
-            playSound(MMSounds.EFFECT_GEOMANCY_HIT_SMALL.get(), 1.5f, 1.3f);
-            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL.get(), 1.5f, 0.9f);
+            playSound(MMSounds.EFFECT_GEOMANCY_HIT_SMALL, 1.5f, 1.3f);
+            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL, 1.5f, 0.9f);
         }
         else if (boulderSize == GeomancyTier.MEDIUM) {
-            playSound(MMSounds.EFFECT_GEOMANCY_HIT_SMALL.get(), 1.5f, 0.9f);
-            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL.get(), 1.5f, 0.5f);
+            playSound(MMSounds.EFFECT_GEOMANCY_HIT_SMALL, 1.5f, 0.9f);
+            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL, 1.5f, 0.5f);
         }
         else if (boulderSize == GeomancyTier.LARGE) {
-            playSound(MMSounds.EFFECT_GEOMANCY_HIT_SMALL.get(), 1.5f, 0.5f);
-            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG.get(), 1.5f, 1.3f);
+            playSound(MMSounds.EFFECT_GEOMANCY_HIT_SMALL, 1.5f, 0.5f);
+            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG, 1.5f, 1.3f);
             EntityCameraShake.cameraShake(level(), position(), 10, 0.05f, 0, 20);
         }
         else if (boulderSize == GeomancyTier.HUGE) {
-            playSound(MMSounds.EFFECT_GEOMANCY_HIT_MEDIUM_1.get(), 1.5f, 1f);
-            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG.get(), 1.5f, 0.9f);
+            playSound(MMSounds.EFFECT_GEOMANCY_HIT_MEDIUM_1, 1.5f, 1f);
+            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG, 1.5f, 0.9f);
             EntityCameraShake.cameraShake(level(), position(), 15, 0.05f, 0, 20);
         }
 

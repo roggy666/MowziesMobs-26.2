@@ -11,9 +11,9 @@ import net.minecraft.world.entity.player.Player;
 public class BossMusicPlayer {
     public static BossMusic currentMusic;
 
-    public static final BossMusic FERROUS_WROUGHTNAUT_MUSIC = new BossMusic(MMSounds.MUSIC_FERROUS_WROUGHTNAUT_THEME.get());
-    public static final BossMusic UMVUTHI_MUSIC = new BossMusic(MMSounds.MUSIC_UMVUTHI_THEME.get());
-    public static final BossMusic FROSTMAW_MUSIC = new BossMusic(MMSounds.MUSIC_FROSTMAW_THEME.get());
+    public static final BossMusic FERROUS_WROUGHTNAUT_MUSIC = new BossMusic(MMSounds.MUSIC_FERROUS_WROUGHTNAUT_THEME);
+    public static final BossMusic UMVUTHI_MUSIC = new BossMusic(MMSounds.MUSIC_UMVUTHI_THEME);
+    public static final BossMusic FROSTMAW_MUSIC = new BossMusic(MMSounds.MUSIC_FROSTMAW_THEME);
     public static final BossMusic SCULPTOR_MUSIC = new SculptorBossMusic();
     private static final BossMusic[] BOSS_MUSICS = new BossMusic[] {
         FERROUS_WROUGHTNAUT_MUSIC,

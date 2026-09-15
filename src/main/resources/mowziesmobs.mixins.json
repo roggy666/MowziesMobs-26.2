@@ -7,17 +7,20 @@
   "mixins": [
     "ArmorMaterialMixin",
     "BlockBehaviourMixin",
+    "BlockItemMixin",
+    "EntityMixin",
     "LivingEntityMixin",
-    "ServerLevelMixin"
+    "PlayerMixin",
+    "SpawnPlacementsMixin"
   ],
   "client": [
-    "client.GeoModelMixin",
-    "client.HumanoidArmorLayerAccess",
-    "client.ClientLevelMixin",
-    "client.MinecraftMixin",
+    "client.AbstractClientPlayerMixin",
     "client.BossHealthOverlayMixin",
-    "client.HumanoidArmorLayerMixin",
-    "client.EntityRenderDispatcherMixin"
+    "client.CameraMixin",
+    "client.GameRendererMixin",
+    "client.ItemInHandRendererMixin",
+    "client.LivingEntityRendererMixin",
+    "client.MinecraftMixin"
   ],
   "injectors": {
     "defaultRequire": 1

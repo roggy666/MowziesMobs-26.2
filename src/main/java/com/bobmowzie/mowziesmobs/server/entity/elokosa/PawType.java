@@ -21,11 +21,11 @@ public enum PawType {
     public static final int COUNT = PawType.values().length;
 
     private final Holder<MobEffect> potion;
-    private final Holder<ParticleType<?>> particleType;
+    private final ParticleType<?> particleType;
 
     private final String name;
 
-    PawType(Holder<MobEffect> potion, Holder<ParticleType<?>> particleType) {
+    PawType(Holder<MobEffect> potion, ParticleType<?> particleType) {
         this.potion = potion;
         this.particleType = particleType;
         name = name().toLowerCase(Locale.ENGLISH);
@@ -55,7 +55,7 @@ public enum PawType {
         return potion;
     }
 
-    public Holder<ParticleType<?>> getParticleType() {
+    public ParticleType<?> getParticleType() {
         return particleType;
     }
 }

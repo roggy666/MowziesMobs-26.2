@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.item;
 
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import com.bobmowzie.mowziesmobs.server.block.BlockHandler;
 import com.bobmowzie.mowziesmobs.server.block.RakedSandBlock;
 import com.bobmowzie.mowziesmobs.server.sound.MMSounds;
@@ -20,7 +21,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.common.Tags;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -44,17 +44,17 @@ public class ItemSandRake extends Item {
             if (player != null) {
                 BlockPlaceContext blockPlaceContext = new BlockPlaceContext(player, context.getHand(), context.getItemInHand(), new BlockHitResult(context.getClickLocation(), context.getClickedFace(), context.getClickedPos(), context.isInside()));
                 RakedSandBlock origBlock = null;
-                if (blockstate.is(Tags.Blocks.SANDS_COLORLESS)) {
-                    origBlock = (RakedSandBlock) BlockHandler.RAKED_SAND.value();
+                if (blockstate.is(ConventionalBlockTags.COLORLESS_SANDS)) {
+                    origBlock = (RakedSandBlock) BlockHandler.RAKED_SAND;
                 }
-                else if (blockstate.is(Tags.Blocks.SANDS_RED)) {
-                    origBlock = (RakedSandBlock) BlockHandler.RED_RAKED_SAND.value();
+                else if (blockstate.is(ConventionalBlockTags.RED_SANDS)) {
+                    origBlock = (RakedSandBlock) BlockHandler.RED_RAKED_SAND;
                 }
 
                 if (origBlock != null) {
                     BlockState blockState = origBlock.getStateForPlacement(blockPlaceContext);
                     if (blockState != null) {
-                        level.playSound(player, blockpos, MMSounds.BLOCK_RAKE_SAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                        level.playSound(player, blockpos, MMSounds.BLOCK_RAKE_SAND, SoundSource.BLOCKS, 1.0F, 1.0F);
                         if (!level.isClientSide()) {
                             level.setBlock(blockpos, blockState, 11);
                             origBlock.onPlace(blockState, level, blockpos, blockstate, false);
@@ -77,6 +77,6 @@ public class ItemSandRake extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
     }
 }

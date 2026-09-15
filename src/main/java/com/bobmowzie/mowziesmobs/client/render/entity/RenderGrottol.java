@@ -22,7 +22,7 @@ import net.minecraft.resources.Identifier;
  * reference, same pattern as the other LLibrary-model renderers in this scope. The texture selection
  * (blackpink/deepslate variants) is live-entity-derived - captured directly during extraction.
  */
-public class RenderGrottol extends EntityRenderer<EntityGrottol, RenderGrottol.GrottolRenderState> {
+public class RenderGrottol extends MowzieLLibraryRenderer<EntityGrottol, RenderGrottol.GrottolRenderState> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/entity/grottol.png");
     private static final Identifier TEXTURE_DEEPSLATE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/entity/grottol_deepslate.png");
     private static final Identifier TEXTURE_BLACKPINK = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/entity/grottol_blackpink.png");
@@ -51,23 +51,21 @@ public class RenderGrottol extends EntityRenderer<EntityGrottol, RenderGrottol.G
     public void extractRenderState(EntityGrottol entity, GrottolRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
 
-        state.entity = entity;
         state.texture = getTextureLocation(entity);
-        state.yRot = entity.getYRot(partialTicks);
     }
 
     @Override
     public void submit(GrottolRenderState state, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
+        setupRotations(poseStack, state);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0F, -1.501F, 0.0F);
 
         renderTasks.submitCustomGeometry(poseStack, model.renderType(state.texture), (pose, vertexConsumer) -> {
             poseStack.pushPose();
             poseStack.last().set(pose);
-            model.setupAnim(state.entity, 0, 0, state.ageInTicks, 0, 0);
-            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, -1);
+            model.setupAnim(state.entity, state.limbSwing, state.limbSwingAmount, state.ageInTicks, state.headYaw, state.headPitch);
+            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, state.overlay, -1);
             poseStack.popPose();
         });
 
@@ -76,9 +74,7 @@ public class RenderGrottol extends EntityRenderer<EntityGrottol, RenderGrottol.G
         super.submit(state, poseStack, renderTasks, cameraState);
     }
 
-    public static class GrottolRenderState extends EntityRenderState {
-        public EntityGrottol entity;
+    public static class GrottolRenderState extends MowzieLLibraryRenderer.State<EntityGrottol> {
         public Identifier texture;
-        public float yRot;
     }
 }

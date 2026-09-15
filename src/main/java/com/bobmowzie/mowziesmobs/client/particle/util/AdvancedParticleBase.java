@@ -11,7 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -385,26 +384,26 @@ public class AdvancedParticleBase extends SingleQuadParticle {
         }
     }
 
-    public static void spawnParticle(Level world, Holder<ParticleType<?>> particle, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double r, double g, double b, double a, double drag, double duration, boolean emissive, boolean canCollide) {
+    public static void spawnParticle(Level world, ParticleType<?> particle, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double r, double g, double b, double a, double drag, double duration, boolean emissive, boolean canCollide) {
         spawnParticle(world, particle, x, y, z, motionX, motionY, motionZ, faceCamera, yaw, pitch, roll, faceCameraAngle, scale, r, g, b, a, drag, duration, emissive, canCollide, new ParticleComponent[]{});
     }
 
-    public static void spawnParticle(Level world, Holder<ParticleType<?>> particle, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
+    public static void spawnParticle(Level world, ParticleType<?> particle, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
         ParticleRotation rotation = faceCamera ? new ParticleRotation.FaceCamera((float) faceCameraAngle) : new ParticleRotation.EulerAngles((float)yaw, (float)pitch, (float)roll);
         world.addParticle(new AdvancedParticleType(particle, rotation, components, (float) red, (float) green, (float) blue, (float) alpha, (float) scale, (float) duration, (float) airDrag, emissive, canCollide), x, y, z, motionX, motionY, motionZ);
     }
 
-    public static void spawnParticle(Level world, Holder<ParticleType<?>> particle, double x, double y, double z, double motionX, double motionY, double motionZ, ParticleRotation rotation, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
+    public static void spawnParticle(Level world, ParticleType<?> particle, double x, double y, double z, double motionX, double motionY, double motionZ, ParticleRotation rotation, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
         world.addParticle(new AdvancedParticleType(particle, rotation, components, (float) red, (float) green, (float) blue, (float) alpha, (float) scale, (float) duration, (float) airDrag, emissive, canCollide), x, y, z, motionX, motionY, motionZ);
     }
 
-    public static void spawnAlwaysVisibleParticle(Level world, Holder<ParticleType<?>> particle, double distanceLimit, double x, double y, double z, double motionX, double motionY, double motionZ, ParticleRotation rotation, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
+    public static void spawnAlwaysVisibleParticle(Level world, ParticleType<?> particle, double distanceLimit, double x, double y, double z, double motionX, double motionY, double motionZ, ParticleRotation rotation, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
         Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
         boolean overrideLimiter = camera.position().distanceToSqr(x, y, z) < distanceLimit * distanceLimit;
         world.addAlwaysVisibleParticle(new AdvancedParticleType(particle, rotation, components, (float) red, (float) green, (float) blue, (float) alpha, (float) scale, (float) duration, (float) airDrag, emissive, canCollide), overrideLimiter, x, y, z, motionX, motionY, motionZ);
     }
 
-    public static void spawnAlwaysVisibleParticle(Level world, Holder<ParticleType<?>> particle, double distanceLimit, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
+    public static void spawnAlwaysVisibleParticle(Level world, ParticleType<?> particle, double distanceLimit, double x, double y, double z, double motionX, double motionY, double motionZ, boolean faceCamera, double yaw, double pitch, double roll, double faceCameraAngle, double scale, double red, double green, double blue, double alpha, double airDrag, double duration, boolean emissive, boolean canCollide, ParticleComponent[] components) {
         Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
         boolean overrideLimiter = camera.position().distanceToSqr(x, y, z) < distanceLimit * distanceLimit;
         ParticleRotation rotation = faceCamera ? new ParticleRotation.FaceCamera((float) faceCameraAngle) : new ParticleRotation.EulerAngles((float)yaw, (float)pitch, (float)roll);

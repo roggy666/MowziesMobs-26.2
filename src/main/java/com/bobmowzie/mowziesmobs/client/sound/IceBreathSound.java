@@ -14,7 +14,7 @@ public class IceBreathSound extends AbstractTickableSoundInstance {
     boolean active = true;
 
     public IceBreathSound(Entity icebreath) {
-        super(MMSounds.ENTITY_FROSTMAW_ICEBREATH.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
+        super(MMSounds.ENTITY_FROSTMAW_ICEBREATH, SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.iceBreath = icebreath;
         volume = 3F;
         pitch = 1f;

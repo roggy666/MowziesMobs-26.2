@@ -35,7 +35,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.GeoItem;
 import com.geckolib.animation.state.AnimationTest;
@@ -75,18 +74,18 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
 
     public void playGauntletAnimation() {
         if (getUser() != null && !getLevel().isClientSide()) {
-            if (gauntletStack != null && gauntletStack.getItem() == ItemHandler.EARTHREND_GAUNTLET.get()) {
+            if (gauntletStack != null && gauntletStack.getItem() == ItemHandler.EARTHREND_GAUNTLET) {
                 Player player = (Player) getUser();
-                ItemHandler.EARTHREND_GAUNTLET.get().triggerAnim(player, GeoItem.getOrAssignId(gauntletStack, (ServerLevel) player.level()), ItemEarthrendGauntlet.CONTROLLER_NAME, ItemEarthrendGauntlet.OPEN_ANIM_NAME);
+                ItemHandler.EARTHREND_GAUNTLET.triggerAnim(player, GeoItem.getOrAssignId(gauntletStack, (ServerLevel) player.level()), ItemEarthrendGauntlet.CONTROLLER_NAME, ItemEarthrendGauntlet.OPEN_ANIM_NAME);
             }
         }
     }
 
     public void stopGauntletAnimation() {
         if (getUser() != null && !getLevel().isClientSide()) {
-            if (gauntletStack != null && gauntletStack.getItem() == ItemHandler.EARTHREND_GAUNTLET.get()) {
+            if (gauntletStack != null && gauntletStack.getItem() == ItemHandler.EARTHREND_GAUNTLET) {
                 Player player = (Player) getUser();
-                ItemHandler.EARTHREND_GAUNTLET.get().triggerAnim(player, GeoItem.getOrAssignId(gauntletStack, (ServerLevel) player.level()), ItemEarthrendGauntlet.CONTROLLER_NAME, ItemEarthrendGauntlet.IDLE_ANIM_NAME);
+                ItemHandler.EARTHREND_GAUNTLET.triggerAnim(player, GeoItem.getOrAssignId(gauntletStack, (ServerLevel) player.level()), ItemEarthrendGauntlet.CONTROLLER_NAME, ItemEarthrendGauntlet.IDLE_ANIM_NAME);
             }
         }
     }
@@ -109,7 +108,7 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
 
     public boolean damageGauntlet() {
         ItemStack stack = getUser().getUseItem();
-        if (stack.getItem() == ItemHandler.EARTHREND_GAUNTLET.get()) {
+        if (stack.getItem() == ItemHandler.EARTHREND_GAUNTLET) {
             InteractionHand handIn = getUser().getUsedItemHand();
             if (stack.getDamageValue() + 5 < stack.getMaxDamage()) {
                 stack.hurtAndBreak(5, getUser(), handIn.asEquipmentSlot());
@@ -126,7 +125,7 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
     }
 
     public void restoreGauntlet(ItemStack stack) {
-        if (stack.getItem() == ItemHandler.EARTHREND_GAUNTLET.get()) {
+        if (stack.getItem() == ItemHandler.EARTHREND_GAUNTLET) {
             if (!ConfigHandler.COMMON.TOOLS_AND_ABILITIES.EARTHREND_GAUNTLET.breakable.get()) {
                 stack.setDamageValue(Math.max(stack.getDamageValue() - 1, 0));
             }
@@ -159,7 +158,7 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
         Vec3 lookVec = getUser().getLookAngle();
         float tunnelSpeed = 0.3f;
         ItemStack stack = getUser().getUseItem();
-        boolean usingGauntlet = stack.getItem() == ItemHandler.EARTHREND_GAUNTLET.get();
+        boolean usingGauntlet = stack.getItem() == ItemHandler.EARTHREND_GAUNTLET;
         if (underground) {
             timeUnderground++;
             if (usingGauntlet && damageGauntlet()) {
@@ -199,7 +198,7 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
                             if (EffectGeomancy.checkBlock(blockState, MMBlockTags.GEOMANCY_TUNNELABLE) && blockState.getBlock() != Blocks.BEDROCK) {
                                 justDug = blockState;
                                 if (!getLevel().isClientSide()) {
-                                    EntityBlockSwapper.EntityBlockSwapperTunneling swapper = new EntityBlockSwapper.EntityBlockSwapperTunneling(EntityHandler.BLOCK_SWAPPER_TUNNELING.get(), getLevel(), pos, Blocks.AIR.defaultBlockState(), 15, false, false, getUser());
+                                    EntityBlockSwapper.EntityBlockSwapperTunneling swapper = new EntityBlockSwapper.EntityBlockSwapperTunneling(EntityHandler.BLOCK_SWAPPER_TUNNELING, getLevel(), pos, Blocks.AIR.defaultBlockState(), 15, false, false, getUser());
                                     getLevel().addFreshEntity(swapper);
                                 }
                             }
@@ -211,7 +210,7 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
         isRumbling = underground;
         if (!prevUnderground && underground) {
             timeUnderground = 0;
-            getUser().playSound(MMSounds.EFFECT_GEOMANCY_BREAK_MEDIUM.get(rand.nextInt(3)).get(), 1f, 0.9f + rand.nextFloat() * 0.1f);
+            getUser().playSound(MMSounds.EFFECT_GEOMANCY_BREAK_MEDIUM.get(rand.nextInt(3)), 1f, 0.9f + rand.nextFloat() * 0.1f);
             if (getUser().level().isClientSide())
                 AdvancedParticleBase.spawnParticle(getUser().level(), ParticleHandler.RING2, (float) getUser().getX(), (float) getUser().getY() + 0.02f, (float) getUser().getZ(), 0, 0, 0, false, 0, Math.PI/2f, 0, 0, 3.5F, 0.83f, 1, 0.39f, 1, 1, 10, true, true, new ParticleComponent[]{
                         new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, ParticleComponent.KeyTrack.startAndEnd(1f, 0f), false),
@@ -221,7 +220,7 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
         }
         if (prevUnderground && !underground) {
             timeAboveGround = 0;
-            getUser().playSound(MMSounds.EFFECT_GEOMANCY_BREAK.get(), 1f, 0.9f + rand.nextFloat() * 0.1f);
+            getUser().playSound(MMSounds.EFFECT_GEOMANCY_BREAK, 1f, 0.9f + rand.nextFloat() * 0.1f);
             if (getUser().level().isClientSide())
                 AdvancedParticleBase.spawnParticle(getUser().level(), ParticleHandler.RING2, (float) getUser().getX(), (float) getUser().getY() + 0.02f, (float) getUser().getZ(), 0, 0, 0, false, 0, Math.PI/2f, 0, 0, 3.5F, 0.83f, 1, 0.39f, 1, 1, 10, true, true, new ParticleComponent[]{
                         new ParticleComponent.PropertyControl(ParticleComponent.PropertyControl.EnumParticleProperty.ALPHA, ParticleComponent.KeyTrack.startAndEnd(1f, 0f), false),
@@ -234,7 +233,7 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
 
             for (int i = 0; i < 6; i++) {
                 if (justDug == null) justDug = Blocks.DIRT.defaultBlockState();
-                EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK.get(), getUser().level(), 80, justDug);
+                EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK, getUser().level(), 80, justDug);
                 fallingBlock.setPos(getUser().getX(), getUser().getY() + 1, getUser().getZ());
                 fallingBlock.setDeltaMovement(getUser().getRandom().nextFloat() * 0.8f - 0.4f, 0.4f + getUser().getRandom().nextFloat() * 0.8f, getUser().getRandom().nextFloat() * 0.8f - 0.4f);
                 getUser().level().addFreshEntity(fallingBlock);
@@ -258,15 +257,15 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
     @Override
     protected boolean canContinueUsing() {
         ItemStack stack = getUser().getUseItem();
-        boolean usingGauntlet = stack.getItem() == ItemHandler.EARTHREND_GAUNTLET.get();
+        boolean usingGauntlet = stack.getItem() == ItemHandler.EARTHREND_GAUNTLET;
         if (whichHand == null) return false;
-        boolean canContinueUsing = (getTicksInUse() <= 1 || !(getUser().onGround() || (getUser().isInWater() && !usingGauntlet)) || underground) && getUser().getItemInHand(whichHand).getItem() == ItemHandler.EARTHREND_GAUNTLET.get() && super.canContinueUsing();
+        boolean canContinueUsing = (getTicksInUse() <= 1 || !(getUser().onGround() || (getUser().isInWater() && !usingGauntlet)) || underground) && getUser().getItemInHand(whichHand).getItem() == ItemHandler.EARTHREND_GAUNTLET && super.canContinueUsing();
         return canContinueUsing;
     }
 
     @Override
     public boolean preventsItemUse(ItemStack stack) {
-        if (stack.getItem() == ItemHandler.EARTHREND_GAUNTLET.get()) return false;
+        if (stack.getItem() == ItemHandler.EARTHREND_GAUNTLET) return false;
         return super.preventsItemUse(stack);
     }
 
@@ -278,7 +277,7 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
         e.controller().setTransitionTicks(4);
         if (perspective == GeckoPlayer.Perspective.THIRD_PERSON) {
             float yMotionThreshold = getUser() == MMCommon.PROXY.getLocalPlayer() ? 1 : 2;
-            if (!underground && getUser().getUseItem().getItem() != ItemHandler.EARTHREND_GAUNTLET.get() && getUser().getDeltaMovement().y() < yMotionThreshold) {
+            if (!underground && getUser().getUseItem().getItem() != ItemHandler.EARTHREND_GAUNTLET && getUser().getDeltaMovement().y() < yMotionThreshold) {
                 e.controller().setAnimation(FALL_ANIM);
             }
             else {
@@ -333,11 +332,12 @@ public class TunnelingAbility extends PlayerAbility implements IGeomancyRumbler 
     }
 
     @Override
-    public void onFall(LivingFallEvent event) {
-        super.onFall(event);
-        if (event.getEntity() == getUser() && isUsing()) {
-            event.setDamageMultiplier(0);
+    public float onFall(Player player, double distance, float damageMultiplier) {
+        damageMultiplier = super.onFall(player, distance, damageMultiplier);
+        if (player == getUser() && isUsing()) {
+            return 0;
         }
+        return damageMultiplier;
     }
 
     @Override

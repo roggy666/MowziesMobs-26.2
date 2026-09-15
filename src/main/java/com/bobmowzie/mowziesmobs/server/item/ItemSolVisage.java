@@ -1,18 +1,14 @@
 package com.bobmowzie.mowziesmobs.server.item;
 
-import com.bobmowzie.mowziesmobs.client.render.entity.RenderUmvuthi;
 import com.bobmowzie.mowziesmobs.client.render.item.RenderSolVisageArmor;
 import com.bobmowzie.mowziesmobs.client.render.item.RenderSolVisageItem;
 import com.bobmowzie.mowziesmobs.server.config.ConfigHandler;
-import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.equipment.ArmorType;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import com.geckolib.animatable.GeoItem;
 import com.geckolib.animatable.client.GeoRenderProvider;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -24,7 +20,6 @@ import com.geckolib.renderer.GeoArmorRenderer;
 import com.geckolib.renderer.GeoItemRenderer;
 import com.geckolib.util.GeckoLibUtil;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -49,9 +44,9 @@ public class ItemSolVisage extends Item implements UmvuthanaMask, GeoItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.1").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.2").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.1");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.2");
     }
 
     private PlayState predicate(AnimationTest<ItemSolVisage> state) {
@@ -91,15 +86,5 @@ public class ItemSolVisage extends Item implements UmvuthanaMask, GeoItem {
                 return armorRenderer;
             }
         });
-    }
-
-    // Kept as a near-empty implementation solely because MMClient.java (out of this scope) still registers one via
-    // RegisterClientExtensionsEvent#registerItem(new ItemSolVisage.ClientExtensions(), ...) - see
-    // ItemUmvuthanaMask.ClientExtensions for the same pattern/reasoning.
-    public static class ClientExtensions implements IClientItemExtensions {
-        @Override
-        public @Nullable Identifier getArmorTexture(ItemStack stack, EquipmentClientInfo.LayerType type, EquipmentClientInfo.Layer layer, Identifier _default) {
-            return RenderUmvuthi.TEXTURE;
-        }
     }
 }

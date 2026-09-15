@@ -127,7 +127,7 @@ public class ParticleSnowFlake extends SingleQuadParticle {
 
         @Override
         public @NotNull ParticleType<ParticleSnowFlake.Data> getType() {
-            return ParticleHandler.SNOWFLAKE.get();
+            return ParticleHandler.SNOWFLAKE;
         }
     }
 }

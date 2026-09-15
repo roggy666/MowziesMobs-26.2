@@ -54,7 +54,7 @@ public class SunstrikeAbility extends HeliomancyAbilityBase {
         LivingEntity user = getUser();
         if (!user.level().isClientSide()) {
             BlockPos hit = rayTrace.getBlockPos();
-            EntitySunstrike sunstrike = new EntitySunstrike(EntityHandler.SUNSTRIKE.get(), user.level(), user, hit.getX(), hit.getY(), hit.getZ());
+            EntitySunstrike sunstrike = new EntitySunstrike(EntityHandler.SUNSTRIKE, user.level(), user, hit.getX(), hit.getY(), hit.getZ());
             sunstrike.onSummon();
             user.level().addFreshEntity(sunstrike);
         }

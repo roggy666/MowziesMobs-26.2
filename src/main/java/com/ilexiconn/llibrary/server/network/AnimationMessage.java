@@ -1,5 +1,6 @@
 package com.ilexiconn.llibrary.server.network;
 
+import net.minecraft.world.entity.player.Player;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.ilexiconn.llibrary.server.animation.IAnimatedEntity;
 import io.netty.buffer.ByteBuf;
@@ -8,7 +9,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record AnimationMessage(int entityId, int index) implements CustomPacketPayload {
@@ -22,19 +22,17 @@ public record AnimationMessage(int entityId, int index) implements CustomPacketP
             AnimationMessage::new
     );
 
-    public static void handleClient(final AnimationMessage packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Level level = MMCommon.PROXY.getClientLevel();
+    public static void handleClient(final AnimationMessage packet, final Player player) {
+        Level level = MMCommon.PROXY.getClientLevel();
 
-            if (level != null && level.getEntity(packet.entityId()) instanceof IAnimatedEntity entity) {
-                if (packet.index() == -1) {
-                    entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
-                } else {
-                    entity.setAnimation(entity.getAnimations()[packet.index()]);
-                }
-                entity.setAnimationTick(0);
+        if (level != null && level.getEntity(packet.entityId()) instanceof IAnimatedEntity entity) {
+            if (packet.index() == -1) {
+                entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
+            } else {
+                entity.setAnimation(entity.getAnimations()[packet.index()]);
             }
-        });
+            entity.setAnimationTick(0);
+        }
     }
 
     @Override

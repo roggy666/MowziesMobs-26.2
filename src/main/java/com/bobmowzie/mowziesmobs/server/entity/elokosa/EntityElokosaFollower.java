@@ -24,7 +24,7 @@ import java.util.UUID;
 public abstract class EntityElokosaFollower<L extends LivingEntity> extends EntityElokosa {
     protected static final Optional<UUID> ABSENT_LEADER = Optional.empty();
 
-    private static final EntityDataAccessor<Optional<UUID>> LEADER = SynchedEntityData.defineId(EntityElokosaFollower.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID.get());
+    private static final EntityDataAccessor<Optional<UUID>> LEADER = SynchedEntityData.defineId(EntityElokosaFollower.class, com.bobmowzie.mowziesmobs.server.entity.EntityHandler.OPTIONAL_UUID);
 
     private final Class<L> leaderClass;
 
@@ -73,7 +73,7 @@ public abstract class EntityElokosaFollower<L extends LivingEntity> extends Enti
 
     @Override
     public ItemStack getPickResult() {
-        return new ItemStack(ItemHandler.ELOKOSA_SPAWN_EGG.get());
+        return new ItemStack(ItemHandler.ELOKOSA_SPAWN_EGG);
     }
 
     @Override

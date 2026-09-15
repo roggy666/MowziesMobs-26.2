@@ -17,23 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.Items;
 
-/**
- * PORTING NOTE (see PORTING_NOTES.md "MobRenderer-based ones using LLibrary models" section and
- * {@code client/render/entity/layer/ItemLayer.java}/{@code WroughtnautEyesLayer.java}'s javadocs for the layer-side
- * half of this fix): {@link ModelWroughtnaut} extends LLibrary's {@code AdvancedModelBase}, which can no longer be
- * the model type parameter of {@code MobRenderer<T,S,M>} - ported to a plain {@code EntityRenderer<T,XRenderState>}.
- * {@link ItemLayer}/{@link WroughtnautEyesLayer} are no longer real {@code RenderLayer}s so both are now called
- * directly from this class's {@link #submit}.
- * <p>
- * <b>Dropped, not silently</b>: the old debug hitbox-line overlay (forward/body-facing indicator vectors, drawn only
- * when {@code F3+B} hitboxes are on) relied on {@code EntityRenderDispatcher#shouldRenderHitBoxes()}, which no
- * longer exists anywhere in vanilla (grep-confirmed zero hits in the full 26.1.2 source). Per-entity-renderer hitbox
- * debug drawing was replaced engine-wide by a generic {@code net.minecraft.client.renderer.debug
- * .EntityHitboxDebugRenderer} (a {@code DebugRenderer.SimpleDebugRenderer}, driven by the new {@code Gizmos}/
- * {@code GizmoStyle} debug-draw API) that already draws hitbox/orientation gizmos for every entity automatically -
- * this mod's bespoke duplicate is now fully redundant rather than needing a replacement, so it was removed outright.
- */
-public class RenderWroughtnaut extends EntityRenderer<EntityWroughtnaut, RenderWroughtnaut.WroughtnautRenderState> {
+public class RenderWroughtnaut extends MowzieLLibraryRenderer<EntityWroughtnaut, RenderWroughtnaut.WroughtnautRenderState> {
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/entity/wroughtnaut.png");
 
     private final ModelWroughtnaut<EntityWroughtnaut> model = new ModelWroughtnaut<>();
@@ -54,30 +38,27 @@ public class RenderWroughtnaut extends EntityRenderer<EntityWroughtnaut, RenderW
     public void extractRenderState(EntityWroughtnaut entity, WroughtnautRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
 
-        state.entity = entity;
-        state.yRot = entity.getYRot(partialTicks);
-        state.partialTick = partialTicks;
     }
 
     @Override
     public void submit(WroughtnautRenderState state, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
+        setupRotations(poseStack, state);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0F, -1.501F, 0.0F);
 
         renderTasks.submitCustomGeometry(poseStack, model.renderType(TEXTURE), (pose, vertexConsumer) -> {
             poseStack.pushPose();
             poseStack.last().set(pose);
-            model.setupAnim(state.entity, 0, 0, state.ageInTicks, 0, 0);
-            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, -1);
+            model.setupAnim(state.entity, state.limbSwing, state.limbSwingAmount, state.ageInTicks, state.headYaw, state.headPitch);
+            model.renderToBuffer(poseStack, vertexConsumer, state.lightCoords, state.overlay, -1);
             poseStack.popPose();
         });
 
         renderTasks.submitCustomGeometry(poseStack, WroughtnautEyesLayer.renderType(TEXTURE), (pose, vertexConsumer) -> {
             poseStack.pushPose();
             poseStack.last().set(pose);
-            eyesLayer.render(poseStack, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, state.entity, 0, 0, state.partialTick, state.ageInTicks, 0, 0);
+            eyesLayer.render(poseStack, vertexConsumer, state.lightCoords, state.overlay, state.entity, state.limbSwing, state.limbSwingAmount, state.partialTick, state.ageInTicks, state.headYaw, state.headPitch);
             poseStack.popPose();
         });
 
@@ -88,9 +69,6 @@ public class RenderWroughtnaut extends EntityRenderer<EntityWroughtnaut, RenderW
         super.submit(state, poseStack, renderTasks, cameraState);
     }
 
-    public static class WroughtnautRenderState extends EntityRenderState {
-        public EntityWroughtnaut entity;
-        public float yRot;
-        public float partialTick;
+    public static class WroughtnautRenderState extends MowzieLLibraryRenderer.State<EntityWroughtnaut> {
     }
 }

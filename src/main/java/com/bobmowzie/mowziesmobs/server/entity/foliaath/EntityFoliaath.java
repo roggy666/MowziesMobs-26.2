@@ -94,7 +94,7 @@ public class EntityFoliaath extends MowzieLLibraryEntity implements Enemy {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(1, new AnimationAttackAI<>(this, ATTACK_ANIMATION, MMSounds.ENTITY_FOLIAATH_BITE_1.get(), null, 2, 4F, 1, 3));
+        this.goalSelector.addGoal(1, new AnimationAttackAI<>(this, ATTACK_ANIMATION, MMSounds.ENTITY_FOLIAATH_BITE_1, null, 2, 4F, 1, 3));
         this.goalSelector.addGoal(1, new AnimationTakeDamage<>(this));
         this.goalSelector.addGoal(1, new AnimationDieAI<>(this));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal(this, LivingEntity.class, 0, true, false, (e, eLevel) ->
@@ -124,12 +124,12 @@ public class EntityFoliaath extends MowzieLLibraryEntity implements Enemy {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return MMSounds.ENTITY_FOLIAATH_HURT.get();
+        return MMSounds.ENTITY_FOLIAATH_HURT;
     }
 
     @Override
     public SoundEvent getDeathSound() {
-        return MMSounds.ENTITY_FOLIAATH_DIE.get();
+        return MMSounds.ENTITY_FOLIAATH_DIE;
     }
 
     @Override
@@ -165,18 +165,18 @@ public class EntityFoliaath extends MowzieLLibraryEntity implements Enemy {
         // Sounds
         if (frame % 13 == 3 && getAnimation() != DIE_ANIMATION) {
             if (openMouth.getTimeRunning() >= 10) {
-                playSound(MMSounds.ENTITY_FOLIAATH_PANT_1.get(), 1, 1);
+                playSound(MMSounds.ENTITY_FOLIAATH_PANT_1, 1, 1);
             } else if (activate.getTimer() >= 25) {
-                playSound(MMSounds.ENTITY_FOLIAATH_PANT_2.get(), 1, 1);
+                playSound(MMSounds.ENTITY_FOLIAATH_PANT_2, 1, 1);
             }
         }
 
         int openMouthTime = openMouth.getTimeRunning();
         if (prevOpenMouth - openMouthTime < 0) {
             if (openMouthTime == 1) {
-                playSound(MMSounds.ENTITY_FOLIAATH_RUSTLE.get(), 1, 1);
+                playSound(MMSounds.ENTITY_FOLIAATH_RUSTLE, 1, 1);
             } else if (openMouthTime == 13) {
-                playSound(MMSounds.ENTITY_FOLIAATH_GRUNT.get(), 1, 1);
+                playSound(MMSounds.ENTITY_FOLIAATH_GRUNT, 1, 1);
             }
         }
 
@@ -188,19 +188,19 @@ public class EntityFoliaath extends MowzieLLibraryEntity implements Enemy {
             if (prevActivate - activateTime < 0) {
                 switch (activateTime) {
                     case 1:
-                        sound = MMSounds.ENTITY_FOLIAATH_RUSTLE.get();
+                        sound = MMSounds.ENTITY_FOLIAATH_RUSTLE;
                         break;
                     case 5:
-                        sound = MMSounds.ENTITY_FOLIAATH_MERGE.get();
+                        sound = MMSounds.ENTITY_FOLIAATH_MERGE;
                         break;
                 }
             } else if (prevActivate - activateTime > 0) {
                 switch (activateTime) {
                     case 24:
-                        sound = MMSounds.ENTITY_FOLIAATH_RETREAT.get();
+                        sound = MMSounds.ENTITY_FOLIAATH_RETREAT;
                         break;
                     case 28:
-                        sound = MMSounds.ENTITY_FOLIAATH_RUSTLE.get();
+                        sound = MMSounds.ENTITY_FOLIAATH_RUSTLE;
                         break;
                 }
             }

@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.message;
 
+import net.minecraft.world.entity.player.Player;
 import com.bobmowzie.mowziesmobs.MMCommon;
 import com.bobmowzie.mowziesmobs.server.entity.ILinkedEntity;
 import io.netty.buffer.ByteBuf;
@@ -9,7 +10,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,19 +33,17 @@ public record MessageLinkEntities(int sourceId, int targetId) implements CustomP
         return new MessageLinkEntities(-1, -1);
     }
 
-    public static void handleClient(final MessageLinkEntities packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Level level = MMCommon.PROXY.getClientLevel();
+    public static void handleClient(final MessageLinkEntities packet, final Player player) {
+        Level level = MMCommon.PROXY.getClientLevel();
 
-            if (level != null) {
-                Entity entitySource = level.getEntity(packet.sourceId());
-                Entity entityTarget = level.getEntity(packet.targetId());
+        if (level != null) {
+            Entity entitySource = level.getEntity(packet.sourceId());
+            Entity entityTarget = level.getEntity(packet.targetId());
 
-                if (entitySource instanceof ILinkedEntity linked && entityTarget != null) {
-                    linked.link(entityTarget);
-                }
+            if (entitySource instanceof ILinkedEntity linked && entityTarget != null) {
+                linked.link(entityTarget);
             }
-        });
+        }
     }
 
     @Override

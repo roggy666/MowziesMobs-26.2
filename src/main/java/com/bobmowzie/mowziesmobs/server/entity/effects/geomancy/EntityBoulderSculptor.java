@@ -171,10 +171,10 @@ public class EntityBoulderSculptor extends EntityBoulderProjectile {
         if (getHeightFrac() > 0.75 && whichTierIndex == 3) whichTierIndex = 1;
         GeomancyTier nextTier = GeomancyTier.values()[whichTierIndex];
         if (getHeightFrac() > 0.45 && random.nextFloat() < 0.15) {
-            return new EntityBoulderSculptorCrumbling(EntityHandler.BOULDER_SCULPTOR_CRUMBLING.get(), level(), getCaster(), blockPosition(), nextTier, random.nextInt(2));
+            return new EntityBoulderSculptorCrumbling(EntityHandler.BOULDER_SCULPTOR_CRUMBLING, level(), getCaster(), blockPosition(), nextTier, random.nextInt(2));
         }
         else {
-            return new EntityBoulderSculptor(EntityHandler.BOULDER_SCULPTOR.get(), level(), getCaster(), Blocks.STONE.defaultBlockState(), blockPosition(), nextTier);
+            return new EntityBoulderSculptor(EntityHandler.BOULDER_SCULPTOR, level(), getCaster(), Blocks.STONE.defaultBlockState(), blockPosition(), nextTier);
         }
     }
 
@@ -359,7 +359,7 @@ public class EntityBoulderSculptor extends EntityBoulderProjectile {
     @Override
     public void shoot(Vec3 shootDirection) {
         super.shoot(shootDirection);
-        EntityBoulderSculptor boulderSculptor = new EntityBoulderSculptor(EntityHandler.BOULDER_SCULPTOR.get(), this);
+        EntityBoulderSculptor boulderSculptor = new EntityBoulderSculptor(EntityHandler.BOULDER_SCULPTOR, this);
         boulderSculptor.setPos(this.position());
         boulderSculptor.replacementBoulder = true;
         boulderSculptor.delayActivation(40);
@@ -409,10 +409,10 @@ public class EntityBoulderSculptor extends EntityBoulderProjectile {
             if (getHeightFrac() > 0.85 && whichTierIndex == 3) whichTierIndex = 1;
             GeomancyTier nextTier = GeomancyTier.values()[whichTierIndex];
             if (consecutiveCrumblers > 0) {
-                return new EntityBoulderSculptorCrumbling(EntityHandler.BOULDER_SCULPTOR_CRUMBLING.get(), level(), getCaster(), blockPosition(), nextTier, consecutiveCrumblers - 1);
+                return new EntityBoulderSculptorCrumbling(EntityHandler.BOULDER_SCULPTOR_CRUMBLING, level(), getCaster(), blockPosition(), nextTier, consecutiveCrumblers - 1);
             }
             else {
-                return new EntityBoulderSculptor(EntityHandler.BOULDER_SCULPTOR.get(), level(), getCaster(), Blocks.STONE.defaultBlockState(), blockPosition(), nextTier);
+                return new EntityBoulderSculptor(EntityHandler.BOULDER_SCULPTOR, level(), getCaster(), Blocks.STONE.defaultBlockState(), blockPosition(), nextTier);
             }
         }
 
@@ -430,7 +430,7 @@ public class EntityBoulderSculptor extends EntityBoulderProjectile {
                 for (Entity entity : onTopOfEntities) {
                     if (entity != null && entity.isPickable() && !(entity instanceof EntityBoulderProjectile) && entity.getY() >= this.getY() + 0.2 && entity.onGround()) {
                         setCrumbling(true);
-                        playSound(MMSounds.ENTITY_SCULPTOR_PLATFORM_CRUMBLE.get(), 1, 1);
+                        playSound(MMSounds.ENTITY_SCULPTOR_PLATFORM_CRUMBLE, 1, 1);
                     }
                 }
             }
@@ -447,7 +447,7 @@ public class EntityBoulderSculptor extends EntityBoulderProjectile {
         private void crumble() {
             explode();
             if (!level().isClientSide()) {
-                EntityBoulderSculptorCrumbling boulderSculptor = new EntityBoulderSculptorCrumbling(EntityHandler.BOULDER_SCULPTOR_CRUMBLING.get(), this);
+                EntityBoulderSculptorCrumbling boulderSculptor = new EntityBoulderSculptorCrumbling(EntityHandler.BOULDER_SCULPTOR_CRUMBLING, this);
                 boulderSculptor.setPos(this.position());
                 boulderSculptor.replacementBoulder = true;
                 boulderSculptor.delayActivation(40);

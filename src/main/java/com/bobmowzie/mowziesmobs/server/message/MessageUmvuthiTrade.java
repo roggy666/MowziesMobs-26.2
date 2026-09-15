@@ -11,8 +11,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,37 +26,34 @@ public record MessageUmvuthiTrade(int entityId) implements CustomPacketPayload {
             MessageUmvuthiTrade::new
     );
 
-    public static void handleServer(final MessageUmvuthiTrade packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Player player = context.player();
+    public static void handleServer(final MessageUmvuthiTrade packet, final ServerPlayer player) {
 
-            if (!(player.level().getEntity(packet.entityId()) instanceof EntityUmvuthi umvuthi)) {
-                return;
+        if (!(player.level().getEntity(packet.entityId()) instanceof EntityUmvuthi umvuthi)) {
+            return;
+        }
+
+        if (umvuthi.getCustomer() != player) {
+            return;
+        }
+
+        if (!(player.containerMenu instanceof ContainerUmvuthiTrade trade)) {
+            return;
+        }
+
+        boolean hasTradedWith = umvuthi.hasTradedWith(player);
+
+        if (!hasTradedWith && umvuthi.fulfillDesire(trade.getSlot(0))) {
+            umvuthi.rememberTrade(player);
+            trade.returnItems();
+            trade.broadcastChanges();
+        } else if (hasTradedWith) {
+            player.addEffect(new MobEffectInstance(EffectHandler.SUNS_BLESSING, MobEffectInstance.INFINITE_DURATION, 0, false, false));
+
+            if (umvuthi.getActiveAbilityType() != EntityUmvuthi.BLESS_ABILITY) {
+                umvuthi.sendAbilityMessage(EntityUmvuthi.BLESS_ABILITY);
+                umvuthi.playSound(MMSounds.ENTITY_UMVUTHI_BLESS, 2, 1);
             }
-
-            if (umvuthi.getCustomer() != player) {
-                return;
-            }
-
-            if (!(player.containerMenu instanceof ContainerUmvuthiTrade trade)) {
-                return;
-            }
-
-            boolean hasTradedWith = umvuthi.hasTradedWith(player);
-
-            if (!hasTradedWith && umvuthi.fulfillDesire(trade.getSlot(0))) {
-                umvuthi.rememberTrade(player);
-                trade.returnItems();
-                trade.broadcastChanges();
-            } else if (hasTradedWith) {
-                player.addEffect(new MobEffectInstance(EffectHandler.SUNS_BLESSING, MobEffectInstance.INFINITE_DURATION, 0, false, false));
-
-                if (umvuthi.getActiveAbilityType() != EntityUmvuthi.BLESS_ABILITY) {
-                    umvuthi.sendAbilityMessage(EntityUmvuthi.BLESS_ABILITY);
-                    umvuthi.playSound(MMSounds.ENTITY_UMVUTHI_BLESS.get(), 2, 1);
-                }
-            }
-        });
+        }
     }
 
     @Override

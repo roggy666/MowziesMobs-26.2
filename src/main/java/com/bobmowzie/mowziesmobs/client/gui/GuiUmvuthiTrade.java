@@ -22,13 +22,8 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import com.bobmowzie.mowziesmobs.client.network.ClientNetworkHandler;
 
-/**
- * PORTING NOTE: see GuiSculptorTrade.java for the full explanation of the GuiGraphics -> GuiGraphicsExtractor /
- * renderBg->extractBackground / renderLabels->extractLabels / render->extractRenderState conversion pattern applied
- * here (same pattern, this file follows it identically).
- */
 public final class GuiUmvuthiTrade extends AbstractContainerScreen<ContainerUmvuthiTrade> implements InventoryUmvuthi.ChangeListener {
     private static final Identifier TEXTURE_TRADE = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/gui/container/umvuthi_trade.png");
     private static final Identifier TEXTURE_REPLENISH = Identifier.fromNamespaceAndPath(MMCommon.MODID, "textures/gui/container/umvuthi_replenish.png");
@@ -38,7 +33,7 @@ public final class GuiUmvuthiTrade extends AbstractContainerScreen<ContainerUmvu
 
     private final InventoryUmvuthi inventory;
 
-    private final ItemStack output = new ItemStack(ItemHandler.GRANT_SUNS_BLESSING.get());
+    private final ItemStack output = new ItemStack(ItemHandler.GRANT_SUNS_BLESSING);
 
     private Button grantButton;
 
@@ -66,7 +61,7 @@ public final class GuiUmvuthiTrade extends AbstractContainerScreen<ContainerUmvu
     	if (button == grantButton) {
             hasTraded = true;
             updateButton();
-            ClientPacketDistributor.sendToServer(new MessageUmvuthiTrade(umvuthi.getId()));
+            ClientNetworkHandler.sendToServer(new MessageUmvuthiTrade(umvuthi.getId()));
             if (!Minecraft.getInstance().isLocalServer()) {
                 boolean satisfied = umvuthi.hasTradedWith(player);
                 if (!satisfied) {
@@ -82,7 +77,7 @@ public final class GuiUmvuthiTrade extends AbstractContainerScreen<ContainerUmvu
     @Override
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int x, int y, float partialTicks) {
         super.extractBackground(guiGraphics, x, y, partialTicks);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, hasTraded ? TEXTURE_REPLENISH : TEXTURE_TRADE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, imageWidth, imageHeight);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, hasTraded ? TEXTURE_REPLENISH : TEXTURE_TRADE, leftPos, topPos, 0.0F, 0.0F, imageWidth, imageHeight, 256, 256);
         if (umvuthi != null) {
             umvuthi.renderingInGUI = true;
             // x and y values are chosen as the first and last pixel of the black (entity) box of the gui texture

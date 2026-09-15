@@ -120,7 +120,7 @@ public class GongBlock extends BaseEntityBlock {
             }
 
             ((GongBlockEntity)blockentity).onHit(p_152192_);
-            p_152190_.playSound(null, p_152191_, MMSounds.BLOCK_GONG.get(), SoundSource.BLOCKS, 2.0F, 1.0F);
+            p_152190_.playSound(null, p_152191_, MMSounds.BLOCK_GONG, SoundSource.BLOCKS, 2.0F, 1.0F);
             p_152190_.gameEvent(p_152189_, GameEvent.BLOCK_CHANGE, p_152191_);
             return true;
         } else {
@@ -140,7 +140,7 @@ public class GongBlock extends BaseEntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level p_152194_, BlockState p_152195_, BlockEntityType<T> p_152196_) {
-        return createTickerHelper(p_152196_, BlockEntityHandler.GONG_BLOCK_ENTITY.get(), GongBlockEntity::tick);
+        return createTickerHelper(p_152196_, BlockEntityHandler.GONG_BLOCK_ENTITY, GongBlockEntity::tick);
     }
 
     @Override
@@ -215,7 +215,7 @@ public class GongBlock extends BaseEntityBlock {
                 BlockPos blockpos1 = abovePos.relative(state.getValue(FACING).getClockWise());
                 BlockPos blockpos2 = abovePos;
                 BlockPos blockpos3 = abovePos.relative(state.getValue(FACING).getCounterClockWise());
-                BlockState defaultGongPart = BlockHandler.GONG_PART.get().defaultBlockState();
+                BlockState defaultGongPart = BlockHandler.GONG_PART.defaultBlockState();
                 level.setBlock(blockpos1, defaultGongPart.setValue(FACING, state.getValue(FACING)).setValue(GongPartBlock.PART, GongPart.SIDE_LEFT).setValue(GongPartBlock.Y_OFFSET, i), 3);
                 level.setBlock(blockpos3, defaultGongPart.setValue(FACING, state.getValue(FACING)).setValue(GongPartBlock.PART, GongPart.SIDE_RIGHT).setValue(GongPartBlock.Y_OFFSET, i), 3);
                 if (blockpos2 != pos) {
@@ -241,7 +241,7 @@ public class GongBlock extends BaseEntityBlock {
                 BlockPos[] toBreakPoses = {blockpos1, abovePos, blockpos3};
                 for (BlockPos toBreakPos : toBreakPoses) {
                     BlockState blockstate = level.getBlockState(toBreakPos);
-                    if (blockstate.is(BlockHandler.GONG_PART.get())) {
+                    if (blockstate.is(BlockHandler.GONG_PART)) {
                         level.setBlock(toBreakPos, Blocks.AIR.defaultBlockState(), 35);
                         level.levelEvent(player, 2001, toBreakPos, Block.getId(blockstate));
                     }
@@ -300,7 +300,7 @@ public class GongBlock extends BaseEntityBlock {
             BlockPos pos = hitResult.getBlockPos();
             BlockPos basePos = getBasePos(state, pos);
             BlockState baseState = level.getBlockState(basePos);
-            if (baseState.is(BlockHandler.GONG.get())) {
+            if (baseState.is(BlockHandler.GONG)) {
                 BlockHitResult baseHitResult = new BlockHitResult(hitResult.getLocation().add(basePos.getX() - pos.getX(), basePos.getY() - pos.getY(), basePos.getZ() - pos.getZ()), hitResult.getDirection(), basePos, hitResult.isInside());
                 baseState.onProjectileHit(level, baseState, baseHitResult, projectile);
             }
@@ -311,7 +311,7 @@ public class GongBlock extends BaseEntityBlock {
             BlockPos basePos = getBasePos(state, pos);
             BlockState baseState = level.getBlockState(basePos);
 
-            if (baseState.is(BlockHandler.GONG.get())) {
+            if (baseState.is(BlockHandler.GONG)) {
                 BlockHitResult baseHitResult = new BlockHitResult(hitResult.getLocation().add(basePos.getX() - pos.getX(), basePos.getY() - pos.getY(), basePos.getZ() - pos.getZ()), hitResult.getDirection(), basePos, hitResult.isInside());
                 return baseState.useItemOn(stack, level, player, hand, baseHitResult);
             }
@@ -334,7 +334,7 @@ public class GongBlock extends BaseEntityBlock {
         public @NotNull BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
             BlockPos basePos = getBasePos(state, pos);
             BlockState baseState = level.getBlockState(basePos);
-            if (baseState.is(BlockHandler.GONG.get())) {
+            if (baseState.is(BlockHandler.GONG)) {
                 level.destroyBlock(basePos, true, player);
                 level.levelEvent(player, 2001, basePos, Block.getId(state));
             }
@@ -350,7 +350,7 @@ public class GongBlock extends BaseEntityBlock {
         protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
             BlockPos basePos = getBasePos(state, pos);
             BlockState baseState = level.getBlockState(basePos);
-            if (!baseState.is(BlockHandler.GONG.get())) {
+            if (!baseState.is(BlockHandler.GONG)) {
                 return Blocks.AIR.defaultBlockState();
             }
             return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
@@ -384,7 +384,7 @@ public class GongBlock extends BaseEntityBlock {
 
         @Override
         public Item asItem() {
-            return BlockHandler.GONG.get().asItem();
+            return BlockHandler.GONG.asItem();
         }
 
         @Override

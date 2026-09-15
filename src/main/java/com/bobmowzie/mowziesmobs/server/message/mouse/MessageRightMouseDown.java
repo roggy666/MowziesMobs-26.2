@@ -11,8 +11,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,26 +22,23 @@ public record MessageRightMouseDown() implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<MessageRightMouseDown> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MMCommon.MODID, "message_right_mouse_down"));
     public static final StreamCodec<ByteBuf, MessageRightMouseDown> STREAM_CODEC = StreamCodec.unit(new MessageRightMouseDown());
 
-    public static void handleServer(final MessageRightMouseDown packet, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Player player = context.player();
-            PlayerData data = DataHandler.getData(player, DataHandler.PLAYER_DATA);
-            data.setMouseRightDown(true);
+    public static void handleServer(final MessageRightMouseDown packet, final ServerPlayer player) {
+        PlayerData data = DataHandler.getData(player, DataHandler.PLAYER_DATA);
+        data.setMouseRightDown(true);
 
-            for (Power power : data.getPowers()) {
-                power.onRightMouseDown(player);
-            }
+        for (Power power : data.getPowers()) {
+            power.onRightMouseDown(player);
+        }
 
-            AbilityData abilityData = DataHandler.getData(player, DataHandler.ABILITY_DATA);
+        AbilityData abilityData = DataHandler.getData(player, DataHandler.ABILITY_DATA);
 
-            if (abilityData != null) {
-                for (Ability<?> ability : abilityData.getAbilities()) {
-                    if (ability instanceof PlayerAbility playerAbility) {
-                        playerAbility.onRightMouseDown(player);
-                    }
+        if (abilityData != null) {
+            for (Ability<?> ability : abilityData.getAbilities()) {
+                if (ability instanceof PlayerAbility playerAbility) {
+                    playerAbility.onRightMouseDown(player);
                 }
             }
-        });
+        }
     }
 
     @Override

@@ -14,7 +14,7 @@ public class GongBlockEntity extends BlockEntity {
     public Direction facing;
 
     public GongBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityHandler.GONG_BLOCK_ENTITY.get(), pos, state);
+        super(BlockEntityHandler.GONG_BLOCK_ENTITY, pos, state);
         facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
     }
 

@@ -10,7 +10,7 @@ public final class BlackPinkSound extends AbstractTickableSoundInstance {
     private final AbstractMinecart minecart;
 
     public BlackPinkSound(AbstractMinecart minecart) {
-        super(MMSounds.MUSIC_BLACK_PINK.get(), SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
+        super(MMSounds.MUSIC_BLACK_PINK, SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());
         this.minecart = minecart;
     }
 

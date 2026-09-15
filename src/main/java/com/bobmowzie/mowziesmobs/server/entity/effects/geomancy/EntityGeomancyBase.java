@@ -1,5 +1,6 @@
 package com.bobmowzie.mowziesmobs.server.entity.effects.geomancy;
 
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import com.bobmowzie.mowziesmobs.server.block.ICopiedBlockProperties;
 import com.bobmowzie.mowziesmobs.server.entity.EntityHandler;
 import com.bobmowzie.mowziesmobs.server.entity.effects.EntityCameraShake;
@@ -40,7 +41,6 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 import com.geckolib.animatable.GeoEntity;
@@ -120,12 +120,12 @@ public abstract class EntityGeomancyBase extends EntityMagicEffect implements Ge
         ) {
             blockState = Blocks.DIRT.defaultBlockState();
         }
-        else if (blockState.is(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE)) blockState = Blocks.DEEPSLATE.defaultBlockState();
+        else if (blockState.is(ConventionalBlockTags.ORES_IN_GROUND_DEEPSLATE)) blockState = Blocks.DEEPSLATE.defaultBlockState();
         else if (blockState.is(BlockTags.NYLIUM)) blockState = Blocks.NETHERRACK.defaultBlockState();
-        else if (blockState.is(Tags.Blocks.ORES_IN_GROUND_NETHERRACK)) blockState = Blocks.NETHERRACK.defaultBlockState();
-        else if (blockState.is(Tags.Blocks.ORES_IN_GROUND_STONE)) blockState = Blocks.STONE.defaultBlockState();
-        else if (blockState.is(Tags.Blocks.SANDS_RED)) blockState = Blocks.RED_SANDSTONE.defaultBlockState();
-        else if (blockState.is(Tags.Blocks.SANDS_COLORLESS)) blockState = Blocks.SANDSTONE.defaultBlockState();
+        else if (blockState.is(ConventionalBlockTags.ORES_IN_GROUND_NETHERRACK)) blockState = Blocks.NETHERRACK.defaultBlockState();
+        else if (blockState.is(ConventionalBlockTags.ORES_IN_GROUND_STONE)) blockState = Blocks.STONE.defaultBlockState();
+        else if (blockState.is(ConventionalBlockTags.RED_SANDS)) blockState = Blocks.RED_SANDSTONE.defaultBlockState();
+        else if (blockState.is(ConventionalBlockTags.COLORLESS_SANDS)) blockState = Blocks.SANDSTONE.defaultBlockState();
         else if (blockState.getBlock() == Blocks.SOUL_SAND) blockState = Blocks.SOUL_SOIL.defaultBlockState();
 
         return blockState;
@@ -183,20 +183,20 @@ public abstract class EntityGeomancyBase extends EntityMagicEffect implements Ge
         this.level().broadcastEntityEvent(this, EXPLOSION_PARTICLES_ID);
         GeomancyTier tier = getTier();
         if (tier == GeomancyTier.NONE) {
-            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL.get(), 1.5f, 0.9f);
-            playSound(MMSounds.EFFECT_GEOMANCY_BREAK.get(), 1.5f, 1f);
+            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL, 1.5f, 0.9f);
+            playSound(MMSounds.EFFECT_GEOMANCY_BREAK, 1.5f, 1f);
         }
         if (tier == GeomancyTier.SMALL) {
-            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL.get(), 1.5f, 0.9f);
-            playSound(MMSounds.EFFECT_GEOMANCY_BREAK.get(), 1.5f, 1f);
+            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL, 1.5f, 0.9f);
+            playSound(MMSounds.EFFECT_GEOMANCY_BREAK, 1.5f, 1f);
         }
         else if (tier == GeomancyTier.MEDIUM) {
-            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL.get(), 1.5f, 0.7f);
-            playSound(MMSounds.EFFECT_GEOMANCY_BREAK_MEDIUM_3.get(), 1.5f, 1.5f);
+            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_SMALL, 1.5f, 0.7f);
+            playSound(MMSounds.EFFECT_GEOMANCY_BREAK_MEDIUM_3, 1.5f, 1.5f);
         }
         else if (tier == GeomancyTier.LARGE) {
-            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG.get(), 1.5f, 1f);
-            playSound(MMSounds.EFFECT_GEOMANCY_BREAK_MEDIUM_1.get(), 1.5f, 0.9f);
+            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG, 1.5f, 1f);
+            playSound(MMSounds.EFFECT_GEOMANCY_BREAK_MEDIUM_1, 1.5f, 0.9f);
             EntityCameraShake.cameraShake(level(), position(), 15, 0.05f, 0, 20);
 
             for (int i = 0; i < 5 * fallingBlockCountMultiplier(); i++) {
@@ -204,15 +204,15 @@ public abstract class EntityGeomancyBase extends EntityMagicEffect implements Ge
                 particlePos = particlePos.yRot((float) (random.nextFloat() * 2 * Math.PI));
                 particlePos = particlePos.xRot((float) (random.nextFloat() * 2 * Math.PI));
                 particlePos = particlePos.add(new Vec3(0, getBbHeight() / 4, 0));
-                EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK.get(), level(), 70, getBlock());
+                EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK, level(), 70, getBlock());
                 fallingBlock.setPos(getX() + particlePos.x, getY() + 0.5 + particlePos.y, getZ() + particlePos.z);
                 fallingBlock.setDeltaMovement((float) particlePos.x * 0.3f, 0.2f + random.nextFloat() * 0.6f, (float) particlePos.z * 0.3f);
                 level().addFreshEntity(fallingBlock);
             }
         }
         else if (tier == GeomancyTier.HUGE) {
-            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG.get(), 1.5f, 0.5f);
-            playSound(MMSounds.EFFECT_GEOMANCY_BREAK_LARGE_1.get(), 1.5f, 0.5f);
+            playSound(MMSounds.EFFECT_GEOMANCY_MAGIC_BIG, 1.5f, 0.5f);
+            playSound(MMSounds.EFFECT_GEOMANCY_BREAK_LARGE_1, 1.5f, 0.5f);
             EntityCameraShake.cameraShake(level(), position(), 20, 0.05f, 0, 20);
 
             for (int i = 0; i < 7 * fallingBlockCountMultiplier(); i++) {
@@ -220,7 +220,7 @@ public abstract class EntityGeomancyBase extends EntityMagicEffect implements Ge
                 particlePos = particlePos.yRot((float) (random.nextFloat() * 2 * Math.PI));
                 particlePos = particlePos.xRot((float) (random.nextFloat() * 2 * Math.PI));
                 particlePos = particlePos.add(new Vec3(0, getBbHeight() / 4, 0));
-                EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK.get(), level(), 70, getBlock());
+                EntityFallingBlock fallingBlock = new EntityFallingBlock(EntityHandler.FALLING_BLOCK, level(), 70, getBlock());
                 fallingBlock.setPos(getX() + particlePos.x, getY() + 0.5 + particlePos.y, getZ() + particlePos.z);
                 fallingBlock.setDeltaMovement((float) particlePos.x * 0.3f, 0.2f + random.nextFloat() * 0.6f, (float) particlePos.z * 0.3f);
                 level().addFreshEntity(fallingBlock);

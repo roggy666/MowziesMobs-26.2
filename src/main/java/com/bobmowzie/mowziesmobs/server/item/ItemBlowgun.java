@@ -12,7 +12,6 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -21,7 +20,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class ItemBlowgun extends BowItem {
-    public static final Predicate<ItemStack> DARTS = stack -> stack.getItem() == ItemHandler.DART.get();
+    public static final Predicate<ItemStack> DARTS = stack -> stack.getItem() == ItemHandler.DART;
 
     public ItemBlowgun(Item.Properties properties) {
         super(properties);
@@ -37,7 +36,6 @@ public class ItemBlowgun extends BowItem {
 
             if (!itemstack.isEmpty()) {
                 int duration = this.getUseDuration(stack, entityLiving) - timeLeft;
-                duration = EventHooks.onArrowLoose(stack, level, player, duration, !itemstack.isEmpty());
 
                 if (duration < 0) {
                     return false;
@@ -53,7 +51,7 @@ public class ItemBlowgun extends BowItem {
                     }
 
                     // Custom sound
-                    level.playSound(null, player.getX(), player.getY(), player.getZ(), MMSounds.ENTITY_UMVUTHANA_BLOWDART.get(), SoundSource.PLAYERS, 1.0F, 1.0F / (player.getRandom().nextFloat() * 0.4F + 1.2F) + power * 0.5F);
+                    level.playSound(null, player.getX(), player.getY(), player.getZ(), MMSounds.ENTITY_UMVUTHANA_BLOWDART, SoundSource.PLAYERS, 1.0F, 1.0F / (player.getRandom().nextFloat() * 0.4F + 1.2F) + power * 0.5F);
                     player.awardStat(Stats.ITEM_USED.get(this));
                     return true;
                 }
@@ -81,14 +79,14 @@ public class ItemBlowgun extends BowItem {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> tooltip, @NotNull TooltipFlag flagIn) {
         super.appendHoverText(stack, context, display, tooltip, flagIn);
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.0").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.1").setStyle(ItemHandler.TOOLTIP_STYLE));
-        tooltip.accept(Component.translatable(getDescriptionId() + ".text.2").setStyle(ItemHandler.TOOLTIP_STYLE));
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.0");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.1");
+        ItemHandler.addTooltip(tooltip, getDescriptionId() + ".text.2");
     }
 
     @Override
     protected @NotNull Projectile createProjectile(@NotNull Level level, @NotNull LivingEntity shooter, @NotNull ItemStack weapon, ItemStack ammo, boolean isCrit) {
-        ArrowItem arrowitem = ammo.getItem() instanceof ItemDart dart ? dart : ItemHandler.DART.get(); // Use dart as default item
+        ArrowItem arrowitem = ammo.getItem() instanceof ItemDart dart ? dart : ItemHandler.DART; // Use dart as default item
         AbstractArrow arrow = arrowitem.createArrow(level, ammo, shooter, weapon);
 
         if (isCrit) {
@@ -105,6 +103,6 @@ public class ItemBlowgun extends BowItem {
     }
 
     public @NotNull ItemStack getDefaultCreativeAmmo(@Nullable Player player, @NotNull ItemStack projectileWeaponItem) {
-        return ItemHandler.DART.get().getDefaultInstance();
+        return ItemHandler.DART.getDefaultInstance();
     }
 }
